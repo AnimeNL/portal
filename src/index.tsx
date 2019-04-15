@@ -6,4 +6,5 @@ import Application from './app/Application';
 
 const container = document.getElementById('root');
 
-new Application(container);
+const app = new Application(container!);
+app.initialize();
