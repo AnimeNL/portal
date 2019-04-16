@@ -5,6 +5,7 @@
 import React from 'react';
 
 import Button from '@material-ui/core/Button';
+import Environment from '../app/Environment';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FullPage from '../components/FullPage';
@@ -29,6 +30,11 @@ const styles = (theme: Theme) =>
         },
     });
 
+interface LoginLayoutProperties extends WithStyles<typeof styles> {
+    // The environment object relevant for displaying the login screen.
+    environment: Environment;
+};
+
 interface State {
     // Whether an authentication request is being validated.
     validating: boolean;
@@ -37,14 +43,14 @@ interface State {
     failed: boolean;
 };
 
-class LoginLayout extends React.Component<WithStyles<typeof styles>, State> {
+class LoginLayout extends React.Component<LoginLayoutProperties, State> {
     state: State = {
         validating: false,
         failed: false,
     };
 
     render() {
-        const { classes } = this.props;
+        const { classes, environment } = this.props;
 
         return (
             <FullPage>
@@ -56,8 +62,8 @@ class LoginLayout extends React.Component<WithStyles<typeof styles>, State> {
                     </Typography>
                     <Typography component="p">
                           Enter your e-mail address and four-digit access code to sign in to the
-                          volunteer portal. Please talk to a Senior Steward in case you cannot login
-                          or forgot your access code.
+                          volunteer portal. Please talk to a {environment.seniorTitle} in case you
+                          cannot login or forgot your access code.
                     </Typography>
 
                     <form className={classes.form}>

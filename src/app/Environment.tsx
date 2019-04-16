@@ -8,6 +8,8 @@ import { EnvironmentConfigPath } from '../config';
 // configuration options unique to groups of volunteers.
 class Environment {
     available: boolean = false;
+
+    seniorTitle?: string;
     year?: number;
 
     // Initialization. Will fetch the environment configuration file from the server on pageload.
@@ -28,8 +30,13 @@ class Environment {
                 return;
             }
 
+            if (!this.validateAndParseString(config, 'seniorTitle')) {
+                console.error('Unable to parse the `seniorTitle` field.');
+                return;
+            }
+
             if (!this.validateAndParseNumber(config, 'year')) {
-                console.error('Unable to parse the year from the environment configuration.');
+                console.error('Unable to parse the `year` field.');
                 return;
             }
 
@@ -47,8 +54,18 @@ class Environment {
         return this.available;
     }
 
-    // Validates the given |field| in the given |config| as a number. The |field| will be written
-    // to an identically named property in this class instance when successful.
+    // Validates the given |field| in the given |config| as a string. The |field| will be written to
+    // an identically named property in this class instance when successful.
+    private validateAndParseString(config: any, field: string): boolean {
+        if (!config.hasOwnProperty(field))
+            return false;
+
+        (this as any)[field] = config[field].toString();
+        return true;
+    }
+
+    // Validates the given |field| in the given |config| as a number. The |field| will be written to
+    // an identically named property in this class instance when successful.
     private validateAndParseNumber(config: any, field: string): boolean {
         if (!config.hasOwnProperty(field))
             return false;

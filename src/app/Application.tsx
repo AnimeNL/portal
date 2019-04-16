@@ -55,7 +55,7 @@ class Application {
 
     // Displays the authentication page allowing a user to identify themselves with the portal.
     private displayAuthenticationPage(): void {
-        ReactDOM.render(<LoginLayout />, this.container);
+        ReactDOM.render(<LoginLayout environment={this.environment} />, this.container);
     }
 
     // Displays a fatal error for the given |message|. Application flow should stop after this.
