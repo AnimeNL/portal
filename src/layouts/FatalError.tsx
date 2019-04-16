@@ -37,11 +37,13 @@ class FatalError extends React.Component<FatalErrorProperties> {
                         subheader={error} />
 
                     <CardContent>
+
                         <Typography component="p">
                             The portal cannot automatically recover from this error. Please
                             contact <a href="tel:+447427457387">Peter</a> so that he can take a look
                             at the issue.
                         </Typography>
+
                     </CardContent>
 
                 </Card>

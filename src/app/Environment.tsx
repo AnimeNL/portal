@@ -34,7 +34,7 @@ class Environment {
             }
 
             // Mark the environment as being available, as all validation has passed.
-            this.available = false;
+            this.available = true;
 
         } catch (e) {
             console.error('Unable to load the environment configuration.', e);
