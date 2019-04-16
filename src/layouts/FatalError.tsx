@@ -6,8 +6,9 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 import Card from '@material-ui/core/Card';
+import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
-import Grid from '@material-ui/core/Grid';
+import FullPage from '../components/FullPage';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -21,28 +22,33 @@ const styles = (theme: Theme) =>
         }
     });
 
-class FatalError extends React.Component<WithStyles<typeof styles>> {
+interface FatalErrorProperties extends WithStyles<typeof styles> {
+    // Human-readable description of the fatal error that occurred.
+    error: string;
+};
+
+class FatalError extends React.Component<FatalErrorProperties> {
     render() {
-        const { classes } = this.props;
+        const { classes, error } = this.props;
 
         return (
-            <Grid
-                container
-                alignContent="center"
-                justify="center"
-                style={{ minHeight: '85vh' }}>
-
+            <FullPage>
                 <Card className={classes.errorCard}>
-                    <CardHeader
-                        title="Volunteer Portal 2019"
-                        subheader="A fatal error has occurred and the portal cannot be loaded." />
 
-                    {/* TODO: Add a <CardMedia> element with an image */}
-                    {/* TODO: Add a <CardContent> element with a detailed error description */}
+                    <CardHeader
+                        title="Volunteer Portal"
+                        subheader={error} />
+
+                    <CardContent>
+                        <Typography component="p">
+                            The portal cannot automatically recover from this error. Please
+                            contact <a href="tel:+447427457387">Peter</a> so that he can take a look
+                            at the issue.
+                        </Typography>
+                    </CardContent>
 
                 </Card>
-
-            </Grid>
+            </FullPage>
         )
     }
 }
