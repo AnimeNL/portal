@@ -13,6 +13,8 @@ class Environment {
     // Initialization. Will fetch the environment configuration file from the server on pageload.
     // Expensive, but critical to the portal's behaviour.
     async initialize() {
+        // TODO: Cache the environment configuration to avoid network access on each pageload.
+
         try {
             const result = await fetch(EnvironmentConfigPath);
             if (!result.ok) {
@@ -32,7 +34,7 @@ class Environment {
             }
 
             // Mark the environment as being available, as all validation has passed.
-            this.available = true;
+            this.available = false;
 
         } catch (e) {
             console.error('Unable to load the environment configuration.', e);

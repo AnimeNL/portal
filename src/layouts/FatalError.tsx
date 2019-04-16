@@ -3,19 +3,16 @@
 // be found in the LICENSE file.
 
 import React from 'react';
-import PropTypes from 'prop-types';
 
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import FullPage from '../components/FullPage';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
-import withRoot from '../withRoot';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
-const styles = (theme: Theme) =>
+const styles = () =>
     createStyles({
         errorCard: {
             maxWidth: 600,
@@ -53,4 +50,4 @@ class FatalError extends React.Component<FatalErrorProperties> {
     }
 }
 
-export default withRoot(withStyles(styles)(FatalError));
+export default withStyles(styles)(FatalError);

@@ -5,11 +5,11 @@
 import React from 'react';
 
 import Grid from '@material-ui/core/Grid';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
+import withRoot from '../withRoot';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
-const styles = (theme: Theme) =>
+const styles = () =>
     createStyles({
         container: {
             minHeight: '100vh',
@@ -50,4 +50,4 @@ class FullPage extends React.Component<WithStyles<typeof styles>> {
     }
 }
 
-export default withStyles(styles)(FullPage);
+export default withRoot(withStyles(styles)(FullPage));
