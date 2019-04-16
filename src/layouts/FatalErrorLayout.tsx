@@ -19,12 +19,12 @@ const styles = () =>
         }
     });
 
-interface FatalErrorProperties extends WithStyles<typeof styles> {
+interface FatalErrorLayoutProperties extends WithStyles<typeof styles> {
     // Human-readable description of the fatal error that occurred.
     error: string;
 };
 
-class FatalError extends React.Component<FatalErrorProperties> {
+class FatalErrorLayout extends React.Component<FatalErrorLayoutProperties> {
     render() {
         const { classes, error } = this.props;
 
@@ -52,4 +52,4 @@ class FatalError extends React.Component<FatalErrorProperties> {
     }
 }
 
-export default withStyles(styles)(FatalError);
+export default withStyles(styles)(FatalErrorLayout);

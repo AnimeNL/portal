@@ -6,7 +6,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Environment from './Environment';
-import FatalError from '../layouts/FatalError';
+import FatalErrorLayout from '../layouts/FatalErrorLayout';
 import LoginLayout from '../layouts/LoginLayout';
 import User from './User';
 
@@ -60,7 +60,7 @@ class Application {
 
     // Displays a fatal error for the given |message|. Application flow should stop after this.
     private displayFatalError(message: string): void {
-        ReactDOM.render(<FatalError error={message} />, this.container);
+        ReactDOM.render(<FatalErrorLayout error={message} />, this.container);
     }
 }
 
