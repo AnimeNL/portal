@@ -32,7 +32,7 @@ class LoginController extends React.Component<Properties> {
     }
 
     render() {
-        return <LoginView onLogin={this.onLogin}
+        return <LoginView onLogin={(email, accessCode) => this.onLogin(email, accessCode)}
                           seniorTitle={this.props.environment.seniorTitle!} />;
     }
 }
