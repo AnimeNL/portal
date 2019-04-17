@@ -5,9 +5,14 @@
 import indigo from '@material-ui/core/colors/indigo';
 
 const root = process.env.PUBLIC_URL;
+const directory = process.env.BACKEND_DIR || 'backend';
 
 // Path to the environment configuration file, relative to the server root.
-export const EnvironmentConfigPath = root + '/data/environment.json';
+export const EnvironmentConfigPath = `${root}/${directory}/environment.json`;
+
+// Path to the service that enables users to log in. Their details will be send
+// here in a POST request, and a JSON response is expected.
+export const UserLoginPath = `${root}/${directory}/login.json`;
 
 // Documentation: https://material-ui.com/customization/themes/
 export const AppTheme = {
