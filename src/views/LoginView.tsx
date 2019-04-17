@@ -103,8 +103,8 @@ class LoginView extends React.Component<Properties, State> {
                     </Typography>
                     <Typography component="p">
                           Enter your e-mail address and four-digit access code to sign in to the
-                          volunteer portal. Please talk to a {seniorTitle} in case you
-                          cannot login or forgot your access code.
+                          volunteer portal. Please talk to a {seniorTitle} in case you forgot your
+                          access code.
                     </Typography>
 
                     <form onSubmit={e => this.onSubmit(e)} className={classes.form}>
@@ -133,12 +133,13 @@ class LoginView extends React.Component<Properties, State> {
 
                         <Button
                             type="submit"
+                            disabled={this.state.validating}
                             fullWidth
                             variant="contained"
                             color="primary"
                             className={classes.submit}>
 
-                            Sign in
+                            {this.state.validating ? 'Signing in…' : 'Sign in'}
 
                         </Button>
 
