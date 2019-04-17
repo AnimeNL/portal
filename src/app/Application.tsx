@@ -6,9 +6,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import Environment from './Environment';
-import FatalErrorLayout from '../layouts/FatalErrorLayout';
-import LoginLayout from '../layouts/LoginLayout';
+import LoginController from './controllers/LoginController';
 import User from './User';
+
+import ErrorView from '../views/ErrorView';
 
 const kEnvironmentError = 'Unable to load the environment settings.';
 
@@ -39,13 +40,13 @@ class Application {
         // to the appropriate page. It's loaded from the network, but will be cached to ensure
         // that subsequent pageloads aren't penalized.
         if (!this.environment.isAvailable()) {
-            this.displayFatalError(kEnvironmentError);
+            this.displayErrorView(kEnvironmentError);
             return;
         }
 
         // Lock the user in to an authentication dialog if they haven't identified themselves yet.
         if (!this.user.isIdentified()) {
-            this.displayAuthenticationPage();
+            this.displayLoginView();
             return;
         }
 
@@ -54,13 +55,14 @@ class Application {
     }
 
     // Displays the authentication page allowing a user to identify themselves with the portal.
-    private displayAuthenticationPage(): void {
-        ReactDOM.render(<LoginLayout environment={this.environment} />, this.container);
+    private displayLoginView(): void {
+        ReactDOM.render(<LoginController environment={this.environment}
+                                         user={this.user} />, this.container);
     }
 
     // Displays a fatal error for the given |message|. Application flow should stop after this.
-    private displayFatalError(message: string): void {
-        ReactDOM.render(<FatalErrorLayout error={message} />, this.container);
+    private displayErrorView(message: string): void {
+        ReactDOM.render(<ErrorView message={message} />, this.container);
     }
 }
 

@@ -5,7 +5,6 @@
 import React from 'react';
 
 import Button from '@material-ui/core/Button';
-import Environment from '../app/Environment';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FullPage from '../components/FullPage';
@@ -14,7 +13,6 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
-import User from '../app/User';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
@@ -31,9 +29,13 @@ const styles = (theme: Theme) =>
         },
     });
 
-interface LoginLayoutProperties extends WithStyles<typeof styles> {
-    // The environment object relevant for displaying the login screen.
-    environment: Environment;
+interface Properties extends WithStyles<typeof styles> {
+    // Event that should be invoked when a login attempt is taking place. A promise must be returned
+    // that is to be resolved with a boolean once it's known whether the attempt was succesful.
+    onLogin: (email: string, accessCode: number) => Promise<boolean>;
+
+    // Title given to the senior volunteer who can assist with login issues.
+    seniorTitle: string;
 };
 
 interface State {
@@ -50,7 +52,7 @@ interface State {
     accessCode: string;
 };
 
-class LoginLayout extends React.Component<LoginLayoutProperties, State> {
+class LoginView extends React.Component<Properties, State> {
     state: State = {
         validating: false,
         failed: false,
@@ -76,12 +78,22 @@ class LoginLayout extends React.Component<LoginLayoutProperties, State> {
 
     // Called when the login form is being submitted. Here we authenticate the user with the given
     // details, and sign them in to the volunteer portal if allowed.
-    onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    async onSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
+
+        this.setState({ validating: true });
+
+        // Let the controller deal with the login request.
+        const result = await this.props.onLogin(this.state.email, 1234);
+
+        this.setState({
+            validating: false,
+            failed: result
+        });
     }
 
     render() {
-        const { classes, environment } = this.props;
+        const { classes, seniorTitle } = this.props;
 
         return (
             <FullPage>
@@ -93,7 +105,7 @@ class LoginLayout extends React.Component<LoginLayoutProperties, State> {
                     </Typography>
                     <Typography component="p">
                           Enter your e-mail address and four-digit access code to sign in to the
-                          volunteer portal. Please talk to a {environment.seniorTitle} in case you
+                          volunteer portal. Please talk to a {seniorTitle} in case you
                           cannot login or forgot your access code.
                     </Typography>
 
@@ -141,4 +153,4 @@ class LoginLayout extends React.Component<LoginLayoutProperties, State> {
     }
 }
 
-export default withStyles(styles)(LoginLayout);
+export default withStyles(styles)(LoginView);
