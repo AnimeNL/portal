@@ -5,6 +5,11 @@
 import React from 'react';
 
 import Button from '@material-ui/core/Button';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import FullPage from '../components/FullPage';
@@ -32,7 +37,7 @@ const styles = (theme: Theme) =>
 interface Properties extends WithStyles<typeof styles> {
     // Event that should be invoked when a login attempt is taking place. A promise must be returned
     // that is to be resolved with a boolean once it's known whether the attempt was succesful.
-    onLogin: (email: string, accessCode: number) => Promise<boolean>;
+    onLogin: (email: string, accessCode: string) => Promise<boolean>;
 
     // Title given to the senior volunteer who can assist with login issues.
     seniorTitle: string;
@@ -56,12 +61,12 @@ class LoginView extends React.Component<Properties, State> {
     state: State = {
         validating: false,
         failed: false,
-        email: 'foo@bar.com',
-        accessCode: '1234'
+        email: '',
+        accessCode: ''
     };
 
     // Called when input has been received in one of the form fields. The state will be updated.
-    updateInput(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+    updateInput(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         switch (event.target.name) {
             case 'email':
                 this.setState({ email: event.target.value });
@@ -76,19 +81,25 @@ class LoginView extends React.Component<Properties, State> {
         }
     }
 
+    // Called when the login failed dialog has been closed. Reset the `failed` state to make sure
+    // it doesn't automatically re-open again.
+    onDialogClose(): void {
+        this.setState({ failed: false });
+    }
+
     // Called when the login form is being submitted. Here we authenticate the user with the given
     // details, and sign them in to the volunteer portal if allowed.
-    async onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
 
         this.setState({ validating: true });
 
         // Let the controller deal with the login request.
-        const result = await this.props.onLogin(this.state.email, 1234);
+        const result = await this.props.onLogin(this.state.email, this.state.accessCode);
 
         this.setState({
             validating: false,
-            failed: result
+            failed: !result
         });
     }
 
@@ -142,6 +153,34 @@ class LoginView extends React.Component<Properties, State> {
                             {this.state.validating ? 'Signing in…' : 'Sign in'}
 
                         </Button>
+
+                        <Dialog
+                            onClose={() => this.onDialogClose()}
+                            open={this.state.failed}>
+
+                            <DialogTitle>Unable to sign you in</DialogTitle>
+                            <DialogContent>
+
+                                <DialogContentText>
+                                    Your login details could not be verified and you could thus not
+                                    be logged in. Please talk to a {seniorTitle} in case you forgot
+                                    your access code.
+                                </DialogContentText>
+
+                                <DialogActions>
+                                    <Button
+                                        onClick={() => this.onDialogClose()}
+                                        color="primary"
+                                        autoFocus>
+
+                                        Try again
+
+                                    </Button>
+                                </DialogActions>
+
+                            </DialogContent>
+
+                        </Dialog>
 
                     </form>
 

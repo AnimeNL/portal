@@ -21,7 +21,7 @@ interface Properties {
 // The login controller is responsible for enabling a user to identify themselves and login to the
 // volunteer portal. It's driven by the LoginView for providing input and events.
 class LoginController extends React.Component<Properties> {
-    async onLogin(email: string, accessCode: number): Promise<boolean> {
+    async onLogin(email: string, accessCode: string): Promise<boolean> {
 
         // TODO: Actually log in with the available user object.
         await new Promise(resolve => {
