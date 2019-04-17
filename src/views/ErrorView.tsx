@@ -20,21 +20,16 @@ class ErrorView extends React.Component<Properties> {
         return (
             <FullPage>
                 <Card>
-
                     <CardHeader
                         title="Volunteer Portal"
                         subheader={this.props.message} />
-
                     <CardContent>
-
                         <Typography component="p">
                             The portal cannot automatically recover from this error. Please
                             contact <a href="tel:+447427457387">Peter</a> so that the issue can be
                             resolved as soon as possible.
                         </Typography>
-
                     </CardContent>
-
                 </Card>
             </FullPage>
         )

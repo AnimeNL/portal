@@ -97,9 +97,7 @@ class LoginView extends React.Component<Properties, State> {
 
         return (
             <FullPage>
-
                 <Paper className={classes.root} elevation={1}>
-
                     <Typography component="h1" variant="h5">
                           Volunteer Portal
                     </Typography>
@@ -147,7 +145,6 @@ class LoginView extends React.Component<Properties, State> {
                     </form>
 
                 </Paper>
-
             </FullPage>
         )
     }
