@@ -14,6 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
+import User from '../app/User';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
@@ -41,13 +42,43 @@ interface State {
 
     // Whether an authentication request has failed.
     failed: boolean;
+
+    // The e-mail address entered in the form.
+    email: string;
+
+    // The access code entered in the form.
+    accessCode: string;
 };
 
 class LoginLayout extends React.Component<LoginLayoutProperties, State> {
     state: State = {
         validating: false,
         failed: false,
+        email: 'foo@bar.com',
+        accessCode: '1234'
     };
+
+    // Called when input has been received in one of the form fields. The state will be updated.
+    updateInput(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
+        switch (event.target.name) {
+            case 'email':
+                this.setState({ email: event.target.value });
+                break;
+
+            case 'access-code':
+                this.setState({ accessCode: event.target.value });
+                break;
+
+            default:
+                throw new Error('Unknown input element: ' + event.target.name);
+        }
+    }
+
+    // Called when the login form is being submitted. Here we authenticate the user with the given
+    // details, and sign them in to the volunteer portal if allowed.
+    onSubmit(event: React.FormEvent<HTMLFormElement>) {
+        event.preventDefault();
+    }
 
     render() {
         const { classes, environment } = this.props;
@@ -66,13 +97,15 @@ class LoginLayout extends React.Component<LoginLayoutProperties, State> {
                           cannot login or forgot your access code.
                     </Typography>
 
-                    <form className={classes.form}>
+                    <form onSubmit={e => this.onSubmit(e)} className={classes.form}>
 
                         <FormControl margin="normal" required fullWidth>
                             <InputLabel htmlFor="email">E-mail address</InputLabel>
                             <Input
                                 id="email"
                                 name="email"
+                                value={this.state.email}
+                                onChange={e => this.updateInput(e)}
                                 autoComplete="email"
                                 autoFocus />
                         </FormControl>
@@ -82,8 +115,10 @@ class LoginLayout extends React.Component<LoginLayoutProperties, State> {
                             <Input
                                 id="access-code"
                                 name="access-code"
-                                autoComplete="current-password"
-                                type="number" />
+                                type="number"
+                                value={this.state.accessCode}
+                                onChange={e => this.updateInput(e)}
+                                autoComplete="current-password" />
                         </FormControl>
 
                         <Button
