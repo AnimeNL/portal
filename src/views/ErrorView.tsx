@@ -9,39 +9,28 @@ import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import FullPage from '../components/FullPage';
 import Typography from '@material-ui/core/Typography';
-import createStyles from '@material-ui/core/styles/createStyles';
-import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
-const styles = () =>
-    createStyles({
-        errorCard: {
-            maxWidth: 600,
-        }
-    });
-
-interface FatalErrorLayoutProperties extends WithStyles<typeof styles> {
+interface Properties {
     // Human-readable description of the fatal error that occurred.
-    error: string;
+    message: string;
 };
 
-class FatalErrorLayout extends React.Component<FatalErrorLayoutProperties> {
+class ErrorView extends React.Component<Properties> {
     render() {
-        const { classes, error } = this.props;
-
         return (
             <FullPage>
-                <Card className={classes.errorCard}>
+                <Card>
 
                     <CardHeader
                         title="Volunteer Portal"
-                        subheader={error} />
+                        subheader={this.props.message} />
 
                     <CardContent>
 
                         <Typography component="p">
                             The portal cannot automatically recover from this error. Please
-                            contact <a href="tel:+447427457387">Peter</a> so that he can take a look
-                            at the issue.
+                            contact <a href="tel:+447427457387">Peter</a> so that the issue can be
+                            resolved as soon as possible.
                         </Typography>
 
                     </CardContent>
@@ -52,4 +41,4 @@ class FatalErrorLayout extends React.Component<FatalErrorLayoutProperties> {
     }
 }
 
-export default withStyles(styles)(FatalErrorLayout);
+export default ErrorView;
