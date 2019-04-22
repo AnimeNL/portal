@@ -7,16 +7,16 @@
     "private": true,
     "dependencies": {
         "@material-ui/core": "latest",
-        "@types/react": "*",
+        "@types/react": "^16.8.14",
         "@types/react-dom": "*",
         "react": "latest",
-        "react-dom": "latest",
-        "react-scripts": "latest"
+        "react-dom": "latest"
     },
     "devDependencies": {
         "@types/jest": "*",
-        "@types/node": "*",
-        "typescript": "latest"
+        "@types/node": "^11.13.7",
+        "react-scripts": "^3.0.0",
+        "typescript": "^3.4.4"
     },
     "browserslist": [
         ">1%",
