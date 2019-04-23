@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
 
 import Environment from '../Environment';
 import User from '../User';
@@ -21,12 +22,12 @@ interface Properties {
 // The login controller is responsible for enabling a user to identify themselves and login to the
 // volunteer portal. It's driven by the LoginView for providing input and events.
 class LoginController extends React.Component<Properties> {
-    async onLogin(email: string, accessCode: string): Promise<boolean> {
+    @bind async onLogin(email: string, accessCode: string): Promise<boolean> {
         return this.props.user.login(email, accessCode);
     }
 
     render() {
-        return <LoginView onLogin={(email, accessCode) => this.onLogin(email, accessCode)}
+        return <LoginView onLogin={this.onLogin}
                           seniorTitle={this.props.environment.seniorTitle!} />;
     }
 }

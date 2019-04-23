@@ -17,6 +17,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Paper from '@material-ui/core/Paper';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
+import bind from 'bind-decorator';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
@@ -65,7 +66,7 @@ class LoginView extends React.Component<Properties, State> {
     };
 
     // Called when input has been received in one of the form fields. The state will be updated.
-    updateInput(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
+    @bind updateInput(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         switch (event.target.name) {
             case 'email':
                 this.setState({ email: event.target.value });
@@ -82,13 +83,13 @@ class LoginView extends React.Component<Properties, State> {
 
     // Called when the login failed dialog has been closed. Reset the `failed` state to make sure
     // it doesn't automatically re-open again.
-    onDialogClose(): void {
+    @bind onDialogClose(): void {
         this.setState({ failed: false });
     }
 
     // Called when the login form is being submitted. Here we authenticate the user with the given
     // details, and sign them in to the volunteer portal if allowed.
-    async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+    @bind async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
 
         this.setState({ validating: true });
@@ -117,7 +118,7 @@ class LoginView extends React.Component<Properties, State> {
                           access code.
                     </Typography>
 
-                    <form onSubmit={e => this.onSubmit(e)} className={classes.form}>
+                    <form onSubmit={this.onSubmit} className={classes.form}>
 
                         <FormControl margin="normal" required fullWidth>
                             <InputLabel htmlFor="email">E-mail address</InputLabel>
@@ -126,7 +127,7 @@ class LoginView extends React.Component<Properties, State> {
                                 name="email"
                                 type="email"
                                 value={this.state.email}
-                                onChange={e => this.updateInput(e)}
+                                onChange={this.updateInput}
                                 autoComplete="email"
                                 autoFocus />
                         </FormControl>
@@ -138,7 +139,7 @@ class LoginView extends React.Component<Properties, State> {
                                 name="access-code"
                                 type="number"
                                 value={this.state.accessCode}
-                                onChange={e => this.updateInput(e)}
+                                onChange={this.updateInput}
                                 autoComplete="current-password" />
                         </FormControl>
 
@@ -155,7 +156,7 @@ class LoginView extends React.Component<Properties, State> {
                         </Button>
 
                         <Dialog
-                            onClose={() => this.onDialogClose()}
+                            onClose={this.onDialogClose}
                             open={this.state.failed}>
 
                             <DialogTitle>Unable to sign you in</DialogTitle>
@@ -169,7 +170,7 @@ class LoginView extends React.Component<Properties, State> {
 
                                 <DialogActions>
                                     <Button
-                                        onClick={() => this.onDialogClose()}
+                                        onClick={this.onDialogClose}
                                         color="primary"
                                         autoFocus>
 
