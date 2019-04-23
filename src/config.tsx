@@ -8,12 +8,16 @@ import indigo from '@material-ui/core/colors/indigo';
 // will be incepted and mocked out for development.
 const isProduction = process.env.NODE_ENV === 'production';
 
+// Directory in which the API calls reside. Development calls will be routed to a different place to
+// avoid naming conflicts, in case both directories are deployed to the same domain.
+const directory = isProduction ? 'api' : 'api-dev';
+
 // Path to the environment configuration file, relative to the server root.
-export const EnvironmentConfigPath = '/api/environment';
+export const EnvironmentConfigPath = `/${directory}/environment`;
 
 // Path to the service that enables users to log in. Their details will be send here in a POST
 // request, and a JSON response is expected.
-export const UserLoginPath = '/api/login';
+export const UserLoginPath = `/${directory}/login`;
 
 // Documentation: https://material-ui.com/customization/themes/
 export const AppTheme = {
@@ -25,21 +29,14 @@ export const AppTheme = {
     },
 };
 
-// Proxy to the fetch() function that can be mocked when in development. This is done because the
-// WebpackDevServer included with react-scripts cannot handle POST requests, which we require for
-// logging in to the application.
-export async function mockableFetch(path : string, ...args : any) : Promise<Response> {
+// Proxy to the fetch() function that can be mocked when in development.
+export async function mockableFetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
     if (!isProduction) {
-        switch (path) {
-            case EnvironmentConfigPath:
-                return new Response(`{ "seniorTitle": "Senior Steward", "year": 2019 }`);
-
-            case UserLoginPath:
-                return new Response(`{ "success": false }`);
-
-            // no default
-        }
+        // Replace the |init| RequestInit for non-GET requests. This is necessary because the
+        // WebpackDevServer included with react-scripts cannot deal with non-GET requests.
+        if (init && init.method !== 'GET')
+            return fetch(input);
     }
 
-    return fetch(path, ...args);
+    return fetch(input, init);
 }
