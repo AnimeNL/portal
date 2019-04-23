@@ -22,13 +22,7 @@ interface Properties {
 // volunteer portal. It's driven by the LoginView for providing input and events.
 class LoginController extends React.Component<Properties> {
     async onLogin(email: string, accessCode: string): Promise<boolean> {
-
-        // TODO: Actually log in with the available user object.
-        await new Promise(resolve => {
-            setTimeout(resolve, 2000);
-        });
-
-        return false;
+        return this.props.user.login(email, accessCode);
     }
 
     render() {

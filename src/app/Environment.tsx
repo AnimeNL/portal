@@ -2,7 +2,7 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import { EnvironmentConfigPath } from '../config';
+import { EnvironmentConfigPath, mockableFetch } from '../config';
 
 // Represents the environment under which the volunteer portal is operating. Exposes various
 // configuration options unique to groups of volunteers.
@@ -18,7 +18,7 @@ class Environment {
         // TODO: Cache the environment configuration to avoid network access on each pageload.
 
         try {
-            const result = await fetch(EnvironmentConfigPath);
+            const result = await mockableFetch(EnvironmentConfigPath);
             if (!result.ok) {
                 console.error('Unable to fetch the environment configuration.');
                 return;
