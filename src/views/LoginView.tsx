@@ -124,6 +124,7 @@ class LoginView extends React.Component<Properties, State> {
                             <Input
                                 id="email"
                                 name="email"
+                                type="email"
                                 value={this.state.email}
                                 onChange={e => this.updateInput(e)}
                                 autoComplete="email"
