@@ -5,25 +5,28 @@
 import { EnvironmentConfigPath, mockableFetch } from '../config';
 import { isNumber, isString } from './util/Validators';
 
-// Settings for the environment the portal will be operating under. Generally fetched from the
-// Environment API from the network:
-//
-// https://github.com/AnimeNL/portal/blob/master/API.md#apienvironment
+/**
+ * Settings for the environment the portal will be operating under. Generally fetched from the
+ * Environment API from the network:
+ *
+ * @see https://github.com/AnimeNL/portal/blob/master/API.md#apienvironment
+ */
 interface EnvironmentData {
-    // Title to use for senior volunteers, who can provide assistance.
     seniorTitle: string;
-
-    // Year in which the event will take place.
     year: number;
 }
 
-// Represents the environment under which the volunteer portal is operating. Exposes various
-// configuration options unique to groups of volunteers.
+/**
+ * Represents the environment under which the volunteer portal is operating. Exposes various
+ * configuration options unique to groups of volunteers.
+ */
 class Environment {
     data?: EnvironmentData;
 
-    // Initialization. Will fetch the environment configuration file from the server on pageload.
-    // Expensive, but critical to the portal's behaviour.
+    /**
+     * Initialization. Will fetch the environment configuration file from the server on pageload.
+     * Expensive, but critical to the portal's behaviour.
+     */
     async initialize(): Promise<void> {
         // TODO: Cache the environment configuration to avoid network access on each pageload.
         try {
@@ -49,25 +52,35 @@ class Environment {
         }
     }
 
-    // Returns whether the environment is readily available, meaning that it was successfully
-    // loaded, parsed and verified.
-    isAvailable() : boolean {
+    /**
+     * Returns whether the environment has been successfully loaded and validated and is readily
+     * available for use. This means that the getters on this instance may be called.
+     */
+    isAvailable(): boolean {
         return !!this.data;
     }
 
-    // Title to use for senior volunteers, who can provide assistance.
+    /**
+     * Title to use for senior volunteers, who can provide assistance.
+     */
     get seniorTitle(): string {
         if (!this.data) throw new Error('The environment is not available.');
         return this.data.seniorTitle;
     }
 
-    // Year in which the event will take place.
+    /**
+     * Year in which the event will take place.
+     */
     get year(): number {
         if (!this.data) throw new Error('The environment is not available.');
         return this.data.year;
     }
 
-    // Validates that the given |configuration| conforms to the definition of EnvironmentData.
+    /**
+     * Validates that the given |configuration| conforms to the definition of EnvironmentData.
+     *
+     * @param configuration The configuration as fetched from the network.
+     */
     private validateConfiguration(configuration: any): configuration is EnvironmentData {
         if (!isString(configuration.seniorTitle)) {
             console.error('Unable to validate EnvironmentData.seniorTitle.');

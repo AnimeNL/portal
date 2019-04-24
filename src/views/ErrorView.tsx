@@ -11,7 +11,9 @@ import FullPage from '../components/FullPage';
 import Typography from '@material-ui/core/Typography';
 
 interface Properties {
-    // Human-readable description of the fatal error that occurred.
+    /**
+     * Human-readable description of the fatal error that occurred.
+     */
     message: string;
 };
 

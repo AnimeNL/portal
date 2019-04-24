@@ -13,18 +13,26 @@ import ErrorView from '../views/ErrorView';
 
 const kEnvironmentError = 'Unable to load the environment settings.';
 
-// Main runtime of the volunteer portal. Constructed on pageload. Initialisation may happen
-// asynchronously as part of the initialize() method.
+/**
+ * Main runtime of the volunteer portal. Constructed on pageload. Initialisation may happen
+ * asynchronously as part of the initialize() method.
+ */
 class Application {
-    // Container in which the application should be rendered.
+    /**
+     * Container in which the application should be rendered.
+     */
     container: Element;
 
-    // Environment under which the application is running—a single deployment of the volunteer
-    // portal is able to service multiple groups of volunteers.
+    /**
+     * Environment under which the application is running—a single deployment of the volunteer
+     * portal is able to service multiple groups of volunteers.
+     */
     environment: Environment;
 
-    // State tracker for the authentication status of the current user. The volunteer portal is only
-    // available to volunteers of the event, so we require people to be logged in.
+    /**
+     * State tracker for the authentication status of the current user. The volunteer portal is only
+     * available to volunteers of the event, so we require people to be logged in.
+     */
     user: User;
 
     constructor(container : Element) {
@@ -54,13 +62,17 @@ class Application {
         // TODO: Render the volunteer portal.
     }
 
-    // Displays the authentication page allowing a user to identify themselves with the portal.
+    /**
+     * Displays the authentication page allowing a user to identify themselves with the portal.
+     */
     private displayLoginView(): void {
         ReactDOM.render(<LoginController environment={this.environment}
                                          user={this.user} />, this.container);
     }
 
-    // Displays a fatal error for the given |message|. Application flow should stop after this.
+    /**
+     * Displays a fatal error for the given |message|. Application flow should stop after this.
+     */
     private displayErrorView(message: string): void {
         ReactDOM.render(<ErrorView message={message} />, this.container);
     }

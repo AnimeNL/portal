@@ -11,18 +11,32 @@ import User from '../User';
 import LoginView from '../../views/LoginView';
 
 interface Properties {
-    // The environment object relevant for displaying the login screen.
+    /**
+     * The environment object relevant for displaying the login screen.
+     */
     environment: Environment;
 
-    // The user object can be used to validate authentication information, and persist the local
-    // state necessary to actually log a user in.
+    /**
+     * The user object can be used to validate authentication information, and persist the local
+     * state necessary to actually log a user in.
+     */
     user: User;
 };
 
-// The login controller is responsible for enabling a user to identify themselves and login to the
-// volunteer portal. It's driven by the LoginView for providing input and events.
+/**
+ * The login controller is responsible for enabling a user to identify themselves and login to the
+ * volunteer portal. It's driven by the LoginView for providing input and events.
+ */
 class LoginController extends React.Component<Properties> {
-    @bind async onLogin(email: string, accessCode: string): Promise<boolean> {
+    /**
+     * Called when the form included on the login view has been submitted.
+     *
+     * @param email The e-mail address entered by the user.
+     * @param accessCode The access code entered by the user.
+     * @return A promise that will be resolved with a boolean once the login state is known.
+     */
+    @bind
+    async onLogin(email: string, accessCode: string): Promise<boolean> {
         return this.props.user.login(email, accessCode);
     }
 

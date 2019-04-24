@@ -35,25 +35,37 @@ const styles = (theme: Theme) =>
     });
 
 interface Properties extends WithStyles<typeof styles> {
-    // Event that should be invoked when a login attempt is taking place. A promise must be returned
-    // that is to be resolved with a boolean once it's known whether the attempt was succesful.
+    /**
+     * Event that should be invoked when a login attempt is taking place. A promise must be returned
+     * that is to be resolved with a boolean once it's known whether the attempt was succesful.
+     */
     onLogin: (email: string, accessCode: string) => Promise<boolean>;
 
-    // Title given to the senior volunteer who can assist with login issues.
+    /**
+     * Title given to the senior volunteer who can assist with login issues.
+     */
     seniorTitle: string;
 };
 
 interface State {
-    // Whether an authentication request is being validated.
+    /**
+     * Whether an authentication request is being validated.
+     */
     validating: boolean;
 
-    // Whether an authentication request has failed.
+    /**
+     * Whether an authentication request has failed.
+     */
     failed: boolean;
 
-    // The e-mail address entered in the form.
+    /**
+     * The e-mail address entered in the form.
+     */
     email: string;
 
-    // The access code entered in the form.
+    /**
+     * The access code entered in the form.
+     */
     accessCode: string;
 };
 
@@ -65,8 +77,13 @@ class LoginView extends React.Component<Properties, State> {
         accessCode: ''
     };
 
-    // Called when input has been received in one of the form fields. The state will be updated.
-    @bind updateInput(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
+    /**
+     * Called when input has been received in one of the form fields. The state will be updated.
+     *
+     * @param event The event from either of the input boxes detailing the user input.
+     */
+    @bind
+    updateInput(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         switch (event.target.name) {
             case 'email':
                 this.setState({ email: event.target.value });
@@ -81,15 +98,24 @@ class LoginView extends React.Component<Properties, State> {
         }
     }
 
-    // Called when the login failed dialog has been closed. Reset the `failed` state to make sure
-    // it doesn't automatically re-open again.
-    @bind onDialogClose(): void {
+    /**
+     * Called when the login failed dialog has been closed. Reset the `failed` state to make sure
+     * it doesn't automatically re-open again.
+     */
+    @bind
+    onDialogClose(): void {
         this.setState({ failed: false });
     }
 
-    // Called when the login form is being submitted. Here we authenticate the user with the given
-    // details, and sign them in to the volunteer portal if allowed.
-    @bind async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
+    /**
+     * Called when the login form is being submitted. Here we authenticate the user with the given
+     * details, and sign them in to the volunteer portal if allowed.
+     *
+     * @param event The event triggered by submitting the form.
+     * @return A void promise. This value won't be used, but is imposed by the async semantics.
+     */
+    @bind
+    async onSubmit(event: React.FormEvent<HTMLFormElement>): Promise<void> {
         event.preventDefault();
 
         this.setState({ validating: true });
