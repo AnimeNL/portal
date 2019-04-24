@@ -3,45 +3,46 @@
 // be found in the LICENSE file.
 
 import { EnvironmentConfigPath, mockableFetch } from '../config';
+import { isNumber, isString } from './util/Validators';
+
+// Settings for the environment the portal will be operating under. Generally fetched from the
+// Environment API from the network:
+//
+// https://github.com/AnimeNL/portal/blob/master/API.md#apienvironment
+interface EnvironmentData {
+    // Title to use for senior volunteers, who can provide assistance.
+    seniorTitle: string;
+
+    // Year in which the event will take place.
+    year: number;
+}
 
 // Represents the environment under which the volunteer portal is operating. Exposes various
 // configuration options unique to groups of volunteers.
 class Environment {
-    available: boolean = false;
-
-    seniorTitle?: string;
-    year?: number;
+    data?: EnvironmentData;
 
     // Initialization. Will fetch the environment configuration file from the server on pageload.
     // Expensive, but critical to the portal's behaviour.
-    async initialize() {
+    async initialize(): Promise<void> {
         // TODO: Cache the environment configuration to avoid network access on each pageload.
-
         try {
-            const result = await mockableFetch(EnvironmentConfigPath);
-            if (!result.ok) {
+            const response = await mockableFetch(EnvironmentConfigPath);
+            if (!response.ok) {
                 console.error('Unable to fetch the environment configuration.');
                 return;
             }
 
-            const config = JSON.parse(await result.text());
-            if (!config) {
+            const configuration = JSON.parse(await response.text());
+            if (!configuration) {
                 console.error('Unable to parse the environment configuration.');
                 return;
             }
 
-            if (!this.validateAndParseString(config, 'seniorTitle')) {
-                console.error('Unable to parse the `seniorTitle` field.');
+            if (!this.validateConfiguration(configuration))
                 return;
-            }
 
-            if (!this.validateAndParseNumber(config, 'year')) {
-                console.error('Unable to parse the `year` field.');
-                return;
-            }
-
-            // Mark the environment as being available, as all validation has passed.
-            this.available = true;
+            this.data = configuration;
 
         } catch (e) {
             console.error('Unable to load the environment configuration.', e);
@@ -51,33 +52,35 @@ class Environment {
     // Returns whether the environment is readily available, meaning that it was successfully
     // loaded, parsed and verified.
     isAvailable() : boolean {
-        return this.available;
+        return !!this.data;
     }
 
-    // Validates the given |field| in the given |config| as a string. The |field| will be written to
-    // an identically named property in this class instance when successful.
-    private validateAndParseString(config: any, field: string): boolean {
-        if (!config.hasOwnProperty(field))
-            return false;
+    // Title to use for senior volunteers, who can provide assistance.
+    get seniorTitle(): string {
+        if (!this.data) throw new Error('The environment is not available.');
+        return this.data.seniorTitle;
+    }
 
-        (this as any)[field] = config[field].toString();
+    // Year in which the event will take place.
+    get year(): number {
+        if (!this.data) throw new Error('The environment is not available.');
+        return this.data.year;
+    }
+
+    // Validates that the given |configuration| conforms to the definition of EnvironmentData.
+    private validateConfiguration(configuration: any): configuration is EnvironmentData {
+        if (!isString(configuration.seniorTitle)) {
+            console.error('Unable to validate EnvironmentData.seniorTitle.');
+            return false;
+        }
+
+        if (!isNumber(configuration.year)) {
+            console.error('Unable to validate EnvironmentData.year.');
+            return false;
+        }
+
         return true;
     }
-
-    // Validates the given |field| in the given |config| as a number. The |field| will be written to
-    // an identically named property in this class instance when successful.
-    private validateAndParseNumber(config: any, field: string): boolean {
-        if (!config.hasOwnProperty(field))
-            return false;
-
-        const value = Number(config[field]);
-        if (isNaN(value))
-            return false;
-
-        (this as any)[field] = value;
-        return true;
-    }
-
 }
 
 export default Environment;
