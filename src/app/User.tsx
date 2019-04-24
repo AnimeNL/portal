@@ -6,6 +6,11 @@ import { UserLoginPath, mockableFetch } from '../config';
 import { isNumber, isString } from './util/Validators';
 
 /**
+ * Key in the local storage under which the serialized login data will be stored.
+ */
+const kLoginDataKey = 'login-data';
+
+/**
  * Interface describing the login data describing the user's current state. Generally fetched from
  * the Login API from the network on authentication, or deserialized from local storage on repeat
  * visits.
@@ -29,8 +34,44 @@ class User {
      * Initializes the user's login state based on local storage. The data will be verified on load,
      * and `this.data` will only be initialized when successful.
      */
-    initialize(): void {
-        // TODO: Load user data from local storage.
+    initializeFromLocalStorage(): void {
+        if (!navigator.cookieEnabled) {
+            console.error('Cookies are disabled: the ability to log in is not available.');
+            return;
+        }
+
+        const serializedData = localStorage.getItem(kLoginDataKey);
+        if (!serializedData)
+            return;
+
+        try {
+            const data = JSON.parse(serializedData);
+            if (data && this.validateConfiguration(data))
+                this.data = data;
+
+        } catch (e) {
+            console.error('Unable to parse the stored login data.', e);
+
+            localStorage.removeItem(kLoginDataKey);
+            window.location.reload();
+        }
+    }
+
+    /**
+     * Stores a serialized version of |this.data| to local storage. This operation may fail if local
+     * storage is not available, as is the case in Safari's private mode.
+     */
+    private storeToLocalStorage() {
+        if (!navigator.cookieEnabled) {
+            console.error('Cookies are disabled: the ability to log in is not available.');
+            return;
+        }
+
+        try {
+            localStorage.setItem(kLoginDataKey, JSON.stringify(this.data));
+        } catch (e) {
+            console.error('Unable to store the login data.', e);
+        }
     }
 
     /**
@@ -100,8 +141,7 @@ class User {
                 return false;
 
             this.data = data;
-
-            // TODO: Store user data in local storage.
+            this.storeToLocalStorage();
 
             return true;
 

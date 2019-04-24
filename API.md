@@ -36,9 +36,9 @@ the input data and return user status when successful. Must accept `POST` reques
 | Property         | Type      | Description |
 | :---             | :---      | :--- |
 | `success`        | `boolean` | Always set to `true` to indicate authentication succeeded. |
-| `userToken`      | `string`  | The token that identifies this user. Should be pseudo-anonymous. |
+| `userToken`      | `string`  | The token that identifies this user. Should be pseudo-anonymous.|
 | `authToken`      | `string`  | The token that authenticates this user. Should be pseudo-anonymous. |
-| `expirationTime` | `number`  | Time, in milliseconds since the UNIX epoch, at which the session expires. |
+| `expirationTime` | `number`  | Time, in milliseconds since the UNIX epoch, at which the session expires.|
 
 #### 🡄 Failure response
 
