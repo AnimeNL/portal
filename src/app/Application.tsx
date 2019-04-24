@@ -5,6 +5,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import Clock from './Clock';
 import Environment from './Environment';
 import LoginController from './controllers/LoginController';
 import User from './User';
@@ -24,6 +25,12 @@ class Application {
     container: Element;
 
     /**
+     * The clock that provides time to the application. Global to the Application given that it can
+     * be manipulated for debugging and testing purposes.
+     */
+    clock: Clock;
+
+    /**
      * Environment under which the application is running—a single deployment of the volunteer
      * portal is able to service multiple groups of volunteers.
      */
@@ -37,8 +44,9 @@ class Application {
 
     constructor(container : Element) {
         this.container = container;
+        this.clock = new Clock();
         this.environment = new Environment();
-        this.user = new User();
+        this.user = new User(this.clock);
     }
 
     async initialize(): Promise<void> {

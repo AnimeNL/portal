@@ -2,6 +2,7 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import Clock from './Clock';
 import { UserLoginPath, mockableFetch } from '../config';
 import { isNumber, isString } from './util/Validators';
 
@@ -31,8 +32,20 @@ class User {
     data?: LoginData;
 
     /**
+     * The clock through which the current time can be obtained.
+     */
+    clock: Clock;
+
+    constructor(clock: Clock) {
+        this.clock = clock;
+    }
+
+    /**
      * Initializes the user's login state based on local storage. The data will be verified on load,
      * and `this.data` will only be initialized when successful.
+     *
+     * When invalid or expired login data is found in the local storage, this will be removed and
+     * the page will be refreshed, effectively mimicing a logout.
      */
     initializeFromLocalStorage(): void {
         if (!navigator.cookieEnabled) {
@@ -46,14 +59,27 @@ class User {
 
         try {
             const data = JSON.parse(serializedData);
-            if (data && this.validateConfiguration(data))
-                this.data = data;
+            if (!data)
+                return;
+
+            // The |data| must be stored as a valid LoginData serialization. Any other value will
+            // be considered garbage and will be ignored.
+            if (!this.validateConfiguration(data))
+                return;
+
+            // If the expiration time has passed, the data should be disregarded.
+            if (data.expirationTime < this.clock.getCurrentTimeMs())
+                return;
+
+            this.data = data;
 
         } catch (e) {
             console.error('Unable to parse the stored login data.', e);
-
-            localStorage.removeItem(kLoginDataKey);
-            window.location.reload();
+        } finally {
+            if (!this.data) {
+                localStorage.removeItem(kLoginDataKey);
+                window.location.reload();
+            }
         }
     }
 
