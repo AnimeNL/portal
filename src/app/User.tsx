@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import { UserLoginPath, mockableFetch } from '../config';
+import { isNumber, isString } from './util/Validators';
 
 /**
  * Interface describing the login data describing the user's current state. Generally fetched from
@@ -12,9 +13,10 @@ import { UserLoginPath, mockableFetch } from '../config';
  * @see https://github.com/AnimeNL/portal/blob/master/API.md#apilogin
  */
 interface LoginData {
-    // TODO: Define the fields
+    userToken: string;
+    authToken: string;
+    expirationTime: number;
 }
-
 
 /**
  * Represents the user logged in to the application, if any. Contains logic to authenticate the user
@@ -28,7 +30,7 @@ class User {
      * and `this.data` will only be initialized when successful.
      */
     initialize(): void {
-
+        // TODO: Load user data from local storage.
     }
 
     /**
@@ -37,6 +39,22 @@ class User {
      */
     isIdentified(): boolean {
         return !!this.data;
+    }
+
+    /**
+     * Title to use for senior volunteers, who can provide assistance.
+     */
+    get userToken(): string {
+        if (!this.data) throw new Error('The user is not identified.');
+        return this.data.userToken;
+    }
+
+    /**
+     * Title to use for senior volunteers, who can provide assistance.
+     */
+    get authToken(): string {
+        if (!this.data) throw new Error('The user is not identified.');
+        return this.data.authToken;
     }
 
     /**
@@ -72,7 +90,20 @@ class User {
                 return false;
             }
 
+            // Verify that the login attempt was successful. If |data.success| was not defined, this
+            // will result in a falsy value and thus count as a failed attempt.
+            if (!data.success)
+                return false;
+
+            // Validate that the received |data| contains a full LoginData object.
+            if (!this.validateConfiguration(data))
+                return false;
+
             this.data = data;
+
+            // TODO: Store user data in local storage.
+
+            return true;
 
         } catch (e) {
             console.error('Unable to handle the login request.', e);
@@ -87,6 +118,21 @@ class User {
      * @param data The data as fetched from the network.
      */
     private validateConfiguration(data: any): data is LoginData {
+        if (!isString(data.userToken)) {
+            console.error('Unable to validate EnvironmentData.userToken.');
+            return false;
+        }
+
+        if (!isString(data.authToken)) {
+            console.error('Unable to validate EnvironmentData.authToken.');
+            return false;
+        }
+
+        if (!isNumber(data.expirationTime)) {
+            console.error('Unable to validate EnvironmentData.expirationTime.');
+            return false;
+        }
+
         return true;
     }
 }
