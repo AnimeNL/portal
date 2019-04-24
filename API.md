@@ -37,7 +37,7 @@ the input data and return user status when successful. Must accept `POST` reques
 | :---      | :---      | :--- |
 | `success` | `boolean` | Always set to `true` to indicate authentication succeeded. |
 
-### 🡄 Failure response
+#### 🡄 Failure response
 
 | Property  | Type      | Description |
 | :---      | :---      | :--- |

@@ -52,6 +52,8 @@ class Application {
             return;
         }
 
+        this.user.initialize();
+
         // Lock the user in to an authentication dialog if they haven't identified themselves yet.
         if (!this.user.isIdentified()) {
             this.displayLoginView();
