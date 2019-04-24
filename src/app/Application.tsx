@@ -8,6 +8,7 @@ import ReactDOM from 'react-dom';
 import Clock from './Clock';
 import Environment from './Environment';
 import LoginController from './controllers/LoginController';
+import PortalController from './controllers/PortalController';
 import User from './User';
 
 import ErrorView from '../views/ErrorView';
@@ -69,7 +70,17 @@ class Application {
         }
 
         // TODO: Load the event, program and schedule.
-        // TODO: Render the volunteer portal.
+
+        this.displayPortalView();
+    }
+
+    /**
+     * Displays the portal view containing the information that's actually useful for the volunteer.
+     */
+    private displayPortalView(): void {
+        ReactDOM.render(<PortalController clock={this.clock}
+                                          environment={this.environment}
+                                          user={this.user} />, this.container);
     }
 
     /**

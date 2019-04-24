@@ -10,16 +10,11 @@ import User from '../User';
 
 import LoginView from '../../views/LoginView';
 
+/**
+ * Properties that must be passed to the <LoginController>.
+ */
 interface Properties {
-    /**
-     * The environment object relevant for displaying the login screen.
-     */
     environment: Environment;
-
-    /**
-     * The user object can be used to validate authentication information, and persist the local
-     * state necessary to actually log a user in.
-     */
     user: User;
 };
 
