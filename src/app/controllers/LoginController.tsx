@@ -32,7 +32,14 @@ class LoginController extends React.Component<Properties> {
      */
     @bind
     async onLogin(email: string, accessCode: string): Promise<boolean> {
-        return this.props.user.login(email, accessCode);
+        const result = await this.props.user.login(email, accessCode);
+
+        // Reload the current page to re-launch the application, this time with the user logged in
+        // to their volunteer portal account.
+        if (result)
+            window.location.reload();
+
+        return result;
     }
 
     render() {
