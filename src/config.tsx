@@ -32,7 +32,9 @@ export const UserLoginPath = `/${directory}/login`;
  */
 export const AppTheme = {
     palette: {
-        primary: indigo,
+        primary: {
+            main: '#1565c0'
+        }
     },
     typography: {
         useNextVariants: true,
