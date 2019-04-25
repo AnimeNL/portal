@@ -51,7 +51,12 @@ export interface HeaderEvents {
 /**
  * Properties accepted by the <Header> element.
  */
-interface Properties extends HeaderEvents, WithStyles<typeof styles> {}
+interface Properties extends HeaderEvents, WithStyles<typeof styles> {
+    /**
+     * Event to be called when the menu button in the header has been clicked on.
+     */
+    onMenuClick: () => void;
+}
 
 /**
  * Dynamic state of the <Header> element.
@@ -104,14 +109,20 @@ class Header extends React.Component<Properties, State> {
     }
 
     render() {
-        const { children, classes, onLogout, onRefresh } = this.props;
+        const { children, classes, onMenuClick, onLogout, onRefresh } = this.props;
 
         return (
             <AppBar position="static">
                 <Toolbar>
 
-                    <IconButton className={classes.menuButton} color="inherit" aria-label="Menu">
+                    <IconButton
+                        aria-label="Menu"
+                        className={classes.menuButton}
+                        color="inherit"
+                        onClick={onMenuClick}>
+
                         <MenuIcon />
+
                     </IconButton>
 
                     <Typography variant="h6" color="inherit" className={classes.grow}>

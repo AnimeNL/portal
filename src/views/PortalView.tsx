@@ -3,8 +3,10 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
 
 import { Header, HeaderEvents } from '../components/Header';
+import ResponsiveDrawer from '../components/ResponsiveDrawer';
 import withRoot from '../withRoot';
 
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -31,6 +33,12 @@ interface Properties extends HeaderEvents, WithStyles<typeof styles> {
  */
 interface State {
     /**
+     * Whether the left-side drawer should be open. The drawer will always be opened for users with
+     * large screens, but can be toggled by small-screen users.
+     */
+    drawerOpen: boolean,
+
+    /**
      * Title that should be displayed in the header bar.
      */
     title: string;
@@ -43,20 +51,54 @@ interface State {
  */
 class PortalView extends React.Component<Properties, State> {
     state: State = {
+        drawerOpen: false,
         title: 'Volunteer Portal',
     };
+
+    /**
+     * Opens the drawer. No-op for large-screen users, but will create a full-page overlay with a
+     * slide-in animation to open the left-hand-side menu for small-screen users.
+     */
+    @bind
+    openDrawer(): void {
+        this.setState({
+            drawerOpen: true
+        })
+    }
+
+    /**
+     * Closes the drawer. Conventionally this will be called in response to the close event on the
+     * <ResponsiveDrawer> event, which handles both out-of-bound clicks and keyboard interactions.
+     */
+    @bind
+    closeDrawer(): void {
+        this.setState({
+            drawerOpen: false
+        });
+    }
 
     render() {
         const { classes, onLogout, onRefresh } = this.props;
 
         return (
             <div className={classes.root}>
-                <Header onLogout={onLogout}
+
+                <Header onMenuClick={this.openDrawer}
+                        onLogout={onLogout}
                         onRefresh={onRefresh}>
 
                     {this.state.title}
 
                 </Header>
+
+                <ResponsiveDrawer
+                    onClose={this.closeDrawer}
+                    open={this.state.drawerOpen}>
+
+                    Hello
+
+                </ResponsiveDrawer>
+
             </div>
         )
     }
