@@ -6,11 +6,14 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import AppBar from '@material-ui/core/AppBar';
+import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import IconButton from '@material-ui/core/IconButton';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import RefreshIcon from '@material-ui/icons/Refresh';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -117,7 +120,7 @@ class Header extends React.Component<Properties, State> {
 
                     <div>
                         <IconButton
-                            aria-label="More"
+                            aria-label="Overflow menu"
                             aria-owns={this.state.overflowMenuOpened ? 'overflow-menu' : undefined}
                             aria-haspopup="true"
                             className={classes.overflowButton}
@@ -130,14 +133,28 @@ class Header extends React.Component<Properties, State> {
 
                         <Menu
                             id="overflow-menu"
+                            disableAutoFocusItem={true}
                             anchorEl={this.state.overflowMenuAnchor}
                             anchorOrigin={{vertical: 'top', horizontal: 'right'}}
                             transformOrigin={{vertical: 'top', horizontal: 'right'}}
                             open={this.state.overflowMenuOpened}
                             onClose={this.closeOverflowMenu}>
 
-                            <MenuItem onClick={onRefresh}>Refresh</MenuItem>
-                            <MenuItem onClick={onLogout}>Sign out</MenuItem>
+                            <MenuItem onClick={onRefresh}>
+                                <ListItemIcon>
+                                    <RefreshIcon />
+                                </ListItemIcon>
+
+                                <Typography variant="inherit">Refresh</Typography>
+                            </MenuItem>
+
+                            <MenuItem onClick={onLogout}>
+                                <ListItemIcon>
+                                    <ExitToAppIcon />
+                                </ListItemIcon>
+
+                                <Typography variant="inherit">Sign out</Typography>
+                            </MenuItem>
 
                         </Menu>
                     </div>
