@@ -2,8 +2,6 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import indigo from '@material-ui/core/colors/indigo';
-
 /**
  * Boolean to indicate whether the current build environment is production or development. API calls
  * will be incepted and mocked out for development.
