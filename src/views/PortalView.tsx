@@ -4,7 +4,7 @@
 
 import React from 'react';
 
-import Header from '../components/Header';
+import { Header, HeaderEvents } from '../components/Header';
 import withRoot from '../withRoot';
 
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -21,7 +21,7 @@ const styles = () =>
  * Properties given to the PortalView element. These are required for the portal to be able to
  * effectively route user interaction to the appropriate place, and provide access to the app model.
  */
-interface Properties extends WithStyles<typeof styles> {
+interface Properties extends HeaderEvents, WithStyles<typeof styles> {
     // TODO: Define the properties for the PortalView
 }
 
@@ -47,11 +47,13 @@ class PortalView extends React.Component<Properties, State> {
     };
 
     render() {
-        const { classes } = this.props;
+        const { classes, onLogout, onRefresh } = this.props;
 
         return (
             <div className={classes.root}>
-                <Header title={this.state.title} />
+                <Header title={this.state.title}
+                        onLogout={onLogout}
+                        onRefresh={onRefresh} />
             </div>
         )
     }

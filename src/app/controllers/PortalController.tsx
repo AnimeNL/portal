@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
 
 import Clock from '../Clock';
 import Environment from '../Environment';
@@ -24,8 +25,35 @@ interface Properties {
  * The <PortalController> is the main application runtime for logged in users.
  */
 class PortalController extends React.Component<Properties> {
+    /**
+     * Called when the user has requested themselves to be logged out.
+     */
+    @bind
+    async onLogout(): Promise<void> {
+        // TODO: Unregister the Service Worker & all cached content here.
+        // TODO: Should we care about application root path here?
+
+        // Remove all locally stored login state for the user.
+        this.props.user.logout();
+
+        // Reload the current page to force them back to the login screen.
+        window.location.reload();
+    }
+
+    /**
+     * Called when a refresh of the application has been requested.
+     */
+    @bind
+    async onRefresh(): Promise<void> {
+        // TODO: Clear Service Worker caches before refreshing the page.
+        // TODO: Should we care about application root path here?
+
+        window.location.reload();
+    }
+
     render() {
-        return <PortalView />;
+        return <PortalView onLogout={this.onLogout}
+                           onRefresh={this.onRefresh} />;
     }
 }
 

@@ -179,6 +179,23 @@ class User {
     }
 
     /**
+     * Logs the user out of their account. All locally stored authentication data will be removed
+     * and the state of the User class will return to that of an anonymous user.
+     */
+    logout(): void {
+        if (!navigator.cookieEnabled) {
+            console.error('Cookies are disabled: the ability to log out is not available.');
+            return;
+        }
+
+        try {
+            localStorage.removeItem(kLoginDataKey);
+        } catch (e) {
+            console.error('Unable to remove the login data.', e);
+        }
+    }
+
+    /**
      * Validates that the given |data| conforms to the definition of LoginData.
      *
      * @param data The data as fetched from the network.

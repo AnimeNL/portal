@@ -3,10 +3,13 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
 
 import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
+import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
+import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -28,23 +31,82 @@ const styles = () =>
     });
 
 /**
+ * Events supported by the <Header> element. These will be proxied by the <PortalView>.
+ */
+export interface HeaderEvents {
+    /**
+     * Event to be called when the user should be logged out.
+     */
+    onLogout: () => void;
+
+    /**
+     * Event to be called when the application should be refreshed.
+     */
+    onRefresh: () => void;
+}
+
+/**
  * Properties accepted by the <Header> element.
  */
-interface Properties extends WithStyles<typeof styles> {
+interface Properties extends HeaderEvents, WithStyles<typeof styles> {
     /**
      * Title that should be displayed on the header bar.
      */
     title: string;
+}
+
+/**
+ * Dynamic state of the <Header> element.
+ */
+interface State {
+    /**
+     * The HTMLElement to which the overflow menu should be anchored, if any.
+     */
+    overflowMenuAnchor: HTMLElement | null,
 
     /**
-     * Whether the Debug menu item should be displayed in the overflow menu.
+     * Whether the overflow menu should be opened.
      */
-    enableDebug?: boolean;
-};
+    overflowMenuOpened: boolean,
+}
 
+/**
+ * The application-level header. It serves three main purposes: toggling the main menu, displaying
+ * the current page's title and providing access to the overflow menu.
+ */
 class Header extends React.Component<Properties> {
+    state: State = {
+        overflowMenuAnchor: null,
+        overflowMenuOpened: false,
+    };
+
+    /**
+     * Called when the overflow menu should be closed. This will be triggered when the user clicks
+     * anywhere outside of the menu's boundaries while it's opened.
+     */
+    @bind
+    closeOverflowMenu(): void {
+        this.setState({
+            overflowMenuOpened: false
+        });
+    }
+
+    /**
+     * Called when the overflow menu should be opened. The given |event| provides access to the icon
+     * itself, which will be the anchor for the to-be-opened menu element.
+     *
+     * @param event Mouse event containing the menu's target.
+     */
+    @bind
+    openOverflowMenu(event: React.MouseEvent<HTMLElement>): void {
+        this.setState({
+            overflowMenuAnchor: event.target,
+            overflowMenuOpened: true
+        });
+    }
+
     render() {
-        const { classes, title } = this.props;
+        const { classes, onLogout, onRefresh, title } = this.props;
 
         return (
             <AppBar position="static">
@@ -61,13 +123,28 @@ class Header extends React.Component<Properties> {
                     <div>
                         <IconButton
                             aria-label="More"
+                            aria-owns={this.state.overflowMenuOpened ? 'overflow-menu' : undefined}
                             aria-haspopup="true"
                             className={classes.overflowButton}
-                            color="inherit">
+                            color="inherit"
+                            onClick={this.openOverflowMenu}>
 
                             <MoreVertIcon />
 
                         </IconButton>
+
+                        <Menu
+                            id="overflow-menu"
+                            anchorEl={this.state.overflowMenuAnchor}
+                            anchorOrigin={{vertical: 'top', horizontal: 'right'}}
+                            transformOrigin={{vertical: 'top', horizontal: 'right'}}
+                            open={this.state.overflowMenuOpened}
+                            onClose={this.closeOverflowMenu}>
+
+                            <MenuItem onClick={onRefresh}>Refresh</MenuItem>
+                            <MenuItem onClick={onLogout}>Sign out</MenuItem>
+
+                        </Menu>
                     </div>
 
                 </Toolbar>
@@ -76,4 +153,5 @@ class Header extends React.Component<Properties> {
     }
 }
 
-export default withStyles(styles)(Header);
+const StyledHeader = withStyles(styles)(Header);
+export { StyledHeader as Header };
