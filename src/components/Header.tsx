@@ -48,12 +48,7 @@ export interface HeaderEvents {
 /**
  * Properties accepted by the <Header> element.
  */
-interface Properties extends HeaderEvents, WithStyles<typeof styles> {
-    /**
-     * Title that should be displayed on the header bar.
-     */
-    title: string;
-}
+interface Properties extends HeaderEvents, WithStyles<typeof styles> {}
 
 /**
  * Dynamic state of the <Header> element.
@@ -74,7 +69,7 @@ interface State {
  * The application-level header. It serves three main purposes: toggling the main menu, displaying
  * the current page's title and providing access to the overflow menu.
  */
-class Header extends React.Component<Properties> {
+class Header extends React.Component<Properties, State> {
     state: State = {
         overflowMenuAnchor: null,
         overflowMenuOpened: false,
@@ -100,13 +95,13 @@ class Header extends React.Component<Properties> {
     @bind
     openOverflowMenu(event: React.MouseEvent<HTMLElement>): void {
         this.setState({
-            overflowMenuAnchor: event.target,
+            overflowMenuAnchor: event.currentTarget,
             overflowMenuOpened: true
         });
     }
 
     render() {
-        const { classes, onLogout, onRefresh, title } = this.props;
+        const { children, classes, onLogout, onRefresh } = this.props;
 
         return (
             <AppBar position="static">
@@ -117,7 +112,7 @@ class Header extends React.Component<Properties> {
                     </IconButton>
 
                     <Typography variant="h6" color="inherit" className={classes.grow}>
-                        {title}
+                        {children}
                     </Typography>
 
                     <div>

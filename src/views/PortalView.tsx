@@ -51,9 +51,12 @@ class PortalView extends React.Component<Properties, State> {
 
         return (
             <div className={classes.root}>
-                <Header title={this.state.title}
-                        onLogout={onLogout}
-                        onRefresh={onRefresh} />
+                <Header onLogout={onLogout}
+                        onRefresh={onRefresh}>
+
+                    {this.state.title}
+
+                </Header>
             </div>
         )
     }
