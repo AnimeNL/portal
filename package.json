@@ -9,9 +9,11 @@
         "@material-ui/core": "latest",
         "@material-ui/icons": "^3.0.2",
         "@types/react": "^16.8.14",
-        "@types/react-dom": "*",
+        "@types/react-dom": "latest",
+        "@types/react-router-dom": "latest",
         "react": "latest",
-        "react-dom": "latest"
+        "react-dom": "latest",
+        "react-router-dom": "latest"
     },
     "devDependencies": {
         "@types/jest": "*",
