@@ -3,29 +3,22 @@
 // be found in the LICENSE file.
 
 import React from 'react';
-import { Route } from 'react-router-dom'
+import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import bind from 'bind-decorator';
 
-import Clock from '../Clock';
+import ApplicationProperties from '../ApplicationProperties';
 import Environment from '../Environment';
+import InternalsController from './InternalsController';
+import OverviewController from './OverviewController';
+import ScheduleController from './ScheduleController';
 import User from '../User';
 
 import PortalView from '../../views/PortalView';
 
 /**
- * Properties that must be passed to the <PortalController>. Interaction with these elements will be
- * provided through events made available on the <PortalView> element.
- */
-interface Properties {
-    clock: Clock;
-    environment: Environment;
-    user: User;
-};
-
-/**
  * The <PortalController> is the main application runtime for logged in users.
  */
-class PortalController extends React.Component<Properties> {
+class PortalController extends React.Component<ApplicationProperties> {
     /**
      * Called when the user has requested themselves to be logged out.
      */
@@ -55,15 +48,31 @@ class PortalController extends React.Component<Properties> {
     render() {
         const { user, environment } = this.props;
 
+        // Utility element that enables using components for routing that should be receiving the
+        // same properties as the <PortalController>, on top of the existing routing properties.
+        const RouteController = (props: any): JSX.Element => {
+            const renderComponent = (routeProps: RouteComponentProps): JSX.Element =>
+                React.createElement(props.component, { ...routeProps, ...this.props });
+
+            return <Route path={props.path} render={renderComponent} />;
+        };
+
         return (
             <PortalView enableDebug={user.enableDebug}
                         portalTitle={environment.portalTitle}
                         onLogout={this.onLogout}
                         onRefresh={this.onRefresh}>
 
-                <Route path="/internals" render={() => <b>Internals</b>} />
-                <Route path="/schedule" render={() => <b>Schedule</b>} />
-                <Route path="/" exact render={() => <b>Overview</b>} />
+                <Switch>
+
+                    {/* Pages specific to the logged in user. */}
+                    <RouteController path="/schedule" component={ScheduleController} />
+                    <RouteController path="/" exact component={OverviewController} />
+
+                    {/* Pages only available to those with debugging privileges. */}
+                    <RouteController path="/internals" component={InternalsController} />
+
+                </Switch>
 
             </PortalView>
         );
