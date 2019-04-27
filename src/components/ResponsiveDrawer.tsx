@@ -7,12 +7,14 @@ import bind from 'bind-decorator';
 
 import { kDrawerWidth } from '../config';
 
+import Divider from '@material-ui/core/Divider';
 import Drawer from '@material-ui/core/Drawer';
 import Hidden from '@material-ui/core/Hidden';
+import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
-const styles = () =>
+const styles = (theme: Theme) =>
     createStyles({
         drawer: {
 
@@ -20,6 +22,7 @@ const styles = () =>
         drawerPaper: {
             width: kDrawerWidth
         },
+        toolbar: theme.mixins.toolbar,
     });
 
 /**
@@ -68,7 +71,11 @@ class ResponsiveDrawer extends React.Component<Properties> {
                         variant="temporary"
                         open={open}>
 
-                        {children}
+                            <div className={classes.toolbar} />
+
+                            <Divider />
+
+                            {children}
 
                     </Drawer>
                 </Hidden>

@@ -25,7 +25,10 @@ const styles = () =>
  * effectively route user interaction to the appropriate place, and provide access to the app model.
  */
 interface Properties extends HeaderEvents, WithStyles<typeof styles> {
-    // TODO: Define the properties for the PortalView
+    /**
+     * Title to use for identifying the volunteer portal instance.
+     */
+    portalTitle: string;
 }
 
 /**
@@ -42,7 +45,7 @@ interface State {
     /**
      * Title that should be displayed in the header bar.
      */
-    title: string;
+    title?: string;
 }
 
 /**
@@ -53,8 +56,17 @@ interface State {
 class PortalView extends React.Component<Properties, State> {
     state: State = {
         drawerOpen: false,
-        title: 'Volunteer Portal',
     };
+
+    /**
+     * Called just before the <PortalView> is mount. The |title| state will be set to the portal
+     * title made available as a property on this component.
+     */
+    componentWillMount() {
+        this.setState({
+            title: this.props.portalTitle
+        });
+    }
 
     /**
      * Opens the drawer. No-op for large-screen users, but will create a full-page overlay with a

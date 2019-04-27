@@ -3,9 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
-import bind from 'bind-decorator';
 
-import Divider from '@material-ui/core/Divider';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -24,14 +22,6 @@ class Menu extends React.Component<WithStyles<typeof styles>> {
         return (
 
             <div>
-
-                <div className={classes.toolbar}>
-                    <Typography variant="h6" color="inherit" className={classes.grow}>
-                        Hello
-                    </Typography>
-                </div>
-
-                <Divider />
 
                 <Typography variant="h6" color="inherit" className={classes.grow}>
                     Items
