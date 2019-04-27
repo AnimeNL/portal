@@ -22,6 +22,7 @@ interface LoginData {
     userToken: string;
     authToken: string;
     expirationTime: number;
+    enableDebug: boolean;
 }
 
 /**
@@ -122,6 +123,14 @@ class User {
     get authToken(): string {
         if (!this.data) throw new Error('The user is not identified.');
         return this.data.authToken;
+    }
+
+    /**
+     * Setting on whether debug mode should be enabled for this user.
+     */
+    get enableDebug(): boolean {
+        if (!this.data) throw new Error('The user is not identified.');
+        return this.data.enableDebug;
     }
 
     /**

@@ -2,5 +2,6 @@
     "success": true,
     "userToken": "UAqWMkBuTjtBJTae",
     "authToken": "TEeyABfznB3Dt25W",
-    "expirationTime": 2064963600000
+    "expirationTime": 2064963600000,
+    "enableDebug": true
 }

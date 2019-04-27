@@ -40,6 +40,7 @@ the input data and return user status when successful. Must accept `POST` reques
 | `userToken`      | `string`  | The token that identifies this user. Should be pseudo-anonymous.|
 | `authToken`      | `string`  | The token that authenticates this user. Should be pseudo-anonymous. |
 | `expirationTime` | `number`  | Time, in milliseconds since the UNIX epoch, at which the session expires.|
+| `enableDebug`    | `boolean` | Setting on whether debug mode should be enabled for this user. |
 
 #### 🡄 Failure response
 
