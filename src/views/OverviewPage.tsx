@@ -20,7 +20,7 @@ interface Properties {
     // TODO: Define the properties for this element.
 }
 
-class OverviewPage extends React.Component<Properties> {
+class OverviewPage extends React.Component<Properties & WithStyles<typeof styles>> {
     render() {
         return <b>OverviewPage</b>
     }

@@ -8,9 +8,16 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+
 const styles = (theme: Theme) =>
     createStyles({
-        // TODO: Define the styles for this element.
+        root: {
+            ...theme.mixins.gutters(),
+            paddingTop: theme.spacing.unit * 2,
+            paddingBottom: theme.spacing.unit * 2,
+        }
     });
 
 /**
@@ -20,9 +27,21 @@ interface Properties {
     // TODO: Define the properties for this element.
 }
 
-class InternalsPage extends React.Component<Properties> {
+class InternalsPage extends React.Component<Properties & WithStyles<typeof styles>> {
     render() {
-        return <b>InternalsPage</b>
+        const { classes } = this.props;
+
+        return (
+            <Paper className={classes.root} elevation={1}>
+               <Typography variant="h5" component="h3">
+                    Volunteer Portal Internals
+                </Typography>
+                <Typography component="p">
+                    This page enables you to change internal configuration of the volunteer portal.
+                    Right now this page just exists to test layout display however.
+                </Typography>
+            </Paper>
+        );
     }
 }
 
