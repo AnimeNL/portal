@@ -50,6 +50,11 @@ interface Properties {
      * The <MenuItem> element accepts children. TypeScript requires us to be explicit.
      */
     children?: React.ReactNode;
+
+    /**
+     * Event listener that will be called when something in the menu has been clicked upon.
+     */
+    onClick: () => void;
 };
 
 /**
@@ -58,13 +63,20 @@ interface Properties {
  */
 class MenuListItem extends React.Component<Properties & WithStyles<typeof styles>> {
     render() {
-        const { children, classes, exact, to } = this.props;
+        const { children, classes, exact, onClick, to } = this.props;
 
         return (
-            <NavLink className={classes.link} activeClassName={classes.activeLink} exact={!!exact} to={to}>
+            <NavLink
+                activeClassName={classes.activeLink}
+                className={classes.link}
+                exact={!!exact}
+                onClick={onClick}
+                to={to}>
+
                 <ListItem className={classes.listItem} button>
                     {children}
                 </ListItem>
+
             </NavLink>
         );
     }

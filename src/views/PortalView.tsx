@@ -125,7 +125,7 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
                         onClose={this.closeDrawer}
                         open={this.state.drawerOpen}>
 
-                        <Menu enableDebug={enableDebug} />
+                        <Menu enableDebug={enableDebug} onClick={this.closeDrawer} />
 
                     </ResponsiveDrawer>
 

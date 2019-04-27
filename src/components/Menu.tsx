@@ -33,6 +33,11 @@ interface Properties {
      * Setting on whether debug mode should be enabled for this user.
      */
     enableDebug: boolean;
+
+    /**
+     * Event listener that will be called when something in the menu has been clicked upon.
+     */
+    onClick: () => void;
 }
 
 /**
@@ -52,7 +57,7 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
 
                     <List>
 
-                        <MenuListItem to="/internals">
+                        <MenuListItem to="/internals" onClick={this.props.onClick}>
                             <ListItemIcon>
                                 <SettingsIcon />
                             </ListItemIcon>
@@ -68,14 +73,14 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
             <div>
                 <List>
 
-                    <MenuListItem to="/" exact>
+                    <MenuListItem to="/" exact onClick={this.props.onClick}>
                         <ListItemIcon>
                             <InboxIcon />
                         </ListItemIcon>
                         <ListItemText primary="Overview" />
                     </MenuListItem>
 
-                    <MenuListItem to="/schedule">
+                    <MenuListItem to="/schedule" onClick={this.props.onClick}>
                         <ListItemIcon>
                             <ScheduleIcon />
                         </ListItemIcon>
