@@ -5,6 +5,7 @@
 import React from 'react';
 
 import ApplicationProperties from '../ApplicationProperties';
+import InternalsPage from '../../views/InternalsPage';
 
 /**
  * The InternalsController is responsible for enabling users with debugging capabilities to change
@@ -13,7 +14,7 @@ import ApplicationProperties from '../ApplicationProperties';
  */
 class InternalsController extends React.Component<ApplicationProperties> {
     render() {
-        return <b>InternalsController</b>;
+        return <InternalsPage />;
     }
 }
 

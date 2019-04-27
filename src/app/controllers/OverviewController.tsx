@@ -5,6 +5,7 @@
 import React from 'react';
 
 import ApplicationProperties from '../ApplicationProperties';
+import OverviewPage from '../../views/OverviewPage';
 
 /**
  * The OverviewController is responsible for displaying the overview page, that gives a summary of
@@ -12,7 +13,7 @@ import ApplicationProperties from '../ApplicationProperties';
  */
 class OverviewController extends React.Component<ApplicationProperties> {
     render() {
-        return <b>OverviewController</b>;
+        return <OverviewPage />;
     }
 }
 
