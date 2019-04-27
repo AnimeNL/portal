@@ -4,31 +4,52 @@
 
 import React from 'react';
 
+import InboxIcon from '@material-ui/icons/Inbox';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ScheduleIcon from '@material-ui/icons/Schedule';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
-        grow: {},
-        toolbar: theme.mixins.toolbar,
+        // ...
     });
 
+/**
+ * The <Menu> element represents the primary navigation for the volunteer portal. It provides access
+ * to each of the primary pages and contains a live display of on-going events for areas.
+ */
 class Menu extends React.Component<WithStyles<typeof styles>> {
     render() {
-        const { classes } = this.props;
-
         return (
-
             <div>
 
-                <Typography variant="h6" color="inherit" className={classes.grow}>
-                    Items
-                </Typography>
+                <List>
+
+                    <ListItem button>
+                        <ListItemIcon>
+                            <InboxIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Overview" />
+                    </ListItem>
+
+                    <ListItem button>
+                        <ListItemIcon>
+                            <ScheduleIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Schedule" />
+                    </ListItem>
+
+                </List>
+
+                {/* TODO: Volunteer groups */}
+                {/* TODO: Location areas */}
 
             </div>
-
         );
     }
 }
