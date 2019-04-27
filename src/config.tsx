@@ -9,10 +9,16 @@
 const isProduction = process.env.NODE_ENV === 'production';
 
 /**
+ * String pointing to the host that should be used for serving the API, instead of the mocked data
+ * included in this repository.
+ */
+const host = process.env.REACT_APP_API_HOST || '';
+
+/**
  * Directory in which the API calls reside. Development calls will be routed to a different place to
  * avoid naming conflicts, in case both directories are deployed to the same domain.
  */
-const directory = isProduction ? 'api' : 'api-dev';
+const directory = (isProduction || host) ? 'api' : 'api-dev';
 
 /**
  * Width of the drawer when opened, in pixels.
@@ -22,13 +28,13 @@ export const kDrawerWidth = 256;
 /**
  * Path to the environment configuration file, relative to the server root.
  */
-export const EnvironmentConfigPath = `/${directory}/environment`;
+export const EnvironmentConfigPath = `${host}/${directory}/environment`;
 
 /**
  * Path to the service that enables users to log in. Their details will be send here in a POST
  * request, and a JSON response is expected.
  */
-export const UserLoginPath = `/${directory}/login`;
+export const UserLoginPath = `${host}/${directory}/login`;
 
 /**
  * @see https://material-ui.com/customization/themes/

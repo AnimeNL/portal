@@ -19,6 +19,7 @@
         "@types/jest": "*",
         "@types/node": "^11.13.8",
         "bind-decorator": "^1.0.11",
+        "cross-env": "^5.2.0",
         "react-scripts": "^3.0.0",
         "typescript": "^3.4.5"
     },
@@ -33,6 +34,8 @@
     },
     "scripts": {
         "start": "react-scripts start",
+        "start-gophers": "cross-env REACT_APP_API_HOST=https://gophers.team/ react-scripts start",
+        "start-stewards": "cross-env REACT_APP_API_HOST=https://stewards.team/ react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test"
     }
