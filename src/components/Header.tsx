@@ -30,7 +30,7 @@ const styles = (theme: Theme) =>
         appBar: {
             marginLeft: kDrawerWidth,
             [theme.breakpoints.up('sm')]: {
-                width: `calc(100% - ${kDrawerWidth}px)`,
+                zIndex: theme.zIndex.drawer + 1,
             },
         },
         menuButton: {
