@@ -61,6 +61,7 @@ class PortalController extends React.Component<Properties> {
                         onLogout={this.onLogout}
                         onRefresh={this.onRefresh}>
 
+                <Route path="/internals" render={() => <b>Internals</b>} />
                 <Route path="/schedule" render={() => <b>Schedule</b>} />
                 <Route path="/" exact render={() => <b>Overview</b>} />
 
