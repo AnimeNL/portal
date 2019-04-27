@@ -15,6 +15,11 @@ const isProduction = process.env.NODE_ENV === 'production';
 const directory = isProduction ? 'api' : 'api-dev';
 
 /**
+ * Width of the drawer when opened, in pixels.
+ */
+export const kDrawerWidth = 280;
+
+/**
  * Path to the environment configuration file, relative to the server root.
  */
 export const EnvironmentConfigPath = `/${directory}/environment`;

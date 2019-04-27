@@ -5,14 +5,12 @@
 import React from 'react';
 import bind from 'bind-decorator';
 
+import { kDrawerWidth } from '../config';
+
 import Drawer from '@material-ui/core/Drawer';
+import Hidden from '@material-ui/core/Hidden';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-
-/**
- * Width of the drawer when opened, in pixels.
- */
-const kDrawerWidth = 240;
 
 const styles = () =>
     createStyles({
@@ -62,16 +60,29 @@ class ResponsiveDrawer extends React.Component<Properties> {
 
         return (
             <nav className={classes.drawer}>
-                <Drawer
-                    anchor="left"
-                    classes={{ paper: classes.drawerPaper }}
-                    onClose={this.handleDrawerClose}
-                    open={open}
-                    variant="temporary">
+                <Hidden smUp implementation="css">
+                    <Drawer
+                        anchor="left"
+                        classes={{ paper: classes.drawerPaper }}
+                        onClose={this.handleDrawerClose}
+                        variant="temporary"
+                        open={open}>
 
-                    {children}
+                        {children}
 
-                </Drawer>
+                    </Drawer>
+                </Hidden>
+                <Hidden xsDown implementation="css">
+                    <Drawer
+                        anchor="left"
+                        classes={{ paper: classes.drawerPaper }}
+                        variant="permanent"
+                        open>
+
+                        {children}
+
+                    </Drawer>
+                </Hidden>
             </nav>
         );
     }

@@ -5,6 +5,8 @@
 import React from 'react';
 import bind from 'bind-decorator';
 
+import { kDrawerWidth } from '../config';
+
 import AppBar from '@material-ui/core/AppBar';
 import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import IconButton from '@material-ui/core/IconButton';
@@ -14,19 +16,30 @@ import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
-const styles = () =>
+const styles = (theme: Theme) =>
     createStyles({
         grow: {
             flexGrow: 1,
         },
+        appBar: {
+            marginLeft: kDrawerWidth,
+            [theme.breakpoints.up('sm')]: {
+                width: `calc(100% - ${kDrawerWidth}px)`,
+            },
+        },
         menuButton: {
             marginLeft: -12,
             marginRight: 20,
+
+            [theme.breakpoints.up('sm')]: {
+                display: 'none',
+            },
         },
         overflowButton: {
             marginRight: -12
@@ -112,7 +125,7 @@ class Header extends React.Component<Properties, State> {
         const { children, classes, onMenuClick, onLogout, onRefresh } = this.props;
 
         return (
-            <AppBar position="static">
+            <AppBar position="fixed" className={classes.appBar}>
                 <Toolbar>
 
                     <IconButton
