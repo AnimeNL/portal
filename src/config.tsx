@@ -37,7 +37,10 @@ export const AppTheme = {
     palette: {
         primary: {
             main: '#1565c0'
-        }
+        },
+        action: {
+            selected: '#E8EAF6',
+        },
     },
     typography: {
         useNextVariants: true,

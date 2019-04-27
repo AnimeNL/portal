@@ -2,11 +2,13 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import { Link } from 'react-router-dom';
 import React from 'react';
+
+import MenuListItem from './MenuListItem';
 
 import InboxIcon from '@material-ui/icons/Inbox';
 import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ScheduleIcon from '@material-ui/icons/Schedule';
@@ -27,22 +29,21 @@ class Menu extends React.Component<WithStyles<typeof styles>> {
     render() {
         return (
             <div>
-
                 <List>
 
-                    <ListItem button>
+                    <MenuListItem to="/" exact>
                         <ListItemIcon>
                             <InboxIcon />
                         </ListItemIcon>
                         <ListItemText primary="Overview" />
-                    </ListItem>
+                    </MenuListItem>
 
-                    <ListItem button>
+                    <MenuListItem to="/schedule">
                         <ListItemIcon>
                             <ScheduleIcon />
                         </ListItemIcon>
                         <ListItemText primary="Schedule" />
-                    </ListItem>
+                    </MenuListItem>
 
                 </List>
 
