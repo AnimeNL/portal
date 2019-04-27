@@ -17,7 +17,10 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 const styles = (theme: Theme) =>
     createStyles({
         drawer: {
-
+            [theme.breakpoints.up('sm')]: {
+                width: kDrawerWidth,
+                flexShrink: 0,
+            },
         },
         drawerPaper: {
             width: kDrawerWidth,

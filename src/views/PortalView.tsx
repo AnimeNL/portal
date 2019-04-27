@@ -2,6 +2,7 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import { BrowserRouter } from 'react-router-dom'
 import React from 'react';
 import bind from 'bind-decorator';
 
@@ -10,25 +11,35 @@ import Menu from '../components/Menu';
 import ResponsiveDrawer from '../components/ResponsiveDrawer';
 import withRoot from '../withRoot';
 
+import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
-const styles = () =>
+const styles = (theme: Theme) =>
     createStyles({
         root: {
+            display: 'flex',
+        },
+        content: {
             flexGrow: 1,
         },
+        toolbar: theme.mixins.toolbar,
     });
 
 /**
  * Properties given to the PortalView element. These are required for the portal to be able to
  * effectively route user interaction to the appropriate place, and provide access to the app model.
  */
-interface Properties extends HeaderEvents, WithStyles<typeof styles> {
+interface Properties extends WithStyles<typeof styles> {
     /**
      * Title to use for identifying the volunteer portal instance.
      */
     portalTitle: string;
+
+    /**
+     * The <PortalView> element accepts children. TypeScript requires us to be explicit.
+     */
+    children?: React.ReactNode;
 }
 
 /**
@@ -53,7 +64,7 @@ interface State {
  * primary components: the header bar, the left-hand side menu and contents of the current page. The
  * application router is rendered as part of this view as well.
  */
-class PortalView extends React.Component<Properties, State> {
+class PortalView extends React.Component<Properties & HeaderEvents, State> {
     state: State = {
         drawerOpen: false,
     };
@@ -91,28 +102,35 @@ class PortalView extends React.Component<Properties, State> {
     }
 
     render() {
-        const { classes, onLogout, onRefresh } = this.props;
+        const { children, classes, onLogout, onRefresh } = this.props;
 
         return (
-            <div className={classes.root}>
+            <BrowserRouter>
+                <div className={classes.root}>
 
-                <Header onMenuClick={this.openDrawer}
-                        onLogout={onLogout}
-                        onRefresh={onRefresh}>
+                    <Header onMenuClick={this.openDrawer}
+                            onLogout={onLogout}
+                            onRefresh={onRefresh}>
 
-                    {this.state.title}
+                        {this.state.title}
 
-                </Header>
+                    </Header>
 
-                <ResponsiveDrawer
-                    onClose={this.closeDrawer}
-                    open={this.state.drawerOpen}>
+                    <ResponsiveDrawer
+                        onClose={this.closeDrawer}
+                        open={this.state.drawerOpen}>
 
-                    <Menu />
+                        <Menu />
 
-                </ResponsiveDrawer>
+                    </ResponsiveDrawer>
 
-            </div>
+                    <main className={classes.content}>
+                        <div className={classes.toolbar} />
+                        {children}
+                    </main>
+
+                </div>
+            </BrowserRouter>
         )
     }
 }

@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import { Route } from 'react-router-dom'
 import bind from 'bind-decorator';
 
 import Clock from '../Clock';
@@ -54,9 +55,16 @@ class PortalController extends React.Component<Properties> {
     render() {
         const { environment } = this.props;
 
-        return <PortalView portalTitle={environment.portalTitle}
-                           onLogout={this.onLogout}
-                           onRefresh={this.onRefresh} />;
+        return (
+            <PortalView portalTitle={environment.portalTitle}
+                        onLogout={this.onLogout}
+                        onRefresh={this.onRefresh}>
+
+                <Route path="/schedule" render={() => <b>Schedule</b>} />
+                <Route path="/" exact render={() => <b>Overview</b>} />
+
+            </PortalView>
+        );
     }
 }
 

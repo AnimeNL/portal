@@ -30,7 +30,7 @@ const styles = () =>
 
 class FullPage extends React.Component<WithStyles<typeof styles>> {
     render() {
-        const { classes } = this.props;
+        const { children, classes } = this.props;
 
         return (
             <Grid
@@ -41,7 +41,7 @@ class FullPage extends React.Component<WithStyles<typeof styles>> {
 
                 <Grid item>
 
-                    {this.props.children}
+                    {children}
 
                 </Grid>
 
