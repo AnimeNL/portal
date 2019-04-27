@@ -12,6 +12,7 @@ import { isNumber, isString } from './util/Validators';
  * @see https://github.com/AnimeNL/portal/blob/master/API.md#apienvironment
  */
 interface EnvironmentData {
+    portalTitle: string;
     seniorTitle: string;
     year: number;
 }
@@ -61,6 +62,14 @@ class Environment {
     }
 
     /**
+     * Title to use for identifying the volunteer portal instance.
+     */
+    get portalTitle(): string {
+        if (!this.data) throw new Error('The environment is not available.');
+        return this.data.portalTitle;
+    }
+
+    /**
      * Title to use for senior volunteers, who can provide assistance.
      */
     get seniorTitle(): string {
@@ -82,6 +91,11 @@ class Environment {
      * @param configuration The configuration as fetched from the network.
      */
     private validateConfiguration(configuration: any): configuration is EnvironmentData {
+        if (!isString(configuration.portalTitle)) {
+            console.error('Unable to validate EnvironmentData.portalTitle.');
+            return false;
+        }
+
         if (!isString(configuration.seniorTitle)) {
             console.error('Unable to validate EnvironmentData.seniorTitle.');
             return false;

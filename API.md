@@ -11,6 +11,7 @@ particular event or group of volunteers. Must accept `GET` requests.
 
 | Property         | Type     | Description |
 | :---             | :---     | :--- |
+| `portalTitle`    | `string` | Title to use for identifying the volunteer portal instance. |
 | `seniorTitle`    | `string` | Title to use for senior volunteers, who can provide assistance. |
 | `year`           | `number` | Year in which the event will take place. |
 
