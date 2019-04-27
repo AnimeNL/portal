@@ -17,7 +17,7 @@ const directory = isProduction ? 'api' : 'api-dev';
 /**
  * Width of the drawer when opened, in pixels.
  */
-export const kDrawerWidth = 280;
+export const kDrawerWidth = 256;
 
 /**
  * Path to the environment configuration file, relative to the server root.

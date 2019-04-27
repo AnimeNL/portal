@@ -6,6 +6,7 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import { Header, HeaderEvents } from '../components/Header';
+import Menu from '../components/Menu';
 import ResponsiveDrawer from '../components/ResponsiveDrawer';
 import withRoot from '../withRoot';
 
@@ -95,7 +96,7 @@ class PortalView extends React.Component<Properties, State> {
                     onClose={this.closeDrawer}
                     open={this.state.drawerOpen}>
 
-                    Hello
+                    <Menu />
 
                 </ResponsiveDrawer>
 
