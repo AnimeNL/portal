@@ -3,6 +3,16 @@
 // be found in the LICENSE file.
 
 /**
+ * Validates that the given |input| is a boolean.
+ *
+ * @param input The input variable, of any type.
+ * @return Whether the |input| is a boolean.
+ */
+export function isBoolean(input: any): input is boolean {
+    return typeof input === 'boolean';
+}
+
+/**
  * Validates that the given |input| is a number.
  *
  * @param input The input variable, of any type.

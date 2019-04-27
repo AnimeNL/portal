@@ -32,6 +32,11 @@ const styles = (theme: Theme) =>
  */
 interface Properties extends WithStyles<typeof styles> {
     /**
+     * Setting on whether debug mode should be enabled for this user.
+     */
+    enableDebug: boolean;
+
+    /**
      * Title to use for identifying the volunteer portal instance.
      */
     portalTitle: string;
@@ -102,7 +107,7 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
     }
 
     render() {
-        const { children, classes, onLogout, onRefresh } = this.props;
+        const { children, classes, enableDebug, onLogout, onRefresh } = this.props;
 
         return (
             <BrowserRouter>
@@ -120,7 +125,7 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
                         onClose={this.closeDrawer}
                         open={this.state.drawerOpen}>
 
-                        <Menu />
+                        <Menu enableDebug={enableDebug} />
 
                     </ResponsiveDrawer>
 

@@ -53,10 +53,11 @@ class PortalController extends React.Component<Properties> {
     }
 
     render() {
-        const { environment } = this.props;
+        const { user, environment } = this.props;
 
         return (
-            <PortalView portalTitle={environment.portalTitle}
+            <PortalView enableDebug={user.enableDebug}
+                        portalTitle={environment.portalTitle}
                         onLogout={this.onLogout}
                         onRefresh={this.onRefresh}>
 

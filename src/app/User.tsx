@@ -4,7 +4,7 @@
 
 import Clock from './Clock';
 import { UserLoginPath, mockableFetch } from '../config';
-import { isNumber, isString } from './util/Validators';
+import { isBoolean, isNumber, isString } from './util/Validators';
 
 /**
  * Key in the local storage under which the serialized login data will be stored.
@@ -222,6 +222,11 @@ class User {
 
         if (!isNumber(data.expirationTime)) {
             console.error('Unable to validate EnvironmentData.expirationTime.');
+            return false;
+        }
+
+        if (!isBoolean(data.enableDebug)) {
+            console.error('Unable to validate EnvironmentData.enableDebug.');
             return false;
         }
 
