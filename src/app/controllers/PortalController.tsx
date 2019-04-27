@@ -70,7 +70,9 @@ class PortalController extends React.Component<ApplicationProperties> {
                     <RouteController path="/" exact component={OverviewController} />
 
                     {/* Pages only available to those with debugging privileges. */}
-                    <RouteController path="/internals" component={InternalsController} />
+                    { user.enableDebug && <RouteController
+                                              path="/internals"
+                                              component={InternalsController} /> }
 
                 </Switch>
 
