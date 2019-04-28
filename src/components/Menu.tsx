@@ -15,6 +15,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import MovieIcon from '@material-ui/icons/MovieOutlined';
 import PanoramaHorizontalIcon from '@material-ui/icons/PanoramaHorizontalOutlined';
+import PeopleIcon from '@material-ui/icons/PeopleOutlined';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -93,7 +94,18 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
 
                 </List>
 
-                {/* TODO: Volunteer groups */}
+                <Divider />
+
+                <List>
+
+                    <MenuListItem to="/schedule/volunteers" onClick={this.props.onClick}>
+                        <ListItemIcon>
+                            <PeopleIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Volunteers" />
+                    </MenuListItem>
+
+                </List>
 
                 <Divider />
 
