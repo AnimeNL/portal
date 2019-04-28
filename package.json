@@ -34,8 +34,8 @@
     },
     "scripts": {
         "start": "react-scripts start",
-        "start-gophers": "cross-env REACT_APP_API_HOST=https://gophers.team/ react-scripts start",
-        "start-stewards": "cross-env REACT_APP_API_HOST=https://stewards.team/ react-scripts start",
+        "start-gophers": "cross-env REACT_APP_API_HOST=https://gophers.team react-scripts start",
+        "start-stewards": "cross-env REACT_APP_API_HOST=https://stewards.team react-scripts start",
         "build": "react-scripts build",
         "test": "react-scripts test"
     }

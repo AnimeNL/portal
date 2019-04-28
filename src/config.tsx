@@ -62,7 +62,7 @@ export const AppTheme = {
  *         an exception if the fetch could not be completed.
  */
 export function mockableFetch(input: RequestInfo, init?: RequestInit): Promise<Response> {
-    if (!isProduction) {
+    if (!isProduction && !host) {
         // Replace the |init| RequestInit for non-GET requests. This is necessary because the
         // WebpackDevServer included with react-scripts cannot deal with non-GET requests.
         if (init && init.method !== 'GET')

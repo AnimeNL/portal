@@ -149,9 +149,6 @@ class User {
 
             const response = await mockableFetch(UserLoginPath, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                },
                 body: requestBody
             });
 
