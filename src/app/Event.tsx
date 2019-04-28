@@ -5,13 +5,31 @@
 import EventLoader from './EventLoader';
 import { IEvent } from './api/IEvent';
 import User from './User';
+import { Volunteer } from './Volunteer';
+import { VolunteerGroup } from './VolunteerGroup';
 
 /**
  * Represents the event this volunteer portal exists for, including data on all the volunteers,
  * events and sessions. Provides a number of utility functions for selecting data.
  */
 class Event {
-    // TODO: Individual properties w/ data.
+    private available: boolean = false;
+
+    /**
+     * Mapping from a group's token to an object detailing its details.
+     */
+    private volunteerGroups: Map<string, VolunteerGroup> = new Map();
+
+    /**
+     * Mapping from a user's token to an object detailing its details.
+     */
+    private volunteers: Map<string, Volunteer> = new Map();
+
+    /**
+     * The Volunteer instance for the logged in user, providing quick and easy access. Not all
+     * logged in users have a Volunteer object, as the latter indicates they have a schedule too.
+     */
+    private volunteer?: Volunteer;
 
     /**
      * Asynchronously loads the event using the EventLoader. The |user| instance will be used to
@@ -30,14 +48,36 @@ class Event {
         }
 
         const eventData = eventLoader.eventData;
-        // ...
+
+        // While we've verified the format of the |eventData|, there can still be a slew of other
+        // issues with it, particularly invalid cross-references.
+        try {
+            for (const info of eventData.volunteerGroups)
+                this.volunteerGroups.set(info.groupToken, new VolunteerGroup(info));
+
+            for (const info of eventData.volunteers) {
+                const volunteerGroup = this.volunteerGroups.get(info.groupToken);
+                if (!volunteerGroup)
+                    throw new Error('Invalid volunteer group for user ' + info.userToken);
+
+                this.volunteers.set(info.userToken, new Volunteer(info, volunteerGroup));
+            }
+
+            this.volunteer = this.volunteers.get(user.userToken);
+
+        } catch (e) {
+            console.error('Unable to import the event data.', e);
+            return;
+        }
+
+        this.available = true;
     }
 
     /**
      * Returns whether all event information is fully available.
      */
     isAvailable(): boolean {
-        return true;
+        return this.available;
     }
 }
 
