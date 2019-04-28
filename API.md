@@ -69,10 +69,11 @@ requests. May be cached offline.
 
 ##### `VolunteerGroup` interface
 
-| Property         | Type     | Description |
-| :---             | :---     | :--- |
-| `groupToken`     | `string` | The token that identifies this group of volunteers. |
-| `label`          | `string` | Label describing the group of volunteers. |
+| Property         | Type      | Description |
+| :---             | :---      | :--- |
+| `groupToken`     | `string`  | The token that identifies this group of volunteers. |
+| `primary`        | `boolean` | Whether this group is the primary group of interest to the logged in user. |
+| `label`          | `string`  | Label describing the group of volunteers. |
 
 ##### `VolunteerInfo` interface
 

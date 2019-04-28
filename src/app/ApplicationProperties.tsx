@@ -4,6 +4,7 @@
 
 import Clock from './Clock';
 import Environment from './Environment';
+import Event from './Event';
 import User from './User';
 
 /**
@@ -13,5 +14,6 @@ import User from './User';
 export default interface ApplicationProperties {
     clock: Clock;
     environment: Environment;
+    event: Event;
     user: User;
 }
