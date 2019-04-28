@@ -3,43 +3,133 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
+import moment from 'moment';
 
+import AccessTimeIcon from '@material-ui/icons/AccessTimeOutlined';
+import Hidden from '@material-ui/core/Hidden';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import ListSubheader from '@material-ui/core/ListSubheader';
+import Paper from '@material-ui/core/Paper';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import TodayIcon from '@material-ui/icons/TodayOutlined';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
-import Paper from '@material-ui/core/Paper';
-import Typography from '@material-ui/core/Typography';
+import { DatePicker, TimePicker } from 'material-ui-pickers';
 
 const styles = (theme: Theme) =>
     createStyles({
-        root: {
-            ...theme.mixins.gutters(),
-            paddingTop: theme.spacing.unit * 2,
-            paddingBottom: theme.spacing.unit * 2,
-        }
+        hidden: { display: 'none' }
     });
 
 /**
  * Properties accepted by the <InternalsPage> element.
  */
 interface Properties {
-    // TODO: Define the properties for this element.
+    /**
+     * Event to be called when the time or date has been changed per the override settings. The
+     * change should be applied immediately to the entire application.
+     */
+    onTimeChanged: (time: moment.Moment) => void;
+
+    /**
+     * The time and date actual at the moment this page got mounted. We won't live-update the page
+     * as time changes, to avoid interrupting the user in making changes.
+     */
+    initialTime: moment.Moment;
 }
 
-class InternalsPage extends React.Component<Properties & WithStyles<typeof styles>> {
+/**
+ * State of the <InternalsPage> element.
+ */
+interface State {
+    /**
+     * Current time. Initialized to the |initialTime| property.
+     */
+    currentTime: moment.Moment;
+}
+
+class InternalsPage extends React.Component<Properties & WithStyles<typeof styles>, State> {
+    state: State;
+
+    // References to the date- and time pickers to be able to open them programmatically. Ideally
+    // these would be typed as React.RefObject<>, but the compiler isn't able to find open().
+    private datePickerRef: any;
+    private timePickerRef: any;
+
+    constructor(props: any) {
+        super(props);
+
+        this.datePickerRef = React.createRef();
+        this.timePickerRef = React.createRef();
+
+        this.state = {
+            currentTime: props.initialTime
+        };
+    }
+
+    @bind
+    openDatePicker(): void {
+        if (this.datePickerRef.current)
+            this.datePickerRef.current.open();
+    }
+
+    @bind
+    openTimePicker(): void {
+        if (this.timePickerRef.current)
+            this.timePickerRef.current.open();
+    }
+
+    /**
+     * Called when the date has been changed. A time update will be propagated to the controller
+     * based on the diff with the input time.
+     */
+    @bind
+    onTimeChanged(date: moment.Moment): void {
+        this.props.onTimeChanged(date);
+        this.setState({
+            currentTime: date
+        });
+    }
+
     render() {
         const { classes } = this.props;
+        const { currentTime } = this.state;
 
         return (
-            <Paper className={classes.root} elevation={1}>
-               <Typography variant="h5" component="h3">
-                    Volunteer Portal Internals
-                </Typography>
-                <Typography component="p">
-                    This page enables you to change internal configuration of the volunteer portal.
-                    Right now this page just exists to test layout display however.
-                </Typography>
+            <Paper square elevation={1}>
+                <List subheader={<ListSubheader>Date and time configuration</ListSubheader>}>
+                    <ListItem button divider onClick={this.openDatePicker}>
+                        <ListItemIcon>
+                            <TodayIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Change the date" secondary={currentTime.format('dddd, MMMM D')} />
+                    </ListItem>
+
+                    <ListItem button onClick={this.openTimePicker}>
+                        <ListItemIcon>
+                            <AccessTimeIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Change the time" secondary={currentTime.format('H:mm')} />
+                    </ListItem>
+                </List>
+
+                <div className={classes.hidden}>
+                    <DatePicker
+                        ref={this.datePickerRef}
+                        onChange={this.onTimeChanged}
+                        value={currentTime} />
+                    <TimePicker
+                        ref={this.timePickerRef}
+                        onChange={this.onTimeChanged}
+                        value={currentTime}
+                        ampm={false} />
+                </div>
+
             </Paper>
         );
     }

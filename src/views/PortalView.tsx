@@ -3,14 +3,17 @@
 // be found in the LICENSE file.
 
 import { BrowserRouter } from 'react-router-dom'
+import MomentUtils from '@date-io/moment';
 import React from 'react';
 import bind from 'bind-decorator';
+import moment from 'moment';
 
 import { Header, HeaderEvents } from '../components/Header';
 import Menu from '../components/Menu';
 import ResponsiveDrawer from '../components/ResponsiveDrawer';
 import withRoot from '../withRoot';
 
+import { MuiPickersUtilsProvider } from 'material-ui-pickers';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
@@ -111,30 +114,32 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
 
         return (
             <BrowserRouter>
-                <div className={classes.root}>
+                <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
+                    <div className={classes.root}>
 
-                    <Header onMenuClick={this.openDrawer}
-                            onLogout={onLogout}
-                            onRefresh={onRefresh}>
+                        <Header onMenuClick={this.openDrawer}
+                                onLogout={onLogout}
+                                onRefresh={onRefresh}>
 
-                        {this.state.title}
+                            {this.state.title}
 
-                    </Header>
+                        </Header>
 
-                    <ResponsiveDrawer
-                        onClose={this.closeDrawer}
-                        open={this.state.drawerOpen}>
+                        <ResponsiveDrawer
+                            onClose={this.closeDrawer}
+                            open={this.state.drawerOpen}>
 
-                        <Menu enableDebug={enableDebug} onClick={this.closeDrawer} />
+                            <Menu enableDebug={enableDebug} onClick={this.closeDrawer} />
 
-                    </ResponsiveDrawer>
+                        </ResponsiveDrawer>
 
-                    <main className={classes.content}>
-                        <div className={classes.toolbar} />
-                        {children}
-                    </main>
+                        <main className={classes.content}>
+                            <div className={classes.toolbar} />
+                            {children}
+                        </main>
 
-                </div>
+                    </div>
+                </MuiPickersUtilsProvider>
             </BrowserRouter>
         )
     }
