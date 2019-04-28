@@ -60,6 +60,7 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
     // these would be typed as React.RefObject<>, but the compiler isn't able to find open().
     private datePickerRef: any;
     private timePickerRef: any;
+    private timeChangeTimeout: any;
 
     constructor(props: any) {
         super(props);
@@ -70,6 +71,32 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
         this.state = {
             currentTime: props.initialTime
         };
+
+        this.startAsyncTimeChange(props.initialTime);
+    }
+
+    /**
+     * Set timeout to start minute update at correct offset from given moment
+     */
+    @bind
+    startAsyncTimeChange(date: moment.Moment): void {
+        if (this.timeChangeTimeout)
+            clearTimeout(this.timeChangeTimeout);
+
+        let offset = (60 - parseInt(date.format('s'))) * 1000;
+        this.timeChangeTimeout = setTimeout(this.asyncTimeChange, offset);
+    }
+
+    /**
+     * Update time shown at Date/Time pickers
+     */
+    @bind
+    asyncTimeChange(): void {
+        this.setState({
+            currentTime: this.state.currentTime.add(1, 'minute'),
+        });
+
+        this.timeChangeTimeout = setTimeout(this.asyncTimeChange, 60000);
     }
 
     @bind
@@ -102,6 +129,7 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
         this.setState({
             currentTime: date
         });
+        this.startAsyncTimeChange(date);
     }
 
     render() {
