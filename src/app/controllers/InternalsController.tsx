@@ -21,7 +21,7 @@ class InternalsController extends React.Component<ApplicationProperties> {
      */
     @bind
     onTimeChanged(time: moment.Moment): void {
-
+        this.props.clock.setMomentFromInternals(time);
     }
 
     render() {
