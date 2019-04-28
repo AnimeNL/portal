@@ -10,6 +10,7 @@ import ApplicationProperties from '../ApplicationProperties';
 import InternalsController from './InternalsController';
 import OverviewController from './OverviewController';
 import ScheduleController from './ScheduleController';
+import VolunteersController from './VolunteersController';
 
 import PortalView from '../../views/PortalView';
 
@@ -65,6 +66,7 @@ class PortalController extends React.Component<ApplicationProperties> {
 
                     {/* Pages specific to the logged in user. */}
                     <RouteController path="/schedule" component={ScheduleController} />
+                    <RouteController path="/volunteers" component={VolunteersController} />
                     <RouteController path="/" exact component={OverviewController} />
 
                     {/* Pages only available to those with debugging privileges. */}

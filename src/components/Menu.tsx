@@ -85,11 +85,11 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
                         <ListItemText primary="Overview" />
                     </MenuListItem>
 
-                    <MenuListItem to="/schedule" exact onClick={this.props.onClick}>
+                    <MenuListItem to="/volunteers/schedule" exact onClick={this.props.onClick}>
                         <ListItemIcon>
                             <ScheduleIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Schedule" />
+                        <ListItemText primary="My schedule" />
                     </MenuListItem>
 
                 </List>
@@ -98,7 +98,7 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
 
                 <List>
 
-                    <MenuListItem to="/schedule/volunteers" onClick={this.props.onClick}>
+                    <MenuListItem to="/volunteers" exact onClick={this.props.onClick}>
                         <ListItemIcon>
                             <PeopleIcon />
                         </ListItemIcon>
