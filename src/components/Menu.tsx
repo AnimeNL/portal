@@ -6,11 +6,15 @@ import React from 'react';
 
 import MenuListItem from './MenuListItem';
 
+import BookIcon from '@material-ui/icons/BookOutlined';
+import BubbleChartIcon from '@material-ui/icons/BubbleChartOutlined'
 import Divider from '@material-ui/core/Divider';
 import InboxIcon from '@material-ui/icons/Inbox';
 import List from '@material-ui/core/List';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import MovieIcon from '@material-ui/icons/MovieOutlined';
+import PanoramaHorizontalIcon from '@material-ui/icons/PanoramaHorizontalOutlined';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -80,7 +84,7 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
                         <ListItemText primary="Overview" />
                     </MenuListItem>
 
-                    <MenuListItem to="/schedule" onClick={this.props.onClick}>
+                    <MenuListItem to="/schedule" exact onClick={this.props.onClick}>
                         <ListItemIcon>
                             <ScheduleIcon />
                         </ListItemIcon>
@@ -90,7 +94,42 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
                 </List>
 
                 {/* TODO: Volunteer groups */}
-                {/* TODO: Location areas */}
+
+                <Divider />
+
+                {/* TODO: It'd be great to specify these in the program JSON.. not quite sure how
+                          that would interact with WebPack and included SVGs, however. */}
+                <List>
+
+                    <MenuListItem to="/schedule/floor/0" onClick={this.props.onClick}>
+                        <ListItemIcon>
+                            <BubbleChartIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Halls" />
+                    </MenuListItem>
+
+                    <MenuListItem to="/schedule/floor/1" onClick={this.props.onClick}>
+                        <ListItemIcon>
+                            <BookIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Ports" />
+                    </MenuListItem>
+
+                    <MenuListItem to="/schedule/floor/2" onClick={this.props.onClick}>
+                        <ListItemIcon>
+                            <PanoramaHorizontalIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Conference" />
+                    </MenuListItem>
+
+                    <MenuListItem to="/schedule/floor/3" onClick={this.props.onClick}>
+                        <ListItemIcon>
+                            <MovieIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Docks" />
+                    </MenuListItem>
+
+                </List>
 
                 {debugOptions}
 
