@@ -60,7 +60,9 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
     // these would be typed as React.RefObject<>, but the compiler isn't able to find open().
     private datePickerRef: any;
     private timePickerRef: any;
-    private timeChangeTimeout: any;
+
+    // Store timeout so we can remove it when we switch to a different page or alter the date/time.
+    private timeChangeTimeout?: NodeJS.Timeout;
 
     constructor(props: any) {
         super(props);
