@@ -79,6 +79,13 @@ class Event {
     isAvailable(): boolean {
         return this.available;
     }
+
+    /**
+     * Returns an iterator that provides access over the groups of volunteers.
+     */
+    getVolunteerGroups(): IterableIterator<VolunteerGroup> {
+        return this.volunteerGroups.values();
+    }
 }
 
 export default Event;
