@@ -62,7 +62,7 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
     private timePickerRef: any;
 
     // Store timeout so we can remove it when we switch to a different page or alter the date/time.
-    private timeChangeTimeout?: NodeJS.Timeout;
+    private updateTimerTimeout?: NodeJS.Timeout;
 
     constructor(props: any) {
         super(props);
@@ -81,7 +81,7 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
      * This starts the timer to update the Date/Time pickers.
      */
     componentWillMount() {
-        this.startAsyncTimeChange(this.state.currentTime);
+        this.startUpdateTimer(this.state.currentTime);
     }
 
     /**
@@ -89,31 +89,31 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
      * This stops the time that updates the Date/Time pickers.
      */
     componentWillUnmount() {
-        if (this.timeChangeTimeout)
-            clearTimeout(this.timeChangeTimeout);
+        if (this.updateTimerTimeout)
+            clearTimeout(this.updateTimerTimeout);
     }
     /**
      * Set timeout to start minute update at correct offset from given moment
      */
     @bind
-    startAsyncTimeChange(date: moment.Moment): void {
-        if (this.timeChangeTimeout)
-            clearTimeout(this.timeChangeTimeout);
+    startUpdateTimer(date: moment.Moment): void {
+        if (this.updateTimerTimeout)
+            clearTimeout(this.updateTimerTimeout);
 
         const offset = (60 - date.second()) * 1000;
-        this.timeChangeTimeout = setTimeout(this.asyncTimeChange, offset);
+        this.updateTimerTimeout = setTimeout(this.updateTime, offset);
     }
 
     /**
      * Update time shown at Date/Time pickers
      */
     @bind
-    asyncTimeChange(): void {
+    updateTime(): void {
         this.setState({
             currentTime: this.state.currentTime.add(1, 'minute'),
         });
 
-        this.timeChangeTimeout = setTimeout(this.asyncTimeChange, 60000);
+        this.updateTimerTimeout = setTimeout(this.updateTime, 60000);
     }
 
     @bind
@@ -146,7 +146,7 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
         this.setState({
             currentTime: date
         });
-        this.startAsyncTimeChange(date);
+        this.startUpdateTimer(date);
     }
 
     render() {
