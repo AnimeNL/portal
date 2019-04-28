@@ -37,9 +37,9 @@ the input data and return user status when successful. Must accept `POST` reques
 | Property         | Type      | Description |
 | :---             | :---      | :--- |
 | `success`        | `boolean` | Always set to `true` to indicate authentication succeeded. |
-| `userToken`      | `string`  | The token that identifies this user. Should be pseudo-anonymous.|
+| `userToken`      | `string`  | The token that identifies this user. Should be pseudo-anonymous. |
 | `authToken`      | `string`  | The token that authenticates this user. Should be pseudo-anonymous. |
-| `expirationTime` | `number`  | Time, in milliseconds since the UNIX epoch, at which the session expires.|
+| `expirationTime` | `number`  | Time, in milliseconds since the UNIX epoch, at which the session expires. |
 | `enableDebug`    | `boolean` | Setting on whether debug mode should be enabled for this user. |
 
 #### 🡄 Failure response
@@ -61,9 +61,30 @@ requests. May be cached offline.
 
 #### 🡄 Success response
 
+| Property          | Type               | Description |
+| :---              | :---               | :--- |
+| `success`         | `boolean`          | Always set to `true` to indicate that event data is available. |
+| `volunteerGroups` | `VolunteerGroup[]` | Array with information about the different groups of volunteers. |
+| `volunteers`      | `VolunteerInfo[]`  | Array with information for all the event's volunteers. |
+
+##### `VolunteerGroup` interface
+
+| Property         | Type     | Description |
+| :---             | :---     | :--- |
+| `groupToken`     | `string` | The token that identifies this group of volunteers. |
+| `label`          | `string` | Label describing the group of volunteers. |
+
+##### `VolunteerInfo` interface
+
 | Property         | Type      | Description |
 | :---             | :---      | :--- |
-| `success`        | `boolean` | Always set to `true` to indicate that event data is available. |
+| `userToken`      | `string`  | The token that identifies this volunteer. Should be pseudo-anonymous. |
+| `groupToken`     | `string`  | The token that identifies the group this volunteer is part of. |
+| `name`           | `string`  | The full name of this volunteer. |
+| `avatar`         | `string?` | URL to the avatar that's to be displayed for this volunteer. |
+| `title`          | `string`  | Title to be displayed for this volunteer. |
+| `accessCode`     | `string?` | Access code of this volunteer. Should be restricted to admins. |
+| `telephone`      | `string?` | Telephone number of this volunteer. Should be restricted. |
 
 #### 🡄 Failure response
 
