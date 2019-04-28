@@ -7,12 +7,22 @@ import React from 'react';
 import { Volunteer } from '../app/Volunteer';
 import { VolunteerGroup } from '../app/VolunteerGroup';
 
+import Avatar from '@material-ui/core/Avatar';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
+
+// Naive algorithm for getting the initials for a particular name: selecting the first and the last
+// capital available in the name.
+const nameInitials = (name: string) =>
+    name.replace(/[^A-Z]/g, '').replace(/^(.).*(.)/g, '$1$2');
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -81,6 +91,20 @@ class VolunteerListPage extends React.Component<Properties & WithStyles<typeof s
         return (
             <>
                 {tabs}
+                <List>
+                    {volunteers.map(volunteer => {
+                        return (
+                            <ListItem button>
+                                <Avatar>
+                                    {nameInitials(volunteer.name)}
+                                </Avatar>
+                                <ListItemText
+                                    primary={volunteer.name}
+                                    secondary={volunteer.title} />
+                            </ListItem>
+                        );
+                    })}
+                </List>
             </>
         );
     }
