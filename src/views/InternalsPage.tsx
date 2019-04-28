@@ -73,10 +73,25 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
         this.state = {
             currentTime: props.initialTime
         };
-
-        this.startAsyncTimeChange(props.initialTime);
     }
 
+
+    /**
+     * Called just before the <InternalsPage> is mount.
+     * This starts the timer to update the Date/Time pickers.
+     */
+    componentWillMount() {
+        this.startAsyncTimeChange(this.state.currentTime);
+    }
+
+    /**
+     * Called just before the <PortalView> is unmount.
+     * This stops the time that updates the Date/Time pickers.
+     */
+    componentWillUnmount() {
+        if (this.timeChangeTimeout)
+            clearTimeout(this.timeChangeTimeout);
+    }
     /**
      * Set timeout to start minute update at correct offset from given moment
      */
