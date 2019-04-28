@@ -6,15 +6,17 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import ApplicationProperties from '../ApplicationProperties';
-import { VolunteerDisplayInfo, VolunteerGroupDisplayInfo, VolunteerListPage } from '../../views/VolunteerListPage';
+import { VolunteerListPage } from '../../views/VolunteerListPage';
+import { Volunteer } from '../Volunteer';
+import { VolunteerGroup } from '../VolunteerGroup';
 
 /**
  * State of the VolunteerListController.
  */
 interface State {
     activeGroupIndex: number;
-    groups: VolunteerGroupDisplayInfo[];
-    volunteers: VolunteerDisplayInfo[];
+    groups: VolunteerGroup[];
+    volunteers: Volunteer[];
 }
 
 /**
@@ -34,23 +36,25 @@ class VolunteerListController extends React.Component<ApplicationProperties, Sta
      */
     componentWillMount(): void {
         const { event } = this.props;
-        const initialState: State = {
-            activeGroupIndex: 0,
-            groups: [],
-            volunteers: []
-        };
+        const state: State = this.state;
 
         for (const group of event.getVolunteerGroups()) {
-            if (group.primary)
-                initialState.activeGroupIndex = initialState.groups.length;
+            if (group.primary) {
+                state.activeGroupIndex = state.groups.length;
+                state.volunteers = this.getVolunteersForGroup(group);
+            }
 
-            initialState.groups.push({
-                label: group.label,
-                activeVolunteers: 0
-            });
+            state.groups.push(group);
         }
 
-        this.setState(initialState);
+        this.setState(state);
+    }
+
+    /**
+     * Returns the list of volunteers for the given |group| as an array.
+     */
+    private getVolunteersForGroup(group: VolunteerGroup): Volunteer[] {
+        return Array.from(this.props.event.getVolunteersForGroup(group));
     }
 
     /**
@@ -59,8 +63,11 @@ class VolunteerListController extends React.Component<ApplicationProperties, Sta
      */
     @bind
     onVolunteerGroupChange(groupIndex: number): void {
+        const group = this.state.groups[groupIndex];
+
         this.setState({
-            activeGroupIndex: groupIndex
+            activeGroupIndex: groupIndex,
+            volunteers: this.getVolunteersForGroup(group)
         });
     }
 

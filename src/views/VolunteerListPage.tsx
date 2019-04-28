@@ -4,6 +4,9 @@
 
 import React from 'react';
 
+import { Volunteer } from '../app/Volunteer';
+import { VolunteerGroup } from '../app/VolunteerGroup';
+
 import Paper from '@material-ui/core/Paper';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
@@ -17,31 +20,6 @@ const styles = (theme: Theme) =>
     });
 
 /**
- * Details necessary for displaying a group of volunteers in the tab bar.
- */
-export interface VolunteerGroupDisplayInfo {
-    /**
-     * The label through which the group can be identified.
-     */
-    label: string;
-
-    /**
-     * The number of volunteers in this group who are currently on a shift.
-     */
-    activeVolunteers: number;
-}
-
-/**
- * Details necessary for displaying the row of an individual volunteer in the list.
- */
-export interface VolunteerDisplayInfo {
-    /**
-     * Name of the volunteer as it should be displayed in the list.
-     */
-    name: string;
-}
-
-/**
  * Properties accepted by the <VolunteerListPage> element.
  */
 interface Properties {
@@ -49,12 +27,12 @@ interface Properties {
      * The groups of volunteers that should be displayed on the page. Tabs will only show up when
      * there is more than a single group to show.
      */
-    groups: VolunteerGroupDisplayInfo[];
+    groups: VolunteerGroup[];
 
     /**
      * The volunteers that should be displayed for the current group of volunteers.
      */
-    volunteers: VolunteerDisplayInfo[];
+    volunteers: Volunteer[];
 
     /**
      * Index of the active group of volunteers as available in |groups|.

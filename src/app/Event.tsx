@@ -86,6 +86,22 @@ class Event {
     getVolunteerGroups(): IterableIterator<VolunteerGroup> {
         return this.volunteerGroups.values();
     }
+
+    /**
+     * Returns an iterator that provides access over the volunteers belonging to a particular group.
+     * The complexity of this operation is O(n) on the number of volunteers.
+     *
+     * @param group The group for which volunteers should be returned.
+     * @return An iterator that provides access to all the volunteers in that particular group.
+     */
+    *getVolunteersForGroup(group: VolunteerGroup): IterableIterator<Volunteer> {
+        for (const volunteer of this.volunteers.values()) {
+            if (volunteer.group != group)
+                continue;
+
+            yield volunteer;
+        }
+    }
 }
 
 export default Event;
