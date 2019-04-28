@@ -85,7 +85,7 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
         if (this.timeChangeTimeout)
             clearTimeout(this.timeChangeTimeout);
 
-        let offset = (60 - parseInt(date.format('s'))) * 1000;
+        const offset = (60 - date.second()) * 1000;
         this.timeChangeTimeout = setTimeout(this.asyncTimeChange, offset);
     }
 
