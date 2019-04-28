@@ -7,11 +7,9 @@ import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import bind from 'bind-decorator';
 
 import ApplicationProperties from '../ApplicationProperties';
-import Environment from '../Environment';
 import InternalsController from './InternalsController';
 import OverviewController from './OverviewController';
 import ScheduleController from './ScheduleController';
-import User from '../User';
 
 import PortalView from '../../views/PortalView';
 

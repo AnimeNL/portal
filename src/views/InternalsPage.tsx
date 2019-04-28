@@ -7,7 +7,6 @@ import bind from 'bind-decorator';
 import moment from 'moment';
 
 import AccessTimeIcon from '@material-ui/icons/AccessTimeOutlined';
-import Hidden from '@material-ui/core/Hidden';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
