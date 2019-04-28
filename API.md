@@ -47,3 +47,26 @@ the input data and return user status when successful. Must accept `POST` reques
 | Property  | Type      | Description |
 | :---      | :---      | :--- |
 | `success` | `boolean` | Always set to `false` to indicate authentication failed. |
+
+### /api/event
+Returns information about the current event, its volunteers and its sessions. This call is only
+available for authenticated users and requires the `authToken` to be included. Must accept `GET`
+requests. May be cached offline.
+
+#### 🡆 GET fields
+
+| Property    | Type     | Description |
+| :---        | :---     | :--- |
+| `authToken` | `string` | The token that authenticates this user. Should be pseudo-anonymous. |
+
+#### 🡄 Success response
+
+| Property         | Type      | Description |
+| :---             | :---      | :--- |
+| `success`        | `boolean` | Always set to `true` to indicate that event data is available. |
+
+#### 🡄 Failure response
+
+| Property  | Type      | Description |
+| :---      | :---      | :--- |
+| `success` | `boolean` | Always set to `false` to indicate that event data is not available. |
