@@ -1,7 +1,7 @@
 # API Documentation
 The volunteer portal requires a number of API calls in order to work properly. They can be provided
 by any back-end, as long as the returned data matches the specification below. Data for all API
-calls must be returned in JSON.
+calls must be returned in JSON. Optional fields must be given, but may be set to `null`.
 
 ### /api/environment
 Returns information about the volunteer portal environment, enabling it to be customized for a

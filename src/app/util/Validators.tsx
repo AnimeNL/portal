@@ -31,3 +31,13 @@ export function isNumber(input: any): input is number {
 export function isString(input: any): input is string {
     return typeof input === 'string';
 }
+
+/**
+ * Validates that the given |input| is either a string or null.
+ *
+ * @param input The input variable, of any type.
+ * @return Whether the |input| is a string or null.
+ */
+export function isStringOrNull(input: any): input is string | null {
+    return input === null || typeof input === 'string';
+}

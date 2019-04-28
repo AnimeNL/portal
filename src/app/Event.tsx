@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import EventLoader from './EventLoader';
+import { IEvent } from './api/IEvent';
 import User from './User';
 
 /**
@@ -10,18 +11,26 @@ import User from './User';
  * events and sessions. Provides a number of utility functions for selecting data.
  */
 class Event {
-    loader: EventLoader;
-
-    constructor() {
-        this.loader = new EventLoader();
-    }
+    // TODO: Individual properties w/ data.
 
     /**
      * Asynchronously loads the event using the EventLoader. The |user| instance will be used to
      * obtain their authentication token, and to sign them out in case their data expired.
      */
     async load(user: User): Promise<void> {
-        // TODO: Load the event data.
+        const eventLoader = new EventLoader();
+
+        // Wait until loading has been completed. If loading failed due to a user error, sign them
+        // out of their account forcing them back to the login screen.
+        if (!await eventLoader.load(user.authToken)) {
+            if (eventLoader.isUserError())
+                user.logout();
+
+            return;
+        }
+
+        const eventData = eventLoader.eventData;
+        // ...
     }
 
     /**

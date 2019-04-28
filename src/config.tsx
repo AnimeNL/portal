@@ -31,6 +31,11 @@ export const kDrawerWidth = 256;
 export const EnvironmentConfigPath = `${host}/${directory}/environment`;
 
 /**
+ * Path to the event API, from which event data will be received.
+ */
+export const EventPath = `${host}/${directory}/event`;
+
+/**
  * Path to the service that enables users to log in. Their details will be send here in a POST
  * request, and a JSON response is expected.
  */
