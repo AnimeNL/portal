@@ -61,6 +61,9 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
     private datePickerRef: any;
     private timePickerRef: any;
 
+    // Store timeout so we can remove it when we switch to a different page or alter the date/time.
+    private updateTimerTimeout?: NodeJS.Timeout;
+
     constructor(props: any) {
         super(props);
 
@@ -70,6 +73,47 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
         this.state = {
             currentTime: props.initialTime
         };
+    }
+
+
+    /**
+     * Called just before the <InternalsPage> is mount.
+     * This starts the timer to update the Date/Time pickers.
+     */
+    componentWillMount() {
+        this.startUpdateTimer(this.state.currentTime);
+    }
+
+    /**
+     * Called just before the <PortalView> is unmount.
+     * This stops the time that updates the Date/Time pickers.
+     */
+    componentWillUnmount() {
+        if (this.updateTimerTimeout)
+            clearTimeout(this.updateTimerTimeout);
+    }
+    /**
+     * Set timeout to start minute update at correct offset from given moment
+     */
+    @bind
+    startUpdateTimer(date: moment.Moment): void {
+        if (this.updateTimerTimeout)
+            clearTimeout(this.updateTimerTimeout);
+
+        const offset = (60 - date.second()) * 1000;
+        this.updateTimerTimeout = setTimeout(this.updateTime, offset);
+    }
+
+    /**
+     * Update time shown at Date/Time pickers
+     */
+    @bind
+    updateTime(): void {
+        this.setState({
+            currentTime: this.state.currentTime.add(1, 'minute'),
+        });
+
+        this.updateTimerTimeout = setTimeout(this.updateTime, 60000);
     }
 
     @bind
@@ -102,6 +146,7 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
         this.setState({
             currentTime: date
         });
+        this.startUpdateTimer(date);
     }
 
     render() {
