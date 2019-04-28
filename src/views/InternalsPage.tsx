@@ -14,6 +14,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Paper from '@material-ui/core/Paper';
+import RestoreIcon from '@material-ui/icons/Restore';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import TodayIcon from '@material-ui/icons/TodayOutlined';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -85,6 +86,14 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
     }
 
     /**
+     * Resets any active time overrides back to the default device time.
+     */
+    @bind
+    resetTime(): void {
+        this.onTimeChanged(moment());
+    }
+
+    /**
      * Called when the date has been changed. A time update will be propagated to the controller
      * based on the diff with the input time.
      */
@@ -110,11 +119,18 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
                         <ListItemText primary="Change the date" secondary={currentTime.format('dddd, MMMM D')} />
                     </ListItem>
 
-                    <ListItem button onClick={this.openTimePicker}>
+                    <ListItem button divider onClick={this.openTimePicker}>
                         <ListItemIcon>
                             <AccessTimeIcon />
                         </ListItemIcon>
                         <ListItemText primary="Change the time" secondary={currentTime.format('H:mm')} />
+                    </ListItem>
+
+                    <ListItem button onClick={this.resetTime}>
+                        <ListItemIcon>
+                            <RestoreIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Reset time time" />
                     </ListItem>
                 </List>
 
