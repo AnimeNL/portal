@@ -3,7 +3,6 @@
 // be found in the LICENSE file.
 
 import EventLoader from './EventLoader';
-import { IEvent } from './api/IEvent';
 import User from './User';
 import { Volunteer } from './Volunteer';
 import { VolunteerGroup } from './VolunteerGroup';
@@ -103,7 +102,7 @@ class Event {
      */
     *getVolunteersForGroup(group: VolunteerGroup): IterableIterator<Volunteer> {
         for (const volunteer of this.volunteers.values()) {
-            if (volunteer.group != group)
+            if (volunteer.group !== group)
                 continue;
 
             yield volunteer;
