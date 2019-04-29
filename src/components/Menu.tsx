@@ -40,6 +40,11 @@ interface Properties {
     enableDebug: boolean;
 
     /**
+     * Whether the user who's currently logged in has a schedule of their own.
+     */
+    hasUserSchedule: boolean;
+
+    /**
      * Event listener that will be called when something in the menu has been clicked upon.
      */
     onClick: () => void;
@@ -85,12 +90,14 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
                         <ListItemText primary="Overview" />
                     </MenuListItem>
 
-                    <MenuListItem to="/volunteers/schedule" exact onClick={this.props.onClick}>
-                        <ListItemIcon>
-                            <ScheduleIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="My schedule" />
-                    </MenuListItem>
+                    { this.props.hasUserSchedule &&
+                        <MenuListItem to="/volunteers/schedule" exact onClick={this.props.onClick}>
+                            <ListItemIcon>
+                                <ScheduleIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="My schedule" />
+                        </MenuListItem>
+                    }
 
                 </List>
 

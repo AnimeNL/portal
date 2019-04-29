@@ -81,6 +81,13 @@ class Event {
     }
 
     /**
+     * Returns the volunteer that's currently logged in to the volunteer portal, if any.
+     */
+    getCurrentVolunteer(): Volunteer | undefined {
+        return this.volunteer;
+    }
+
+    /**
      * Returns an iterator that provides access over the groups of volunteers.
      */
     getVolunteerGroups(): IterableIterator<VolunteerGroup> {

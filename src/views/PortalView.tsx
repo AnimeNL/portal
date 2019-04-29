@@ -40,6 +40,11 @@ interface Properties extends WithStyles<typeof styles> {
     enableDebug: boolean;
 
     /**
+     * Whether the user who's currently logged in has a schedule of their own.
+     */
+    hasUserSchedule: boolean;
+
+    /**
      * Title to use for identifying the volunteer portal instance.
      */
     portalTitle: string;
@@ -110,7 +115,7 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
     }
 
     render() {
-        const { children, classes, enableDebug, onLogout, onRefresh } = this.props;
+        const { children, classes, enableDebug, hasUserSchedule, onLogout, onRefresh } = this.props;
 
         return (
             <BrowserRouter>
@@ -129,7 +134,10 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
                             onClose={this.closeDrawer}
                             open={this.state.drawerOpen}>
 
-                            <Menu enableDebug={enableDebug} onClick={this.closeDrawer} />
+                            <Menu
+                                enableDebug={enableDebug}
+                                hasUserSchedule={hasUserSchedule}
+                                onClick={this.closeDrawer} />
 
                         </ResponsiveDrawer>
 
