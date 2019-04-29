@@ -62,7 +62,7 @@ class EventLoader {
      */
     async load(authToken: string): Promise<boolean> {
         try {
-            const url = new URL(EventPath);
+            const url = new URL(EventPath, window.location.href);
             url.searchParams.append('authToken', authToken);
 
             const response = await mockableFetch(url.href);
