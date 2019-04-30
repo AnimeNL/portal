@@ -87,6 +87,13 @@ class Event {
     }
 
     /**
+     * Returns an iterator that provides access to all volunteers.
+     */
+    getVolunteers(): IterableIterator<Volunteer> {
+        return this.volunteers.values();
+    }
+
+    /**
      * Returns an iterator that provides access over the groups of volunteers.
      */
     getVolunteerGroups(): IterableIterator<VolunteerGroup> {
