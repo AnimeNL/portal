@@ -11,6 +11,7 @@ import moment from 'moment';
 import { Header, HeaderEvents } from '../components/Header';
 import Menu from '../components/Menu';
 import ResponsiveDrawer from '../components/ResponsiveDrawer';
+import { Volunteer } from '../app/Volunteer';
 import withRoot from '../withRoot';
 
 import { MuiPickersUtilsProvider } from 'material-ui-pickers';
@@ -40,14 +41,14 @@ interface Properties extends WithStyles<typeof styles> {
     enableDebug: boolean;
 
     /**
-     * Whether the user who's currently logged in has a schedule of their own.
-     */
-    hasUserSchedule: boolean;
-
-    /**
      * Title to use for identifying the volunteer portal instance.
      */
     portalTitle: string;
+
+    /**
+     * The volunteer for whom the portal is being displayed, if any.
+     */
+    volunteer?: Volunteer;
 
     /**
      * The <PortalView> element accepts children. TypeScript requires us to be explicit.
@@ -115,7 +116,7 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
     }
 
     render() {
-        const { children, classes, enableDebug, hasUserSchedule, onLogout, onRefresh } = this.props;
+        const { children, classes, enableDebug, onLogout, onRefresh, volunteer } = this.props;
 
         return (
             <BrowserRouter>
@@ -136,7 +137,7 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
 
                             <Menu
                                 enableDebug={enableDebug}
-                                hasUserSchedule={hasUserSchedule}
+                                volunteer={volunteer}
                                 onClick={this.closeDrawer} />
 
                         </ResponsiveDrawer>

@@ -5,6 +5,8 @@
 import React from 'react';
 
 import MenuListItem from './MenuListItem';
+import { Volunteer } from '../app/Volunteer';
+import slug from '../app/util/Slug';
 
 import BookIcon from '@material-ui/icons/BookOutlined';
 import BubbleChartIcon from '@material-ui/icons/BubbleChartOutlined'
@@ -40,9 +42,9 @@ interface Properties {
     enableDebug: boolean;
 
     /**
-     * Whether the user who's currently logged in has a schedule of their own.
+     * The volunteer for whom the portal is being displayed, if any.
      */
-    hasUserSchedule: boolean;
+    volunteer?: Volunteer;
 
     /**
      * Event listener that will be called when something in the menu has been clicked upon.
@@ -79,6 +81,12 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
             );
         }
 
+        // Link to the page that contains the schedule of the volunteer that's currently logged in,
+        // if the user is associated with a volunteer.
+        const volunteerScheduleLink =
+            this.props.volunteer ? '/volunteers/' + slug(this.props.volunteer.name)
+                                 : null;
+
         return (
             <div>
                 <List>
@@ -90,8 +98,8 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
                         <ListItemText primary="Overview" />
                     </MenuListItem>
 
-                    { this.props.hasUserSchedule &&
-                        <MenuListItem to="/volunteers/schedule" exact onClick={this.props.onClick}>
+                    { volunteerScheduleLink &&
+                        <MenuListItem to={volunteerScheduleLink} exact onClick={this.props.onClick}>
                             <ListItemIcon>
                                 <ScheduleIcon />
                             </ListItemIcon>

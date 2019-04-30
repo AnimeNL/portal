@@ -46,7 +46,6 @@ class PortalController extends React.Component<ApplicationProperties> {
 
     render() {
         const { event, user, environment } = this.props;
-        const hasUserSchedule = !!event.getCurrentVolunteer();
 
         // Utility element that enables using components for routing that should be receiving the
         // same properties as the <PortalController>, on top of the existing routing properties.
@@ -59,8 +58,8 @@ class PortalController extends React.Component<ApplicationProperties> {
 
         return (
             <PortalView enableDebug={user.enableDebug}
-                        hasUserSchedule={hasUserSchedule}
                         portalTitle={environment.portalTitle}
+                        volunteer={event.getCurrentVolunteer()}
                         onLogout={this.onLogout}
                         onRefresh={this.onRefresh}>
 
