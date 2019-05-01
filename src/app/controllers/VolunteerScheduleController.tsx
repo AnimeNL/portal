@@ -7,6 +7,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import bind from 'bind-decorator';
 
 import ApplicationProperties from '../ApplicationProperties';
+import NotFound from '../../views/NotFound';
 import { Volunteer } from '../Volunteer';
 import createSlug from '../util/Slug';
 
@@ -69,10 +70,12 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
     render() {
         const { volunteer } = this.state;
 
-        if (volunteer)
-            return <b>{volunteer.name}</b>;
-        else
-            return <b>404</b>;
+        // |volunteer| won't be set if an invalid slug was passed on the URL, so display an error
+        // page instead when that's the case.
+        if (!volunteer)
+            return <NotFound />;
+
+        return <b>{volunteer.name}</b>;
     }
 }
 
