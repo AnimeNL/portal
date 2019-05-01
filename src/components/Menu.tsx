@@ -113,7 +113,7 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
 
                 <List>
 
-                    <MenuListItem to="/volunteers" onClick={this.props.onClick}>
+                    <MenuListItem to="/volunteers" exact onClick={this.props.onClick}>
                         <ListItemIcon>
                             <PeopleIcon />
                         </ListItemIcon>
