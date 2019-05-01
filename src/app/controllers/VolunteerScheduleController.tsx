@@ -9,6 +9,7 @@ import bind from 'bind-decorator';
 import ApplicationProperties from '../ApplicationProperties';
 import NotFound from '../../views/NotFound';
 import { Volunteer } from '../Volunteer';
+import { VolunteerSchedulePage } from '../../views/VolunteerSchedulePage';
 import createSlug from '../util/Slug';
 
 /**
@@ -75,7 +76,9 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
         if (!volunteer)
             return <NotFound />;
 
-        return <b>{volunteer.name}</b>;
+        return (
+            <VolunteerSchedulePage volunteer={volunteer} />
+        );
     }
 }
 

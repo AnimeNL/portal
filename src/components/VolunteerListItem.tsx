@@ -2,9 +2,9 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import { Link } from 'react-router-dom';
 import React from 'react';
 
+import ConditionalLink from './ConditionalLink';
 import { Volunteer } from '../app/Volunteer';
 import slug from '../app/util/Slug';
 
@@ -42,9 +42,10 @@ interface Properties {
      * be compiled based on the |volunteer| property.
      *
      * Supported types:
-     *   "status": Displays the volunteer's name, title and current shift, if any.
+     *   "header": Displays the volunteer's name and title. Not linked.
+     *   "status": Displays the volunteer's name, title and current shift, if any. Linked.
      */
-    type: "status";
+    type: "header" | "status";
 }
 
 /**
@@ -55,13 +56,17 @@ class VolunteerListItem extends React.Component<Properties & WithStyles<typeof s
     render() {
         const { classes, type, volunteer } = this.props;
 
-        const location = '/volunteers/' + slug(volunteer.name);
-
+        let location: string | undefined = '/volunteers/' + slug(volunteer.name);
         let primary = volunteer.name;
         let secondary = null;
 
         switch (type) {
+            case 'header':
+                location = undefined;
+                secondary = volunteer.title;
+                break;
             case 'status':
+                // TODO: Include the volunteer's current shift.
                 secondary = volunteer.title;
                 break;
             default:
@@ -69,8 +74,8 @@ class VolunteerListItem extends React.Component<Properties & WithStyles<typeof s
         }
 
         return (
-            <Link className={classes.link} to={location}>
-                <ListItem button>
+            <ConditionalLink className={classes.link} to={location}>
+                <ListItem button={!!location}>
                     <Avatar>
                         {nameInitials(volunteer.name)}
                     </Avatar>
@@ -78,7 +83,7 @@ class VolunteerListItem extends React.Component<Properties & WithStyles<typeof s
                         primary={primary}
                         secondary={secondary} />
                 </ListItem>
-            </Link >
+            </ConditionalLink>
         );
     }
 }
