@@ -14,7 +14,9 @@ export class ProgramSession {
 
     constructor(info: IProgramSession, location: Location) {
         this.info = info;
+
         this.location_ = location;
+        this.location_.addSession(this);
     }
 
     /**

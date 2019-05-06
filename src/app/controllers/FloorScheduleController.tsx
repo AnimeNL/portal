@@ -4,10 +4,10 @@
 
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import bind from 'bind-decorator';
 
 import ApplicationProperties from '../ApplicationProperties';
 import { Floor } from '../Floor';
+import { FloorSchedulePage } from '../../views/FloorSchedulePage';
 import NotFound from '../../views/NotFound';
 
 /**
@@ -56,7 +56,7 @@ class FloorScheduleController extends React.Component<Properties, State> {
         const floorId = parseInt(identifier);
 
         for (const floor of event.getFloors()) {
-            if (floor.id != floorId)
+            if (floor.id !== floorId)
                 continue;
 
             this.setState({ floor });
@@ -67,6 +67,7 @@ class FloorScheduleController extends React.Component<Properties, State> {
     }
 
     render() {
+        const { clock } = this.props;
         const { floor } = this.state;
 
         // |floor| won't be set if an invalid identifier was passed on the URL, so display an error
@@ -74,9 +75,7 @@ class FloorScheduleController extends React.Component<Properties, State> {
         if (!floor)
             return <NotFound />;
 
-        return (
-            <b>{floor.label}</b>
-        );
+        return <FloorSchedulePage clock={clock} floor={floor} />;
     }
 }
 

@@ -10,18 +10,18 @@ import { Location } from './Location';
  */
 export class Floor {
     info: IFloor;
-    locations: Location[];
+    locations_: Location[];
 
     constructor(info: IFloor) {
         this.info = info;
-        this.locations = [];
+        this.locations_ = [];
     }
 
     /**
      * Adds the given |location| to the list of locations that exist on this floor.
      */
     addLocation(location: Location): void {
-        this.locations.push(location);
+        this.locations_.push(location);
     }
 
     /**
@@ -36,6 +36,13 @@ export class Floor {
      */
     get label(): string {
         return this.info.label;
+    }
+
+    /**
+     * Gets an array with the locations that are part of this floor.
+     */
+    get locations(): Location[] {
+        return this.locations_;
     }
 
     /**
