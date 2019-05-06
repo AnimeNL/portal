@@ -74,7 +74,7 @@ requests. May be cached offline.
 | :---             | :---      | :--- |
 | `id`             | `number`  | Id (number) of the floor. Usually begins with zero. |
 | `label`          | `string`  | Label describing the name of the floor. |
-| `icon`           | `string?` | URL to an icon that should be displayed for this floor. Optional. |
+| `icon`           | `string?` | URL to an SVG definition icon that should be displayed for this floor. Optional. |
 
 ##### `VolunteerGroup` interface
 
