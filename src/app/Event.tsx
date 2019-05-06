@@ -138,6 +138,13 @@ class Event {
     }
 
     /**
+     * Returns an iterator that provides access to all locations.
+     */
+    getLocations(): IterableIterator<Location> {
+        return this.locations.values();
+    }
+
+    /**
      * Returns an iterator that provides access to all volunteers.
      */
     getVolunteers(): IterableIterator<Volunteer> {

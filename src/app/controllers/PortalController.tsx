@@ -9,6 +9,7 @@ import bind from 'bind-decorator';
 import ApplicationProperties from '../ApplicationProperties';
 import FloorScheduleController from './FloorScheduleController';
 import InternalsController from './InternalsController';
+import LocationScheduleController from './LocationScheduleController';
 import OverviewController from './OverviewController';
 import ScheduleController from './ScheduleController';
 import VolunteerListController from './VolunteerListController';
@@ -69,6 +70,7 @@ class PortalController extends React.Component<ApplicationProperties> {
 
                     {/* Pages specific to the logged in user. */}
                     <RouteController path="/schedule/floors/:floor" component={FloorScheduleController} />
+                    <RouteController path="/schedule/locations/:location" component={LocationScheduleController} />
                     <RouteController path="/volunteers" exact component={VolunteerListController} />
                     <RouteController path="/volunteers/:slug" component={VolunteerScheduleController} />
                     <RouteController path="/" exact component={OverviewController} />
