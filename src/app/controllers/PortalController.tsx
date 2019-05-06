@@ -59,8 +59,8 @@ class PortalController extends React.Component<ApplicationProperties> {
 
         return (
             <PortalView enableDebug={user.enableDebug}
+                        event={event}
                         portalTitle={environment.portalTitle}
-                        volunteer={event.getCurrentVolunteer()}
                         onLogout={this.onLogout}
                         onRefresh={this.onRefresh}>
 

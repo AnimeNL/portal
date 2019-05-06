@@ -8,6 +8,7 @@ import React from 'react';
 import bind from 'bind-decorator';
 import moment from 'moment';
 
+import Event from '../app/Event';
 import { Header, HeaderEvents } from '../components/Header';
 import Menu from '../components/Menu';
 import ResponsiveDrawer from '../components/ResponsiveDrawer';
@@ -41,14 +42,14 @@ interface Properties extends WithStyles<typeof styles> {
     enableDebug: boolean;
 
     /**
+     * The event for which the menu is being displayed.
+     */
+    event: Event;
+
+    /**
      * Title to use for identifying the volunteer portal instance.
      */
     portalTitle: string;
-
-    /**
-     * The volunteer for whom the portal is being displayed, if any.
-     */
-    volunteer?: Volunteer;
 
     /**
      * The <PortalView> element accepts children. TypeScript requires us to be explicit.
@@ -116,7 +117,7 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
     }
 
     render() {
-        const { children, classes, enableDebug, onLogout, onRefresh, volunteer } = this.props;
+        const { children, classes, enableDebug, event, onLogout, onRefresh } = this.props;
 
         return (
             <BrowserRouter>
@@ -137,7 +138,7 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
 
                             <Menu
                                 enableDebug={enableDebug}
-                                volunteer={volunteer}
+                                event={event}
                                 onClick={this.closeDrawer} />
 
                         </ResponsiveDrawer>

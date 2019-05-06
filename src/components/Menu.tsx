@@ -4,6 +4,8 @@
 
 import React from 'react';
 
+import Event from '../app/Event';
+import { Floor } from '../app/Floor';
 import MenuListItem from './MenuListItem';
 import { Volunteer } from '../app/Volunteer';
 import slug from '../app/util/Slug';
@@ -20,15 +22,16 @@ import PanoramaHorizontalIcon from '@material-ui/icons/PanoramaHorizontalOutline
 import PeopleIcon from '@material-ui/icons/PeopleOutlined';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import SettingsIcon from '@material-ui/icons/Settings';
+import SvgIcon from '@material-ui/core/SvgIcon';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
-        debug: {
-            padding: theme.spacing.unit * 2,
-            paddingTop: theme.spacing.unit
+        floorIcon: {
+            width: '1em',
+            height: '1em',
         }
     });
 
@@ -42,9 +45,9 @@ interface Properties {
     enableDebug: boolean;
 
     /**
-     * The volunteer for whom the portal is being displayed, if any.
+     * The event for which the menu is being displayed.
      */
-    volunteer?: Volunteer;
+    event: Event;
 
     /**
      * Event listener that will be called when something in the menu has been clicked upon.
@@ -58,6 +61,8 @@ interface Properties {
  */
 class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
     render() {
+        const { classes, event } = this.props;
+
         let debugOptions: JSX.Element | null = null;
 
         // Users for whom the debug mode is enabled get a number of additional options in the menu
@@ -81,11 +86,13 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
             );
         }
 
+        const floors = event.getFloors();
+        const volunteer = event.getCurrentVolunteer();
+
         // Link to the page that contains the schedule of the volunteer that's currently logged in,
         // if the user is associated with a volunteer.
-        const volunteerScheduleLink =
-            this.props.volunteer ? '/volunteers/' + slug(this.props.volunteer.name)
-                                 : null;
+        const volunteerScheduleLink = volunteer ? '/volunteers/' + slug(volunteer.name)
+                                                : null;
 
         return (
             <div>
@@ -124,37 +131,28 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
 
                 <Divider />
 
-                {/* TODO: It'd be great to specify these in the program JSON.. not quite sure how
-                          that would interact with WebPack and included SVGs, however. */}
                 <List>
 
-                    <MenuListItem to="/schedule/floor/0" onClick={this.props.onClick}>
-                        <ListItemIcon>
-                            <BubbleChartIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Halls" />
-                    </MenuListItem>
+                    { Array.from(floors).map((floor: Floor) => {
+                        const destination = '/schedule/floor/' + floor.id;
 
-                    <MenuListItem to="/schedule/floor/1" onClick={this.props.onClick}>
-                        <ListItemIcon>
-                            <BookIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Ports" />
-                    </MenuListItem>
+                        return (
+                            <MenuListItem
+                                key={floor.id}
+                                to={destination}
+                                onClick={this.props.onClick}>
 
-                    <MenuListItem to="/schedule/floor/2" onClick={this.props.onClick}>
-                        <ListItemIcon>
-                            <PanoramaHorizontalIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Conference" />
-                    </MenuListItem>
+                                { floor.icon && <ListItemIcon>
+                                                    <SvgIcon>
+                                                        <use xlinkHref={floor.icon} />
+                                                    </SvgIcon>
+                                                </ListItemIcon> }
 
-                    <MenuListItem to="/schedule/floor/3" onClick={this.props.onClick}>
-                        <ListItemIcon>
-                            <MovieIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Docks" />
-                    </MenuListItem>
+                                <ListItemText primary={floor.label} />
+
+                            </MenuListItem>
+                        );
+                    }) }
 
                 </List>
 
