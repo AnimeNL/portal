@@ -9,5 +9,6 @@ import { IProgramSession } from './IProgramSession';
  */
 export interface IProgramEvent {
     id: number;
+    internal: boolean;
     sessions: IProgramSession[];
 }

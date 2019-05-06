@@ -7,5 +7,6 @@
  */
 export interface ILocation {
     id: number;
+    floorId: number;
     label: string;
 }
