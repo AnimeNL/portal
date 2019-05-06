@@ -5,6 +5,8 @@
 import EventLoader from './EventLoader';
 import { Floor } from './Floor';
 import { Location } from './Location';
+import { ProgramEvent } from './ProgramEvent';
+import { ProgramSession } from './ProgramSession';
 import User from './User';
 import { Volunteer } from './Volunteer';
 import { VolunteerGroup } from './VolunteerGroup';
@@ -15,6 +17,11 @@ import { VolunteerGroup } from './VolunteerGroup';
  */
 class Event {
     private available: boolean = false;
+
+    /**
+     * Mapping from an event Id to an object detailing it.
+     */
+    private events: Map<number, ProgramEvent> = new Map();
 
     /**
      * Mapping from a floor identifier to an object detailing it.
@@ -72,6 +79,20 @@ class Event {
                     throw new Error('Invalid floor for location: ' + info.id);
 
                 this.locations.set(info.id, new Location(info, floor));
+            }
+
+            for (const info of eventData.events) {
+                const sessions : ProgramSession[] = [];
+
+                for (const sessionInfo of info.sessions) {
+                    const location = this.locations.get(sessionInfo.locationId);
+                    if (!location)
+                        throw new Error('Invalid location for session: ' + info.id);
+
+                    sessions.push(new ProgramSession(sessionInfo, location));
+                }
+
+                this.events.set(info.id, new ProgramEvent(info, sessions));
             }
 
             for (const info of eventData.volunteerGroups)

@@ -92,7 +92,7 @@ requests. May be cached offline.
 | :---             | :---               | :--- |
 | `id`             | `number`           | Id (number) of the event. Must be unique. |
 | `internal`       | `boolean`          | Whether this event is internal to the conference and not publicly announced. |
-| `sessions`       | `ProgramSession[]` | Id (number) of the floor this event will take place on. |
+| `sessions`       | `ProgramSession[]` | Array detailing the sessions that are part of this event. |
 
 ##### `ProgramSession` interface
 
