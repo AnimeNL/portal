@@ -3,10 +3,11 @@
 // be found in the LICENSE file.
 
 import { IEvent } from './api/IEvent';
+import { IFloor } from './api/IFloor';
 import { IVolunteerInfo } from './api/IVolunteerInfo';
 import { IVolunteerGroup } from './api/IVolunteerGroup';
 import { EventPath, mockableFetch } from '../config';
-import { isBoolean, isString, isStringOrNull } from './util/Validators';
+import { isBoolean, isNumber, isString, isStringOrNull } from './util/Validators';
 
 /**
  * Enumeration detailing the possible outcomes of loading the event data.
@@ -152,6 +153,16 @@ class EventLoader {
             return false;
         }
 
+        if (!event.hasOwnProperty('floors') || !Array.isArray(event.floors)) {
+            console.error('Unable to validate IEvent.floors');
+            return false;
+        }
+
+        for (const floor of event.floors) {
+            if (!this.validateFloor(floor))
+                return false;
+        }
+
         if (!event.hasOwnProperty('volunteerGroups') || !Array.isArray(event.volunteerGroups)) {
             console.error('Unable to validate IEvent.volunteerGroups.');
             return false;
@@ -170,6 +181,31 @@ class EventLoader {
         for (const volunteerInfo of event.volunteers) {
             if (!this.validateVolunteerInfo(volunteerInfo))
                 return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Validates that the given |floor| matches the IFloor interface.
+     *
+     * @param floor The data as fetched from an untrusted source.
+     * @return Whether the given |floor| conforms to the IFloor interface.
+     */
+    private validateFloor(floor: any): floor is IFloor {
+        if (!floor.hasOwnProperty('id') || !isNumber(floor.id)) {
+            console.error('Unable to validate IFloor.id.');
+            return false;
+        }
+
+        if (!floor.hasOwnProperty('label') || !isString(floor.label)) {
+            console.error('Unable to validate IFloor.label.');
+            return false;
+        }
+
+        if (!floor.hasOwnProperty('icon') || !isStringOrNull(floor.icon)) {
+            console.error('Unable to validate IFloor.icon.');
+            return false;
         }
 
         return true;

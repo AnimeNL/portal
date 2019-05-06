@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import EventLoader from './EventLoader';
+import { Floor } from './Floor';
 import User from './User';
 import { Volunteer } from './Volunteer';
 import { VolunteerGroup } from './VolunteerGroup';
@@ -13,6 +14,11 @@ import { VolunteerGroup } from './VolunteerGroup';
  */
 class Event {
     private available: boolean = false;
+
+    /**
+     * Mapping from a floor identifier to an object detailing its data.
+     */
+    private floors: Map<number, Floor> = new Map();
 
     /**
      * Mapping from a group's token to an object detailing its details.
@@ -51,6 +57,9 @@ class Event {
         // While we've verified the format of the |eventData|, there can still be a slew of other
         // issues with it, particularly invalid cross-references.
         try {
+            for (const info of eventData.floors)
+                this.floors.set(info.id, new Floor(info));
+
             for (const info of eventData.volunteerGroups)
                 this.volunteerGroups.set(info.groupToken, new VolunteerGroup(info));
 
@@ -84,6 +93,13 @@ class Event {
      */
     getCurrentVolunteer(): Volunteer | undefined {
         return this.volunteer;
+    }
+
+    /**
+     * Returns an iterator that provides access to all floors.
+     */
+    getFloors(): IterableIterator<Floor> {
+        return this.floors.values();
     }
 
     /**
