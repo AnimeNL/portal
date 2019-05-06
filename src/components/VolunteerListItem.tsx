@@ -4,6 +4,7 @@
 
 import React from 'react';
 
+import AccessCodeDialogButton from './AccessCodeDialogButton';
 import ConditionalLink from './ConditionalLink';
 import { Volunteer } from '../app/Volunteer';
 import slug from '../app/util/Slug';
@@ -57,13 +58,18 @@ class VolunteerListItem extends React.Component<Properties & WithStyles<typeof s
         const { classes, type, volunteer } = this.props;
 
         let location: string | undefined = '/volunteers/' + slug(volunteer.name);
+
         let primary = volunteer.name;
         let secondary = null;
+        let actions = null;
 
         switch (type) {
             case 'header':
                 location = undefined;
                 secondary = volunteer.title;
+                actions = (
+                    <AccessCodeDialogButton volunteer={volunteer} />
+                );
                 break;
             case 'status':
                 // TODO: Include the volunteer's current shift.
@@ -82,6 +88,7 @@ class VolunteerListItem extends React.Component<Properties & WithStyles<typeof s
                     <ListItemText
                         primary={primary}
                         secondary={secondary} />
+                    {actions}
                 </ListItem>
             </ConditionalLink>
         );
