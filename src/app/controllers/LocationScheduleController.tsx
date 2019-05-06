@@ -4,7 +4,6 @@
 
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import bind from 'bind-decorator';
 
 import ApplicationProperties from '../ApplicationProperties';
 import { Location } from '../Location';
@@ -55,7 +54,7 @@ class LocationScheduleController extends React.Component<Properties, State> {
         const locationId = parseInt(identifier);
 
         for (const location of event.getLocations()) {
-            if (location.id != locationId)
+            if (location.id !== locationId)
                 continue;
 
             this.setState({ location });

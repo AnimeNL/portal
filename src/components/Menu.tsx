@@ -7,33 +7,17 @@ import React from 'react';
 import Event from '../app/Event';
 import { Floor } from '../app/Floor';
 import MenuListItem from './MenuListItem';
-import { Volunteer } from '../app/Volunteer';
 import slug from '../app/util/Slug';
 
-import BookIcon from '@material-ui/icons/BookOutlined';
-import BubbleChartIcon from '@material-ui/icons/BubbleChartOutlined'
 import Divider from '@material-ui/core/Divider';
 import InboxIcon from '@material-ui/icons/Inbox';
 import List from '@material-ui/core/List';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import MovieIcon from '@material-ui/icons/MovieOutlined';
-import PanoramaHorizontalIcon from '@material-ui/icons/PanoramaHorizontalOutlined';
 import PeopleIcon from '@material-ui/icons/PeopleOutlined';
 import ScheduleIcon from '@material-ui/icons/Schedule';
 import SettingsIcon from '@material-ui/icons/Settings';
 import SvgIcon from '@material-ui/core/SvgIcon';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import createStyles from '@material-ui/core/styles/createStyles';
-import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-
-const styles = (theme: Theme) =>
-    createStyles({
-        floorIcon: {
-            width: '1em',
-            height: '1em',
-        }
-    });
 
 /**
  * Properties accepted by the <Menu> element.
@@ -59,9 +43,9 @@ interface Properties {
  * The <Menu> element represents the primary navigation for the volunteer portal. It provides access
  * to each of the primary pages and contains a live display of on-going events for areas.
  */
-class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
+class Menu extends React.Component<Properties> {
     render() {
-        const { classes, event } = this.props;
+        const { event } = this.props;
 
         let debugOptions: JSX.Element | null = null;
 
@@ -163,4 +147,4 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
     }
 }
 
-export default withStyles(styles)(Menu);
+export default Menu;

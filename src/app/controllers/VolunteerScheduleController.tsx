@@ -4,7 +4,6 @@
 
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
-import bind from 'bind-decorator';
 
 import ApplicationProperties from '../ApplicationProperties';
 import NotFound from '../../views/NotFound';

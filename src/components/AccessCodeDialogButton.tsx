@@ -8,7 +8,6 @@ import bind from 'bind-decorator';
 import { Volunteer } from '../app/Volunteer';
 
 import Button from '@material-ui/core/Button';
-import CloseIcon from '@material-ui/icons/Close';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';

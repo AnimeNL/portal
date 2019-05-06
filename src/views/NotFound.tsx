@@ -38,7 +38,7 @@ function NotFound(props : any) {
             direction="column"
             justify="center">
 
-            <img src="/static/images/404.png" />
+            <img src="/static/images/404.png" alt="Event-specific logo"/>
             <Typography className={classes.message} component="p" variant="h5">
                 Whoops!
             </Typography>

@@ -12,7 +12,6 @@ import Event from '../app/Event';
 import { Header, HeaderEvents } from '../components/Header';
 import Menu from '../components/Menu';
 import ResponsiveDrawer from '../components/ResponsiveDrawer';
-import { Volunteer } from '../app/Volunteer';
 import withRoot from '../withRoot';
 
 import { MuiPickersUtilsProvider } from 'material-ui-pickers';
