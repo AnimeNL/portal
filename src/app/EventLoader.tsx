@@ -4,6 +4,9 @@
 
 import { IEvent } from './api/IEvent';
 import { IFloor } from './api/IFloor';
+import { ILocation } from './api/ILocation';
+import { IProgramEvent } from './api/IProgramEvent';
+import { IProgramSession } from './api/IProgramSession';
 import { IVolunteerInfo } from './api/IVolunteerInfo';
 import { IVolunteerGroup } from './api/IVolunteerGroup';
 import { EventPath, mockableFetch } from '../config';
@@ -153,6 +156,16 @@ class EventLoader {
             return false;
         }
 
+        if (!event.hasOwnProperty('events') || !Array.isArray(event.events)) {
+            console.error('Unable to validate IEvent.events');
+            return false;
+        }
+
+        for (const programEvent of event.events) {
+            if (!this.validateEvent(programEvent))
+                return false;
+        }
+
         if (!event.hasOwnProperty('floors') || !Array.isArray(event.floors)) {
             console.error('Unable to validate IEvent.floors');
             return false;
@@ -160,6 +173,16 @@ class EventLoader {
 
         for (const floor of event.floors) {
             if (!this.validateFloor(floor))
+                return false;
+        }
+
+        if (!event.hasOwnProperty('locations') || !Array.isArray(event.locations)) {
+            console.error('Unable to validate IEvent.locations');
+            return false;
+        }
+
+        for (const location of event.locations) {
+            if (!this.validateLocation(location))
                 return false;
         }
 
@@ -205,6 +228,87 @@ class EventLoader {
 
         if (!floor.hasOwnProperty('icon') || !isStringOrNull(floor.icon)) {
             console.error('Unable to validate IFloor.icon.');
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Validates that the given |location| matches the ILocation interface.
+     *
+     * @param location The data as fetched from an untrusted source.
+     * @return Whether the given |location| conforms to the ILocation interface.
+     */
+    private validateLocation(location: any): location is ILocation {
+        if (!location.hasOwnProperty('id') || !isNumber(location.id)) {
+            console.error('Unable to validate ILocation.id.');
+            return false;
+        }
+
+        if (!location.hasOwnProperty('label') || !isString(location.label)) {
+            console.error('Unable to validate ILocation.label.');
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Validates that the given |programEvent| matches the IProgramEvent interface.
+     *
+     * @param programEvent The data as fetched from an untrusted source.
+     * @return Whether the given |programEvent| conforms to the IProgramEvent interface.
+     */
+    private validateProgramEvent(programEvent: any): programEvent is IProgramEvent {
+        if (!programEvent.hasOwnProperty('id') || !isNumber(programEvent.id)) {
+            console.error('Unable to validate IProgramEvent.id.');
+            return false;
+        }
+
+        if (!programEvent.hasOwnProperty('sessions') || !Array.isArray(programEvent.sessions)) {
+            console.error('Unable to validate IProgramEvent.icon.');
+            return false;
+        }
+
+        for (const programSession of programEvent.sessions) {
+            if (!this.validateProgramSession(programSession))
+                return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Validates that the given |programSession| matches the IProgramSession interface.
+     *
+     * @param programSession The data as fetched from an untrusted source.
+     * @return Whether the given |programSession| conforms to the IProgramSession interface.
+     */
+    private validateProgramSession(programSession: any): programSession is IProgramSession {
+        if (!programSession.hasOwnProperty('name') || !isString(programSession.name)) {
+            console.error('Unable to validate IProgramSession.name.');
+            return false;
+        }
+
+        if (!programSession.hasOwnProperty('description') ||
+            !isStringOrNull(programSession.description)) {
+            console.error('Unable to validate IProgramSession.description.');
+            return false;
+        }
+
+        if (!programSession.hasOwnProperty('locationId') || !isNumber(programSession.locationId)) {
+            console.error('Unable to validate IProgramSession.locationId.');
+            return false;
+        }
+
+        if (!programSession.hasOwnProperty('beginTime') || !isNumber(programSession.beginTime)) {
+            console.error('Unable to validate IProgramSession.beginTime.');
+            return false;
+        }
+
+        if (!programSession.hasOwnProperty('endTime') || !isNumber(programSession.endTime)) {
+            console.error('Unable to validate IProgramSession.endTime.');
             return false;
         }
 
