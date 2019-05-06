@@ -64,8 +64,10 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
                 continue;
 
             this.setState({ volunteer });
-            break;
+            return;
         }
+
+        this.setState({ volunteer: undefined });
     }
 
     render() {

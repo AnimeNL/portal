@@ -134,7 +134,7 @@ class Menu extends React.Component<Properties & WithStyles<typeof styles>> {
                 <List>
 
                     { Array.from(floors).map((floor: Floor) => {
-                        const destination = '/schedule/floor/' + floor.id;
+                        const destination = '/schedule/floors/' + floor.id + '/' + slug(floor.label);
 
                         return (
                             <MenuListItem

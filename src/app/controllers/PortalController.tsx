@@ -7,6 +7,7 @@ import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import bind from 'bind-decorator';
 
 import ApplicationProperties from '../ApplicationProperties';
+import FloorScheduleController from './FloorScheduleController';
 import InternalsController from './InternalsController';
 import OverviewController from './OverviewController';
 import ScheduleController from './ScheduleController';
@@ -67,7 +68,7 @@ class PortalController extends React.Component<ApplicationProperties> {
                 <Switch>
 
                     {/* Pages specific to the logged in user. */}
-                    <RouteController path="/schedule" component={ScheduleController} />
+                    <RouteController path="/schedule/floors/:floor" component={FloorScheduleController} />
                     <RouteController path="/volunteers" exact component={VolunteerListController} />
                     <RouteController path="/volunteers/:slug" component={VolunteerScheduleController} />
                     <RouteController path="/" exact component={OverviewController} />
