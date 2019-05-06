@@ -100,11 +100,12 @@ class AccessCodeDialogButton extends React.Component<Properties, State> {
         const supportsCopyToClipboard = navigator.clipboard && navigator.clipboard.writeText;
 
         return (
-            <ListItemSecondaryAction>
-
-                <IconButton onClick={this.openDialog} aria-label="Display access code">
-                    <LockIcon />
-                </IconButton>
+            <>
+                <ListItemSecondaryAction>
+                    <IconButton onClick={this.openDialog} aria-label="Display access code">
+                        <LockIcon />
+                    </IconButton>
+                </ListItemSecondaryAction>
 
                 <Dialog open={this.state.dialogOpen} onClose={this.closeDialog}>
                     <DialogTitle>
@@ -132,8 +133,7 @@ class AccessCodeDialogButton extends React.Component<Properties, State> {
                     open={this.state.snackbarOpen}
                     onClose={this.closeConfirmationSnackbar}
                     message="Copied to clipboard" />
-
-            </ListItemSecondaryAction>
+            </>
         );
     }
 }

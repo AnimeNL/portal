@@ -29,6 +29,7 @@ const styles = (theme: Theme) =>
         },
         appBar: {
             marginLeft: kDrawerWidth,
+            paddingRight: '0px !important',
             [theme.breakpoints.up('sm')]: {
                 zIndex: theme.zIndex.drawer + 1,
             },
