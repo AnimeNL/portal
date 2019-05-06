@@ -12,14 +12,6 @@ import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import createStyles from '@material-ui/core/styles/createStyles';
-import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-
-const styles = (theme: Theme) =>
-    createStyles({
-        // TODO: Define the styles for this element.
-    });
 
 /**
  * Properties accepted by the <VolunteerListPage> element.
@@ -52,7 +44,7 @@ interface Properties {
  * name and an avatar, as well as their title and, if any, their current activity. When there are
  * multiple groups of volunteers, a tab switcher will be shown as well.
  */
-class VolunteerListPage extends React.Component<Properties & WithStyles<typeof styles>> {
+export class VolunteerListPage extends React.Component<Properties> {
     render() {
         const { activeGroupIndex, groups, onVolunteerGroupChange, volunteers } = this.props;
 
@@ -92,6 +84,3 @@ class VolunteerListPage extends React.Component<Properties & WithStyles<typeof s
         );
     }
 }
-
-const StyledVolunteerListPage = withStyles(styles)(VolunteerListPage);
-export { StyledVolunteerListPage as VolunteerListPage };
