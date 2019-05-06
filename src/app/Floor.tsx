@@ -3,15 +3,25 @@
 // be found in the LICENSE file.
 
 import { IFloor } from './api/IFloor';
+import { Location } from './Location';
 
 /**
  * Represents a floor or area of the event.
  */
 export class Floor {
     info: IFloor;
+    locations: Location[];
 
     constructor(info: IFloor) {
         this.info = info;
+        this.locations = [];
+    }
+
+    /**
+     * Adds the given |location| to the list of locations that exist on this floor.
+     */
+    addLocation(location: Location): void {
+        this.locations.push(location);
     }
 
     /**

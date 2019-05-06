@@ -14,7 +14,9 @@ export class Location {
 
     constructor(info: ILocation, floor: Floor) {
         this.info = info;
+
         this.floor_ = floor;
+        this.floor_.addLocation(this);
     }
 
     /**
