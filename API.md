@@ -64,7 +64,9 @@ requests. May be cached offline.
 | Property          | Type               | Description |
 | :---              | :---               | :--- |
 | `success`         | `boolean`          | Always set to `true` to indicate that event data is available. |
+| `events`          | `ProgramEvent[]`   | Array with information about the events that will take place. |
 | `floors`          | `Floor[]`          | Array with information about the floors available for the event. |
+| `locations`       | `Location[]`       | Array with information about the locations available for the event. |
 | `volunteerGroups` | `VolunteerGroup[]` | Array with information about the different groups of volunteers. |
 | `volunteers`      | `VolunteerInfo[]`  | Array with information for all the event's volunteers. |
 
@@ -75,6 +77,30 @@ requests. May be cached offline.
 | `id`             | `number`  | Id (number) of the floor. Usually begins with zero. |
 | `label`          | `string`  | Label describing the name of the floor. |
 | `icon`           | `string?` | URL to an SVG definition icon that should be displayed for this floor. Optional. |
+
+##### `Location` interface
+
+| Property         | Type      | Description |
+| :---             | :---      | :--- |
+| `id`             | `number`  | Id (number) of the location. Must be unique. |
+| `label`          | `string`  | Label describing the name of the location. |
+
+##### `ProgramEvent` interface
+
+| Property         | Type               | Description |
+| :---             | :---               | :--- |
+| `id`             | `number`           | Id (number) of the event. Must be unique. |
+| `sessions`       | `ProgramSession[]` | Id (number) of the floor this event will take place on. |
+
+##### `ProgramSession` interface
+
+| Property         | Type      | Description |
+| :---             | :---      | :--- |
+| `name`           | `string`  | Name of the event. |
+| `description`    | `string?` | Description of the event. |
+| `locationId`     | `number`  | Id of the location in which the session will be taking place. |
+| `beginTime`      | `number`  | Time, in seconds since the UNIX epoch, at which session begins. |
+| `endTime`        | `number`  | Time, in seconds since the UNIX epoch, at which session ends. |
 
 ##### `VolunteerGroup` interface
 

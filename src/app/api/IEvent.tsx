@@ -3,6 +3,8 @@
 // be found in the LICENSE file.
 
 import { IFloor } from './IFloor';
+import { ILocation } from './ILocation';
+import { IProgramEvent } from './IProgramEvent';
 import { IVolunteerGroup } from './IVolunteerGroup';
 import { IVolunteerInfo } from './IVolunteerInfo';
 
@@ -11,7 +13,9 @@ import { IVolunteerInfo } from './IVolunteerInfo';
  */
 export interface IEvent {
     success: boolean;
+    events: IProgramEvent[];
     floors: IFloor[];
+    locations: ILocation[];
     volunteerGroups: IVolunteerGroup[];
     volunteers: IVolunteerInfo[];
 }
