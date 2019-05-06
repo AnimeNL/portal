@@ -83,6 +83,7 @@ requests. May be cached offline.
 | Property         | Type      | Description |
 | :---             | :---      | :--- |
 | `id`             | `number`  | Id (number) of the location. Must be unique. |
+| `floorId`        | `number`  | Id (number) of the floor where this location is. Usually begins with zero. |
 | `label`          | `string`  | Label describing the name of the location. |
 
 ##### `ProgramEvent` interface
@@ -90,6 +91,7 @@ requests. May be cached offline.
 | Property         | Type               | Description |
 | :---             | :---               | :--- |
 | `id`             | `number`           | Id (number) of the event. Must be unique. |
+| `internal`       | `boolean`          | Whether this event is internal to the conference and not publicly announced. |
 | `sessions`       | `ProgramSession[]` | Id (number) of the floor this event will take place on. |
 
 ##### `ProgramSession` interface

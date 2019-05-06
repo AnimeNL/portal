@@ -162,7 +162,7 @@ class EventLoader {
         }
 
         for (const programEvent of event.events) {
-            if (!this.validateEvent(programEvent))
+            if (!this.validateProgramEvent(programEvent))
                 return false;
         }
 
@@ -246,6 +246,11 @@ class EventLoader {
             return false;
         }
 
+        if (!location.hasOwnProperty('floorId') || !isNumber(location.floorId)) {
+            console.error('Unable to validate ILocation.floorId.');
+            return false;
+        }
+
         if (!location.hasOwnProperty('label') || !isString(location.label)) {
             console.error('Unable to validate ILocation.label.');
             return false;
@@ -263,6 +268,11 @@ class EventLoader {
     private validateProgramEvent(programEvent: any): programEvent is IProgramEvent {
         if (!programEvent.hasOwnProperty('id') || !isNumber(programEvent.id)) {
             console.error('Unable to validate IProgramEvent.id.');
+            return false;
+        }
+
+        if (!programEvent.hasOwnProperty('internal') || !isBoolean(programEvent.internal)) {
+            console.error('Unable to validate IProgramEvent.internal.');
             return false;
         }
 
