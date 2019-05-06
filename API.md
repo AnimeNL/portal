@@ -64,8 +64,17 @@ requests. May be cached offline.
 | Property          | Type               | Description |
 | :---              | :---               | :--- |
 | `success`         | `boolean`          | Always set to `true` to indicate that event data is available. |
+| `floors`          | `Floor[]`          | Array with information about the floors available for the event. |
 | `volunteerGroups` | `VolunteerGroup[]` | Array with information about the different groups of volunteers. |
 | `volunteers`      | `VolunteerInfo[]`  | Array with information for all the event's volunteers. |
+
+##### `Floor` interface
+
+| Property         | Type      | Description |
+| :---             | :---      | :--- |
+| `id`             | `number`  | Id (number) of the floor. Usually begins with zero. |
+| `label`          | `string`  | Label describing the name of the floor. |
+| `icon`           | `string?` | URL to an icon that should be displayed for this floor. Optional. |
 
 ##### `VolunteerGroup` interface
 
