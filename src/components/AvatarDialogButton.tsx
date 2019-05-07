@@ -118,8 +118,13 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
      */
     @bind
     openAvatarUploadDialog() {
+        const { volunteer } = this.props;
+        const selectedPicture = volunteer.avatar ? 'url(' + volunteer.avatar + ')'
+                                                 : undefined;
+
         this.setState({
-            uploadDialogOpen: true
+            uploadDialogOpen: true,
+            selectedPicture
         });
     }
 
