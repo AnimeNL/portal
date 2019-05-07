@@ -75,8 +75,9 @@ class Menu extends React.Component<Properties> {
 
         // Determine name to for the Volunteers menu item
         // Only show as Volunteers if you have access to more than one group.
-        const volunteerGroupName = Array.from(event.getVolunteerGroups()).length > 1 ?
-            'Volunteers' : Array.from(event.getVolunteerGroups())[0].label;
+        const volunteerGroups = Array.from(event.getVolunteerGroups());
+        const volunteerGroupName = volunteerGroups.length > 1 ?
+            'Volunteers' : volunteerGroups[0].label;
 
         // Link to the page that contains the schedule of the volunteer that's currently logged in,
         // if the user is associated with a volunteer.
