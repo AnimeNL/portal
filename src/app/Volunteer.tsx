@@ -34,8 +34,8 @@ export class Volunteer {
     /**
      * URL to the avatar that's to be displayed for this volunteer, if any.
      */
-    get avatar(): string | null {
-        return this.info.avatar;
+    get avatar(): string | undefined {
+        return this.info.avatar || undefined;
     }
 
     /**

@@ -3,7 +3,6 @@
 // be found in the LICENSE file.
 
 import React from 'react';
-import bind from 'bind-decorator';
 
 import AccessCodeDialogButton from './AccessCodeDialogButton';
 import AvatarDialogButton from './AvatarDialogButton';
@@ -35,11 +34,6 @@ interface Properties {
     volunteer: Volunteer;
 
     /**
-     * Whether the avatar is editable. A dialog will be shown in case it is.
-     */
-    editable?: boolean;
-
-    /**
      * Type of list item that should be rendered. The contents of the list item will automatically
      * be compiled based on the |volunteer| property.
      *
@@ -48,6 +42,12 @@ interface Properties {
      *   "status": Displays the volunteer's name, title and current shift, if any. Linked.
      */
     type: "header" | "status";
+
+    /**
+     * An event that is to be invoked if the photo of the |volunteer| has been updated. The ability
+     * to change the photo will be enabled based on whether this property has been set.
+     */
+    onPictureUpdated?: (imageData: string) => Promise<boolean>;
 }
 
 /**
@@ -56,7 +56,7 @@ interface Properties {
  */
 class VolunteerListItem extends React.Component<Properties & WithStyles<typeof styles>> {
     render() {
-        const { classes, editable, type, volunteer } = this.props;
+        const { classes, onPictureUpdated, type, volunteer } = this.props;
 
         let location: string | undefined = '/volunteers/' + slug(volunteer.name);
 
@@ -83,7 +83,7 @@ class VolunteerListItem extends React.Component<Properties & WithStyles<typeof s
         return (
             <ConditionalLink className={classes.link} to={location}>
                 <ListItem button={!!location}>
-                    <AvatarDialogButton editable={editable} volunteer={volunteer} />
+                    <AvatarDialogButton volunteer={volunteer} onPictureUpdated={onPictureUpdated} />
                     <ListItemText
                         primary={primary}
                         secondary={secondary} />

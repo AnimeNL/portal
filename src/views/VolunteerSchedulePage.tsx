@@ -26,6 +26,12 @@ interface Properties {
      * The volunteer for whom this page is being displayed.
      */
     volunteer: Volunteer;
+
+    /**
+     * An event that is to be invoked if the photo of the |volunteer| has been updated. The ability
+     * to change the photo will be enabled based on whether this property has been set.
+     */
+    onPictureUpdated?: (imageData: string) => Promise<boolean>;
 }
 
 /**
@@ -33,14 +39,15 @@ interface Properties {
  */
 class VolunteerSchedulePage extends React.Component<Properties & WithStyles<typeof styles>> {
     render() {
-        const { classes, volunteer } = this.props;
+        const { classes, onPictureUpdated, volunteer } = this.props;
 
         return (
             <React.Fragment>
 
                 <Paper square>
                     <List>
-                        <VolunteerListItem volunteer={volunteer} editable
+                        <VolunteerListItem onPictureUpdated={onPictureUpdated}
+                                           volunteer={volunteer}
                                            type="header" />
                     </List>
                 </Paper>

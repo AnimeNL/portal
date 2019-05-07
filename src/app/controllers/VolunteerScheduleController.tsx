@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+import bind from 'bind-decorator';
 
 import ApplicationProperties from '../ApplicationProperties';
 import NotFound from '../../views/NotFound';
@@ -69,6 +70,21 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
         this.setState({ volunteer: undefined });
     }
 
+    /**
+     * Called when the picture for this volunteer has been updated with the given |imageData|,
+     * which is a base64-encoded string (including header) of the new photo.
+     */
+    @bind
+    async onPictureUpdated(imageData: string): Promise<boolean> {
+        if (!this.state.volunteer)
+            return false;
+
+        // TODO: Actually upload the photo.
+
+        this.state.volunteer.info.avatar = imageData;
+        return true;
+    }
+
     render() {
         const { volunteer } = this.state;
 
@@ -77,8 +93,10 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
         if (!volunteer)
             return <NotFound />;
 
+        // TODO: Only enable editting when we should.
         return (
-            <VolunteerSchedulePage volunteer={volunteer} />
+            <VolunteerSchedulePage onPictureUpdated={this.onPictureUpdated}
+                                   volunteer={volunteer} />
         );
     }
 }

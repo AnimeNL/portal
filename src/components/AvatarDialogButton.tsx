@@ -14,12 +14,9 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
-import LinearProgress from '@material-ui/core/LinearProgress';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
@@ -78,9 +75,10 @@ interface Properties {
     volunteer: Volunteer;
 
     /**
-     * Whether the avatar is editable. A dialog will be shown in case it is.
+     * An event that is to be invoked if the photo of the |volunteer| has been updated. The ability
+     * to change the photo will be enabled based on whether this property has been set.
      */
-    editable?: boolean;
+    onPictureUpdated?: (imageData: string) => Promise<boolean>;
 }
 
 /**
@@ -109,7 +107,7 @@ interface State {
  */
 class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof styles>, State> {
     state: State = {
-        uploadDialogOpen: true,
+        uploadDialogOpen: false,
         uploadSaving: false,
     };
 
@@ -119,12 +117,10 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
     @bind
     openAvatarUploadDialog() {
         const { volunteer } = this.props;
-        const selectedPicture = volunteer.avatar ? 'url(' + volunteer.avatar + ')'
-                                                 : undefined;
 
         this.setState({
             uploadDialogOpen: true,
-            selectedPicture
+            selectedPicture: volunteer.avatar,
         });
     }
 
@@ -139,7 +135,7 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
         fileReader.addEventListener('load', _ => {
             if (typeof fileReader.result !== 'string') return;
             this.setState({
-                selectedPicture: 'url(' + fileReader.result + ')',
+                selectedPicture: fileReader.result,
             });
         });
 
@@ -162,34 +158,48 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
      * take a little bit of time before the dialog dismisses.
      */
     @bind
-    confirmAvatarUploadDialog() {
+    async confirmAvatarUploadDialog() {
+        const { selectedPicture } = this.state;
+        const { onPictureUpdated } = this.props;
+
+        // The |onPictureUpdated| event must be set in order for uploading photos to be enabled. A
+        // picture has to be selected in order to upload anything at all.
+        if (!onPictureUpdated || !selectedPicture)
+            return;
+
         this.setState({ uploadSaving: true });
 
-        // TODO: Actually upload the avatar.
+        await onPictureUpdated(selectedPicture);
+        // TODO: Handle |result|==false
 
-        setTimeout(() => {
-            this.setState({
-                uploadDialogOpen: false,
-                uploadSaving: false,
-            });
-        }, 2500);
+        this.setState({
+            uploadDialogOpen: false,
+            uploadSaving: false,
+        });
     }
 
     render() {
-        const { classes, editable, volunteer } = this.props;
+        const { classes, onPictureUpdated, volunteer } = this.props;
 
-        // If the avatar is not editable, which will be the common case, bail out early.
-        if (!editable) {
+        // If the |onPictureUpdated| event has not been set, bail out. This is the common case since
+        // the ability to upload new photos is limited to the current user and admins.
+        if (!onPictureUpdated) {
             return (
-                <Avatar>
+                <Avatar src={volunteer.avatar}>
                     {nameInitials(volunteer.name)}
                 </Avatar>
             );
         }
 
+        const selectedAvatar =
+            this.state.selectedPicture ? 'url(' + this.state.selectedPicture + ')'
+                                       : undefined;
+
         return (
             <>
-                <Avatar className={classes.clickable} onClick={this.openAvatarUploadDialog}>
+                <Avatar src={volunteer.avatar}
+                        className={classes.clickable}
+                        onClick={this.openAvatarUploadDialog}>
                     {nameInitials(volunteer.name)}
                 </Avatar>
 
@@ -202,7 +212,7 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
 
                     <DialogContent className={classes.uploadBackground}>
                         <div className={classes.uploadSheet}
-                             style={{ backgroundImage: this.state.selectedPicture }}>
+                             style={{ backgroundImage: selectedAvatar }}>
 
                             <input accept="foobar;image/*"
                                    className={classes.invisibleInput}

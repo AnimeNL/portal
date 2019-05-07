@@ -4,7 +4,6 @@
 
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import React from 'react';
-import moment from 'moment';
 
 import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
