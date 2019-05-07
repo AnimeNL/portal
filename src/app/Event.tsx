@@ -83,16 +83,17 @@ class Event {
 
             for (const info of eventData.events) {
                 const sessions : ProgramSession[] = [];
+                const event = new ProgramEvent(info, sessions);
 
                 for (const sessionInfo of info.sessions) {
                     const location = this.locations.get(sessionInfo.locationId);
                     if (!location)
                         throw new Error('Invalid location for session: ' + info.id);
 
-                    sessions.push(new ProgramSession(sessionInfo, location));
+                    sessions.push(new ProgramSession(sessionInfo, event, location));
                 }
 
-                this.events.set(info.id, new ProgramEvent(info, sessions));
+                this.events.set(info.id, event);
             }
 
             for (const info of eventData.volunteerGroups)

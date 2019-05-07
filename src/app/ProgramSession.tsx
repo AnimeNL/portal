@@ -5,6 +5,7 @@
 import moment from 'moment';
 
 import { IProgramSession } from './api/IProgramSession';
+import { ProgramEvent } from './ProgramEvent';
 import { Location } from './Location';
 
 /**
@@ -13,16 +14,18 @@ import { Location } from './Location';
 export class ProgramSession {
     info: IProgramSession;
     beginTime_: moment.Moment;
+    event_: ProgramEvent;
     endTime_: moment.Moment;
 
     location_: Location;
 
-    constructor(info: IProgramSession, location: Location) {
+    constructor(info: IProgramSession, event: ProgramEvent, location: Location) {
         this.info = info;
 
         this.beginTime_ = moment.unix(info.beginTime);
         this.endTime_ = moment.unix(info.endTime);
 
+        this.event_ = event;
         this.location_ = location;
         this.location_.addSession(this);
     }
@@ -39,6 +42,13 @@ export class ProgramSession {
      */
     get description(): string | null {
         return this.info.description;
+    }
+
+    /**
+     * The event of the session
+     */
+    get event(): ProgramEvent {
+        return this.event_;
     }
 
     /**
