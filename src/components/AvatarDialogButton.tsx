@@ -42,6 +42,7 @@ const styles = (theme: Theme) =>
             justifyContent: 'center',
             padding: theme.spacing.unit,
 
+            backgroundSize: 'cover',
             backgroundColor: 'white',
             borderRadius: '125px',
 
@@ -87,6 +88,11 @@ interface Properties {
  */
 interface State {
     /**
+     * The selected picture in renderable form, if any.
+     */
+    selectedPicture?: string;
+
+    /**
      * Whether the upload dialog is being presented to the user.
      */
     uploadDialogOpen: boolean;
@@ -115,6 +121,24 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
         this.setState({
             uploadDialogOpen: true
         });
+    }
+
+    /**
+     * Called when a photo has been selected in the image picker interface. It should be loaded and
+     * be displayed as the background of the picker area.
+     */
+    handlePhotoSelected(selectedFiles: FileList | null) {
+        if (!selectedFiles || !selectedFiles[0]) return;
+
+        const fileReader = new FileReader();
+        fileReader.addEventListener('load', _ => {
+            if (typeof fileReader.result !== 'string') return;
+            this.setState({
+                selectedPicture: 'url(' + fileReader.result + ')',
+            });
+        });
+
+        fileReader.readAsDataURL(selectedFiles[0]);
     }
 
     /**
@@ -172,15 +196,17 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
                     </DialogTitle>
 
                     <DialogContent className={classes.uploadBackground}>
-                        <div className={classes.uploadSheet}>
+                        <div className={classes.uploadSheet}
+                             style={{ backgroundImage: this.state.selectedPicture }}>
 
                             <input accept="foobar;image/*"
                                    className={classes.invisibleInput}
+                                   onChange={e => this.handlePhotoSelected(e.target.files)}
                                    id="icon-button-photo"
                                    type="file" />
 
                             <label htmlFor="icon-button-photo">
-                                <IconButton color="primary" component="span">
+                                <IconButton component="span">
                                     <PhotoCamera />
                                 </IconButton>
                             </label>
