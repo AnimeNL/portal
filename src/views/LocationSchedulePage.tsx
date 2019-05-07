@@ -8,15 +8,20 @@ import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
 import { Location } from '../app/Location';
 import { kDrawerWidth } from '../config';
+import { ProgramSession } from '../app/ProgramSession';
+import TimedListItem from '../components/TimedListItem';
 
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import LockIcon from '@material-ui/icons/Lock';
 import Paper from '@material-ui/core/Paper';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
+import grey from '@material-ui/core/colors/grey';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
@@ -27,7 +32,20 @@ const styles = (theme: Theme) =>
                 // Take away an extra 17px to compensate for the scrollbar that's always visible.
                 maxWidth: 'calc(100vw - 17px - ' + kDrawerWidth + 'px)',
             },
-        }
+            marginBottom: theme.spacing.unit * 2,
+        },
+        sessionName: {
+            fontWeight: 'bold',
+        },
+        sessionDescription: {
+            color: grey[600],
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
+        },
+        internalIcon: {
+            marginRight: theme.spacing.unit / 2,
+        },
     });
 
 /**
@@ -95,6 +113,33 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
                                           secondary={description}
                                           secondaryTypographyProps={{ noWrap: true }} />
                         </ListItem>
+                    </List>
+                </Paper>
+
+                <Paper className={classes.maximumWidthHeader}>
+                    <List>
+                        { location.sessions.map((session: ProgramSession) => {
+                            // TODO: Determine (background)color for this TimedLineItem
+                            const className = "";
+
+                            let internal: JSX.Element | null = null;
+                            if (session.event.internal) {
+                                internal = <LockIcon className={classes.internalIcon} fontSize="inherit" />;
+                            }
+
+                            return (
+                                <TimedListItem beginTime={session.beginTime}
+                                               endTime={session.endTime}
+                                               className={className}>
+                                    <Typography className={classes.sessionName}>
+                                        {internal}{session.name}
+                                    </Typography>
+                                    <Typography className={classes.sessionDescription}>
+                                        {session.description}
+                                    </Typography>
+                                </TimedListItem>
+                            );
+                        }) }
                     </List>
                 </Paper>
 
