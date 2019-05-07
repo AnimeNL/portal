@@ -3,23 +3,19 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
 
 import AccessCodeDialogButton from './AccessCodeDialogButton';
+import AvatarDialogButton from './AvatarDialogButton';
 import ConditionalLink from './ConditionalLink';
 import { Volunteer } from '../app/Volunteer';
 import slug from '../app/util/Slug';
 
-import Avatar from '@material-ui/core/Avatar';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-
-// Naive algorithm for getting the initials for a particular name: selecting the first and the last
-// capital available in the name.
-const nameInitials = (name: string) =>
-    name.replace(/[^A-Z]/g, '').replace(/^(.).*(.)/g, '$1$2');
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -39,6 +35,11 @@ interface Properties {
     volunteer: Volunteer;
 
     /**
+     * Whether the avatar is editable. A dialog will be shown in case it is.
+     */
+    editable?: boolean;
+
+    /**
      * Type of list item that should be rendered. The contents of the list item will automatically
      * be compiled based on the |volunteer| property.
      *
@@ -55,7 +56,7 @@ interface Properties {
  */
 class VolunteerListItem extends React.Component<Properties & WithStyles<typeof styles>> {
     render() {
-        const { classes, type, volunteer } = this.props;
+        const { classes, editable, type, volunteer } = this.props;
 
         let location: string | undefined = '/volunteers/' + slug(volunteer.name);
 
@@ -82,9 +83,7 @@ class VolunteerListItem extends React.Component<Properties & WithStyles<typeof s
         return (
             <ConditionalLink className={classes.link} to={location}>
                 <ListItem button={!!location}>
-                    <Avatar>
-                        {nameInitials(volunteer.name)}
-                    </Avatar>
+                    <AvatarDialogButton editable={editable} volunteer={volunteer} />
                     <ListItemText
                         primary={primary}
                         secondary={secondary} />

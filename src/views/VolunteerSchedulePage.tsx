@@ -40,7 +40,7 @@ class VolunteerSchedulePage extends React.Component<Properties & WithStyles<type
 
                 <Paper square>
                     <List>
-                        <VolunteerListItem volunteer={volunteer}
+                        <VolunteerListItem volunteer={volunteer} editable
                                            type="header" />
                     </List>
                 </Paper>
