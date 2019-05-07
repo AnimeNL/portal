@@ -7,6 +7,7 @@ import React from 'react';
 import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
 import { Location } from '../app/Location';
+import { kDrawerWidth } from '../config';
 
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
@@ -20,7 +21,13 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
-        // TODO: Define the styles for this element.
+        maximumWidthHeader: {
+            maxWidth: '100vw',
+            [theme.breakpoints.up('sm')]: {
+                // Take away an extra 17px to compensate for the scrollbar that's always visible.
+                maxWidth: 'calc(100vw - 17px - ' + kDrawerWidth + 'px)',
+            },
+        }
     });
 
 /**
@@ -74,7 +81,7 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
         return (
             <React.Fragment>
 
-                <Paper square>
+                <Paper className={classes.maximumWidthHeader} square>
                     <List>
                         <ListItem>
                             { location.floor.icon &&
@@ -83,7 +90,10 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
                                       <use xlinkHref={location.floor.icon} />
                                   </SvgIcon>
                               </Avatar> }
-                            <ListItemText primary={title} secondary={description} />
+                            <ListItemText primary={title}
+                                          primaryTypographyProps={{ noWrap: true }}
+                                          secondary={description}
+                                          secondaryTypographyProps={{ noWrap: true }} />
                         </ListItem>
                     </List>
                 </Paper>
