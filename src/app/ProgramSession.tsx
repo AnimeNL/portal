@@ -2,6 +2,8 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import moment from 'moment';
+
 import { IProgramSession } from './api/IProgramSession';
 import { Location } from './Location';
 
@@ -10,10 +12,16 @@ import { Location } from './Location';
  */
 export class ProgramSession {
     info: IProgramSession;
+    beginTime_: moment.Moment;
+    endTime_: moment.Moment;
+
     location_: Location;
 
     constructor(info: IProgramSession, location: Location) {
         this.info = info;
+
+        this.beginTime_ = moment.unix(info.beginTime);
+        this.endTime_ = moment.unix(info.endTime);
 
         this.location_ = location;
         this.location_.addSession(this);
@@ -43,14 +51,14 @@ export class ProgramSession {
     /**
      * Time, in seconds since the UNIX epoch, at which session begins.
      */
-    get beginTime(): number {
-        return this.info.beginTime;
+    get beginTime(): moment.Moment {
+        return this.beginTime_;
     }
 
     /**
      * Time, in seconds since the UNIX epoch, at which session ends.
      */
-    get endTime(): number {
-        return this.info.endTime;
+    get endTime(): moment.Moment {
+        return this.endTime_;
     }
 }

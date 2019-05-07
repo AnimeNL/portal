@@ -4,6 +4,7 @@
 
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import React from 'react';
+import moment from 'moment';
 
 import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
@@ -19,6 +20,7 @@ import ListItem from '@material-ui/core/ListItem';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
+import grey from '@material-ui/core/colors/grey';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 /**
@@ -37,7 +39,18 @@ const styles = (theme: Theme) =>
 
             padding: theme.spacing.unit,
             fontWeight: 500,
-        }
+        },
+        activeSession: {
+            // TODO: Styling for active sessions in the location card.
+            color: 'red',
+        },
+        futureSession: {
+            // TODO: Styling for future sessions in the location card.
+            color: 'blue',
+        },
+        noSession: {
+            color: grey[600],
+        },
     });
 
 /**
@@ -56,6 +69,21 @@ interface Properties extends WithStyles<typeof styles> {
 }
 
 /**
+ * Properties required to appropriately display a session on the location card.
+ */
+interface SessionDisplayInfo {
+    /**
+     * The program session that's about to be displayed on this page.
+     */
+    session: ProgramSession;
+
+    /**
+     * The class name that should be used to control presentation of this session.
+     */
+    className: string;
+}
+
+/**
  * The floor schedule page is responsible for displaying the locations available on a particular
  * floor, together with the events that are happening in them at the current time.
  */
@@ -65,9 +93,11 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
      * maximum of |kMaximumActiveSessions| will be returned, preferring active ones, then proceeding
      * with upcoming sessions. An empty array will be returned if there are no more sessions.
      */
-    private createSessionSelectionForLocation(location: Location): ProgramSession[] {
-        const currentTime : number = this.props.clock.getCurrentTimeMs() / 1000;
-        const selection : ProgramSession[] = [];
+    private createSessionSelectionForLocation(location: Location): SessionDisplayInfo[] {
+        const { classes, clock } = this.props;
+
+        const currentTime = clock.getMoment();
+        const selection: SessionDisplayInfo[] = [];
 
         // Create a sorted list of all the sessions in the |location| by their starting time.
         const sessions = Array.from(location.sessions).sort((lhs, rhs) => {
@@ -79,7 +109,10 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
             if (session.endTime < currentTime)
                 continue;
 
-            selection.push(session);
+            const className = session.beginTime <= currentTime ? classes.activeSession
+                                                               : classes.futureSession;
+
+            selection.push({ session, className });
 
             if (selection.length >= kMaximumActiveSessions)
                 break;
@@ -116,16 +149,16 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
 
                                 <List dense>
 
-                                    { sessions.map((session: ProgramSession) => {
+                                    { sessions.map((displayInfo: SessionDisplayInfo) => {
                                         return (
-                                            <ListItem>
-                                                {session.name}
+                                            <ListItem className={displayInfo.className}>
+                                                {displayInfo.session.name}
                                             </ListItem>
                                         );
                                     }) }
 
                                     { !sessions.length &&
-                                        <ListItem>
+                                        <ListItem className={classes.noSession}>
                                             <i>No more scheduled events in this location.</i>
                                         </ListItem>
                                     }
