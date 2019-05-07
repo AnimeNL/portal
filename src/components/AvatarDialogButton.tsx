@@ -15,20 +15,40 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
+import IconButton from '@material-ui/core/IconButton';
 import LinearProgress from '@material-ui/core/LinearProgress';
+import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
-        clickable: {
-            cursor: 'pointer',
+        clickable: { cursor: 'pointer' },
+        invisibleInput: { display: 'none' },
+
+        uploadBackground: {
+            borderTop: '1px solid #d0d0d0',
+            borderBottom: '1px solid #d0d0d0',
+            backgroundColor: theme.palette.divider,
+
+            padding: theme.spacing.unit * 2,
         },
+
         uploadSheet: {
-            borderTop: `1px solid ${theme.palette.divider}`,
-            borderBottom: `1px solid ${theme.palette.divider}`,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: theme.spacing.unit,
+
+            backgroundColor: 'white',
+            borderRadius: '125px',
+
+            width: '250px',
+            height: '250px',
         },
+
         saveButtonAnim: {
             position: 'absolute',
             top: '50%',
@@ -83,7 +103,7 @@ interface State {
  */
 class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof styles>, State> {
     state: State = {
-        uploadDialogOpen: false,
+        uploadDialogOpen: true,
         uploadSaving: false,
     };
 
@@ -144,15 +164,28 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
                     {nameInitials(volunteer.name)}
                 </Avatar>
 
-                <Dialog open={this.state.uploadDialogOpen} fullWidth
+                <Dialog open={this.state.uploadDialogOpen}
                         onClose={this.cancelAvatarUploadDialog}>
 
                     <DialogTitle>
-                        Upload a new picture
+                        Update picture
                     </DialogTitle>
 
-                    <DialogContent className={classes.uploadSheet}>
+                    <DialogContent className={classes.uploadBackground}>
+                        <div className={classes.uploadSheet}>
 
+                            <input accept="foobar;image/*"
+                                   className={classes.invisibleInput}
+                                   id="icon-button-photo"
+                                   type="file" />
+
+                            <label htmlFor="icon-button-photo">
+                                <IconButton color="primary" component="span">
+                                    <PhotoCamera />
+                                </IconButton>
+                            </label>
+
+                        </div>
                     </DialogContent>
 
                     <DialogActions>
