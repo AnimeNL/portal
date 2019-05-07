@@ -226,6 +226,11 @@ class EventLoader {
             return false;
         }
 
+        if (!floor.hasOwnProperty('iconColor') || !isStringOrNull(floor.iconColor)) {
+            console.error('Unable to validate IFloor.iconColor.');
+            return false;
+        }
+
         if (!floor.hasOwnProperty('icon') || !isStringOrNull(floor.icon)) {
             console.error('Unable to validate IFloor.icon.');
             return false;

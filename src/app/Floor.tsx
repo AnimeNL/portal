@@ -46,6 +46,13 @@ export class Floor {
     }
 
     /**
+     * Color (CSS value) that should be applied to the floor and its icons.
+     */
+    get iconColor(): string | null {
+        return this.info.iconColor;
+    }
+
+    /**
      * URL to an icon that should be displayed for this floor. Optional.
      */
     get icon(): string | null {

@@ -8,5 +8,6 @@
 export interface IFloor {
     id: number;
     label: string;
+    iconColor: string | null;
     icon: string | null;
 }

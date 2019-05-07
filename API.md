@@ -76,6 +76,7 @@ requests. May be cached offline.
 | :---             | :---      | :--- |
 | `id`             | `number`  | Id (number) of the floor. Usually begins with zero. |
 | `label`          | `string`  | Label describing the name of the floor. |
+| `iconColor`      | `string?` | Color ([CSS value](https://developer.mozilla.org/en-US/docs/Web/CSS/color_value)) that should be applied to the floor and its icons. |
 | `icon`           | `string?` | URL to an SVG definition icon that should be displayed for this floor. Optional. |
 
 ##### `Location` interface
