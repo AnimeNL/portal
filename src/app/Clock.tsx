@@ -69,13 +69,6 @@ class Clock {
             console.error('Could not store the time difference in local storage.', e);
         }
     }
-
-    /**
-     * Returns the current time in milliseconds.
-     */
-    getCurrentTimeMs(): number {
-        return Date.now();
-    }
 }
 
 export default Clock;

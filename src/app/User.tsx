@@ -2,7 +2,8 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import Clock from './Clock';
+import moment from 'moment';
+
 import { UserLoginPath, mockableFetch } from '../config';
 import { isBoolean, isNumber, isString } from './util/Validators';
 
@@ -33,15 +34,6 @@ class User {
     data?: LoginData;
 
     /**
-     * The clock through which the current time can be obtained.
-     */
-    clock: Clock;
-
-    constructor(clock: Clock) {
-        this.clock = clock;
-    }
-
-    /**
      * Initializes the user's login state based on local storage. The data will be verified on load,
      * and `this.data` will only be initialized when successful.
      *
@@ -68,8 +60,9 @@ class User {
             if (!this.validateConfiguration(data))
                 return;
 
-            // If the expiration time has passed, the data should be disregarded.
-            if (data.expirationTime < this.clock.getCurrentTimeMs())
+            // If the expiration time has passed, the data should be disregarded. This deliberately
+            // does not adhere to mocked time in the Clock.
+            if (moment.unix(data.expirationTime) < moment())
                 return;
 
             this.data = data;

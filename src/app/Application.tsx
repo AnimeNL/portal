@@ -55,7 +55,7 @@ class Application {
         this.container = container;
         this.clock = new Clock();
         this.environment = new Environment();
-        this.user = new User(this.clock);
+        this.user = new User();
         this.event = new Event();
     }
 
