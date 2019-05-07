@@ -73,6 +73,12 @@ class Menu extends React.Component<Properties> {
         const floors = event.getFloors();
         const volunteer = event.getCurrentVolunteer();
 
+        // Determine name to for the Volunteers menu item
+        // Only show as Volunteers if you have access to more than one group.
+        const volunteerGroups = Array.from(event.getVolunteerGroups());
+        const volunteerGroupName = volunteerGroups.length > 1 ?
+            'Volunteers' : volunteerGroups[0].label;
+
         // Link to the page that contains the schedule of the volunteer that's currently logged in,
         // if the user is associated with a volunteer.
         const volunteerScheduleLink = volunteer ? '/volunteers/' + slug(volunteer.name)
@@ -108,7 +114,7 @@ class Menu extends React.Component<Properties> {
                         <ListItemIcon>
                             <PeopleIcon />
                         </ListItemIcon>
-                        <ListItemText primary="Volunteers" />
+                        <ListItemText primary={volunteerGroupName} />
                     </MenuListItem>
 
                 </List>
