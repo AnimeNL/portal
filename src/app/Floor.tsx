@@ -48,8 +48,8 @@ export class Floor {
     /**
      * Color (CSS value) that should be applied to the floor and its icons.
      */
-    get iconColor(): string | null {
-        return this.info.iconColor;
+    get iconColor(): string | undefined {
+        return this.info.iconColor || undefined;
     }
 
     /**

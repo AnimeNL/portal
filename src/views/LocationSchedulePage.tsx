@@ -78,8 +78,8 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
                     <List>
                         <ListItem>
                             { location.floor.icon &&
-                              <Avatar>
-                                  <SvgIcon>
+                              <Avatar style={{ backgroundColor: location.floor.iconColor }}>
+                                  <SvgIcon nativeColor="white">
                                       <use xlinkHref={location.floor.icon} />
                                   </SvgIcon>
                               </Avatar> }

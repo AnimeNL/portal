@@ -133,7 +133,7 @@ class Menu extends React.Component<Properties> {
                                 onClick={this.props.onClick}>
 
                                 { floor.icon && <ListItemIcon>
-                                                    <SvgIcon>
+                                                    <SvgIcon nativeColor={floor.iconColor}>
                                                         <use xlinkHref={floor.icon} />
                                                     </SvgIcon>
                                                 </ListItemIcon> }
