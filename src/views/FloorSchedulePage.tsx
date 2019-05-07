@@ -15,6 +15,7 @@ import slug from '../app/util/Slug';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import Divider from '@material-ui/core/Divider';
+import LockIcon from '@material-ui/icons/Lock';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -50,6 +51,12 @@ const styles = (theme: Theme) =>
         },
         noSession: {
             color: grey[600],
+        },
+        internalEvent: {
+            backgroundColor: 'yellow',
+        },
+        internalIcon: {
+            marginRight: theme.spacing.unit / 2,
         },
     });
 
@@ -109,8 +116,11 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
             if (session.endTime < currentTime)
                 continue;
 
-            const className = session.beginTime <= currentTime ? classes.activeSession
-                                                               : classes.futureSession;
+            const className = session.event.internal ?
+                classes.internalEvent :
+                (session.beginTime <= currentTime ?
+                    classes.activeSession :
+                    classes.futureSession);
 
             selection.push({ session, className });
 
@@ -150,8 +160,16 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
                                 <List dense>
 
                                     { sessions.map((displayInfo: SessionDisplayInfo) => {
+                                        let internal: JSX.Element | null = null;
+                                        if (displayInfo.session.event.internal) {
+                                            internal = (
+                                                <LockIcon fontSize="inherit" className={classes.internalIcon} />
+                                            );
+                                        }
+
                                         return (
                                             <ListItem className={displayInfo.className}>
+                                                {internal}
                                                 {displayInfo.session.name}
                                             </ListItem>
                                         );
