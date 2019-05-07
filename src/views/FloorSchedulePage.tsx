@@ -15,9 +15,9 @@ import slug from '../app/util/Slug';
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import Divider from '@material-ui/core/Divider';
-import LockIcon from '@material-ui/icons/Lock';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import LockIcon from '@material-ui/icons/Lock';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -162,9 +162,8 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
                                     { sessions.map((displayInfo: SessionDisplayInfo) => {
                                         let internal: JSX.Element | null = null;
                                         if (displayInfo.session.event.internal) {
-                                            internal = (
-                                                <LockIcon fontSize="inherit" className={classes.internalIcon} />
-                                            );
+                                            internal = <LockIcon className={classes.internalIcon}
+                                                                 fontSize="inherit" />;
                                         }
 
                                         return (

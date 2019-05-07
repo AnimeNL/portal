@@ -5,8 +5,8 @@
 import moment from 'moment';
 
 import { IProgramSession } from './api/IProgramSession';
-import { ProgramEvent } from './ProgramEvent';
 import { Location } from './Location';
+import { ProgramEvent } from './ProgramEvent';
 
 /**
  * Represents a session of a particular event.
@@ -14,9 +14,9 @@ import { Location } from './Location';
 export class ProgramSession {
     info: IProgramSession;
     beginTime_: moment.Moment;
-    event_: ProgramEvent;
     endTime_: moment.Moment;
 
+    event_: ProgramEvent;
     location_: Location;
 
     constructor(info: IProgramSession, event: ProgramEvent, location: Location) {
@@ -45,7 +45,7 @@ export class ProgramSession {
     }
 
     /**
-     * The event of the session
+     * The event of the session.
      */
     get event(): ProgramEvent {
         return this.event_;
