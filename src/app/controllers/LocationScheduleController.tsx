@@ -7,6 +7,7 @@ import { RouteComponentProps } from 'react-router-dom';
 
 import ApplicationProperties from '../ApplicationProperties';
 import { Location } from '../Location';
+import { LocationSchedulePage } from '../../views/LocationSchedulePage';
 import NotFound from '../../views/NotFound';
 
 /**
@@ -65,6 +66,7 @@ class LocationScheduleController extends React.Component<Properties, State> {
     }
 
     render() {
+        const { clock } = this.props;
         const { location } = this.state;
 
         // |location| won't be set if an invalid identifier was passed on the URL, so display an
@@ -72,9 +74,8 @@ class LocationScheduleController extends React.Component<Properties, State> {
         if (!location)
             return <NotFound />;
 
-        return (
-            <b>{location.label}</b>
-        );
+        return <LocationSchedulePage clock={clock}
+                                     location={location} />;
     }
 }
 
