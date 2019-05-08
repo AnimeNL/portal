@@ -34,13 +34,15 @@ the input data and return user status when successful. Must accept `POST` reques
 
 #### 🡄 Success response
 
-| Property         | Type      | Description |
-| :---             | :---      | :--- |
-| `success`        | `boolean` | Always set to `true` to indicate authentication succeeded. |
-| `userToken`      | `string`  | The token that identifies this user. Should be pseudo-anonymous. |
-| `authToken`      | `string`  | The token that authenticates this user. Should be pseudo-anonymous. |
-| `expirationTime` | `number`  | Time, in milliseconds since the UNIX epoch, at which the session expires. |
-| `enableDebug`    | `boolean` | Setting on whether debug mode should be enabled for this user. |
+| Property         | Type       | Description |
+| :---             | :---       | :--- |
+| `success`        | `boolean`  | Always set to `true` to indicate authentication succeeded. |
+| `userToken`      | `string`   | The token that identifies this user. Should be pseudo-anonymous. |
+| `authToken`      | `string`   | The token that authenticates this user. Should be pseudo-anonymous. |
+| `expirationTime` | `number`   | Time, in milliseconds since the UNIX epoch, at which the session expires. |
+| `abilities`      | `string[]` | Abilities that are available for this user. |
+
+The following `abilities` will be recognized: `debug`.
 
 #### 🡄 Failure response
 

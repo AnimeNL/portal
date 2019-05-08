@@ -59,9 +59,11 @@ class PortalController extends React.Component<ApplicationProperties> {
             return <Route path={props.path} render={renderComponent} />;
         };
 
+        const enableDebug = user.hasAbility('debug');
+
         return (
             <PortalView clock={clock}
-                        enableDebug={user.enableDebug}
+                        enableDebug={enableDebug}
                         event={event}
                         portalTitle={environment.portalTitle}
                         onLogout={this.onLogout}
@@ -77,9 +79,8 @@ class PortalController extends React.Component<ApplicationProperties> {
                     <RouteController path="/" exact component={OverviewController} />
 
                     {/* Pages only available to those with debugging privileges. */}
-                    { user.enableDebug && <RouteController
-                                              path="/internals"
-                                              component={InternalsController} /> }
+                    { enableDebug && <RouteController path="/internals"
+                                                      component={InternalsController} /> }
 
                 </Switch>
 

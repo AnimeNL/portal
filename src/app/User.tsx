@@ -5,7 +5,7 @@
 import moment from 'moment';
 
 import { UserLoginPath, mockableFetch } from '../config';
-import { isBoolean, isNumber, isString } from './util/Validators';
+import { isNumber, isString } from './util/Validators';
 
 /**
  * Key in the local storage under which the serialized login data will be stored.
@@ -23,7 +23,7 @@ interface LoginData {
     userToken: string;
     authToken: string;
     expirationTime: number;
-    enableDebug: boolean;
+    abilities: string[];
 }
 
 /**
@@ -119,11 +119,11 @@ class User {
     }
 
     /**
-     * Setting on whether debug mode should be enabled for this user.
+     * Returns whether the user has the given |ability| activated for their account.
      */
-    get enableDebug(): boolean {
+    hasAbility(ability: string): boolean {
         if (!this.data) throw new Error('The user is not identified.');
-        return this.data.enableDebug;
+        return this.data.abilities.includes(ability);
     }
 
     /**
@@ -215,9 +215,16 @@ class User {
             return false;
         }
 
-        if (!isBoolean(data.enableDebug)) {
-            console.error('Unable to validate EnvironmentData.enableDebug.');
+        if (!Array.isArray(data.abilities)) {
+            console.error('Unable to validate EnvironmentData.abilities.');
             return false;
+        }
+
+        for (const ability of data.abilities) {
+            if (!isString(ability)) {
+                console.error('Unable to validate EnvironmentData.abilities.');
+                return false;
+            }
         }
 
         return true;
