@@ -3,6 +3,8 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
+import moment from 'moment';
 
 import Clock from '../app/Clock';
 import Event from '../app/Event';
@@ -79,6 +81,7 @@ interface State {
  * to each of the primary pages and contains a live display of on-going events for areas.
  */
 class Menu extends React.Component<Properties, State> {
+    updateTimer?: NodeJS.Timeout;
     state: State = {
         volunteersLabel: 'Volunteers',
         floors: []
@@ -102,11 +105,17 @@ class Menu extends React.Component<Properties, State> {
      * Computes the current state regarding the floors available for this event. A re-count will
      * happen for all the sessions to determine the active ones.
      */
+    @bind
     private computeFloorInformation(): void {
         const { clock, event } = this.props;
 
         const currentTime = clock.getMoment();
         const floors: FloorDisplayInfo[] = [];
+
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
+
+        let nextUpdate = currentTime.clone().add({ years: 1 });
 
         for (const floor of event.getFloors()) {
             if (!floor.icon || !floor.iconColor)
@@ -116,10 +125,15 @@ class Menu extends React.Component<Properties, State> {
 
             for (const location of floor.locations) {
                 for (const session of location.sessions) {
-                    if (session.endTime < currentTime || session.beginTime > currentTime)
+                    if (session.endTime < currentTime)
                         continue;
 
-                    ++activeSessionCount;
+                    if (session.beginTime <= currentTime) {
+                        nextUpdate = moment.min(nextUpdate, session.endTime);
+                        activeSessionCount++;
+                    } else {
+                        nextUpdate = moment.min(nextUpdate, session.beginTime);
+                    }
                 }
             }
 
@@ -133,6 +147,7 @@ class Menu extends React.Component<Properties, State> {
             });
         }
 
+        this.updateTimer = setTimeout(this.computeFloorInformation, nextUpdate.diff(currentTime));
         this.setState({ floors });
     }
 
