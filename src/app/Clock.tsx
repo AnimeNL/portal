@@ -4,6 +4,8 @@
 
 import moment from 'moment';
 
+type ObserverFn = (time: moment.Moment) => void;
+
 /**
  * Key, used in local storage, where the time offset will be stored.
  */
@@ -21,12 +23,15 @@ const kMaximumDifferenceMs: number = 5 * 365 * 24 * 60 * 60 * 1000;  // 5 years
  * TODO: Enable the portal's time to be simulated and forwarded for testing purposes.
  */
 class Clock {
+    observers: Set<ObserverFn>;
     offset?: number;
 
     /**
      * Loads the configured time difference, if any, from local storage.
      */
     constructor() {
+        this.observers = new Set();
+
         try {
             const differenceString = localStorage.getItem(kTimeOffsetKey);
             if (differenceString !== null) {
@@ -51,6 +56,20 @@ class Clock {
     }
 
     /**
+     * Adds the |observer| to be invoked when the time changes.
+     */
+    addObserver(observer: ObserverFn): void {
+        this.observers.add(observer);
+    }
+
+    /**
+     * Deletes the |observer| from the list of things to invoke when the time changes.
+     */
+    removeObserver(observer: ObserverFn): void {
+        this.observers.delete(observer);
+    }
+
+    /**
      * Called when the current time should be adjusted based on a request made on the Internals
      * page. This will take place application-wide.
      *
@@ -68,6 +87,10 @@ class Clock {
         } catch (e) {
             console.error('Could not store the time difference in local storage.', e);
         }
+
+        // (3) Announce the time update to the listening observers.
+        for (const observer of this.observers)
+            observer(this.getMoment());
     }
 }
 

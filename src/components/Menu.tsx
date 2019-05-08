@@ -88,7 +88,7 @@ class Menu extends React.Component<Properties, State> {
     }
 
     componentWillMount() {
-        const { event } = this.props;
+        const { clock, event } = this.props;
 
         // Determine name to for the Volunteers menu item. If the logged in user only has access to
         // a single group, specialize the display.
@@ -99,6 +99,18 @@ class Menu extends React.Component<Properties, State> {
         // Populate the list of floors available for the event. The counter will continue to update
         // as time goes on, to ensure we have up-to-date information.
         this.computeFloorInformation();
+
+        // Observe time changes in the application so that we can update the menu.
+        clock.addObserver(this.computeFloorInformation);
+    }
+
+    componentWillUnmount() {
+        const { clock } = this.props;
+
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
+
+        clock.removeObserver(this.computeFloorInformation);
     }
 
     /**
