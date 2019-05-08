@@ -7,6 +7,7 @@ import React from 'react';
 import Event from '../app/Event';
 import { Floor } from '../app/Floor';
 import MenuListItem from './MenuListItem';
+import MenuSessionIndicator from './MenuSessionIndicator';
 import slug from '../app/util/Slug';
 
 import Divider from '@material-ui/core/Divider';
@@ -139,6 +140,9 @@ class Menu extends React.Component<Properties> {
                                                 </ListItemIcon> }
 
                                 <ListItemText primary={floor.label} />
+
+                                { /* TODO: Include a count of active sessions in this location. */ }
+                                <MenuSessionIndicator color={floor.iconColor} count={0} />
 
                             </MenuListItem>
                         );
