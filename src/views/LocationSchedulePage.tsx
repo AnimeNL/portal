@@ -95,7 +95,7 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
         const title = location.label;
         const description =
             this.getFloorIdentifier(location.floor) + ' — ' +
-            location.sessions.length + ' session' + (location.sessions.length != 1 ? 's' : '');
+            location.sessions.length + ' session' + (location.sessions.length !== 1 ? 's' : '');
 
         return (
             <React.Fragment>

@@ -41,18 +41,92 @@ interface Properties {
 }
 
 /**
+ * Information necessary to display the menu item for a particular floor, obtained from the event
+ * program, and updated when the relevant information passes. This data matches that of the
+ * properties available in the Floor interface.
+ */
+interface FloorDisplayInfo {
+    id: number;
+    link: string;
+    label: string;
+    icon: string;
+    iconColor: string;
+    activeSessionCount: number;
+}
+
+/**
+ * State of the <Menu> element. Will be periodically updated.
+ */
+interface State {
+    /**
+     * Label to use for linking to the list of volunteers for this event.
+     */
+    volunteersLabel: string;
+
+    /**
+     * Sorted list of floors that should be displayed in the menu.
+     */
+    floors: FloorDisplayInfo[];
+}
+
+/**
  * The <Menu> element represents the primary navigation for the volunteer portal. It provides access
  * to each of the primary pages and contains a live display of on-going events for areas.
  */
-class Menu extends React.Component<Properties> {
-    render() {
+class Menu extends React.Component<Properties, State> {
+    state: State = {
+        volunteersLabel: 'Volunteers',
+        floors: []
+    }
+
+    componentWillMount() {
         const { event } = this.props;
+
+        // Determine name to for the Volunteers menu item. If the logged in user only has access to
+        // a single group, specialize the display.
+        const volunteerGroups = Array.from(event.getVolunteerGroups());
+        if (volunteerGroups.length === 1)
+            this.setState({ volunteersLabel: volunteerGroups[0].label });
+
+        // Populate the list of floors available for the event. The counter will continue to update
+        // as time goes on, to ensure we have up-to-date information.
+        this.computeFloorInformation();
+    }
+
+    /**
+     * Computes the current state regarding the floors available for this event. A re-count will
+     * happen for all the sessions to determine the active ones.
+     */
+    private computeFloorInformation(): void {
+        const event = this.props.event;
+        const floors: FloorDisplayInfo[] = [];
+
+        for (const floor of event.getFloors()) {
+            if (!floor.icon || !floor.iconColor)
+                continue;
+
+            floors.push({
+                id: floor.id,
+                link: '/schedule/floors/' + floor.id + '/' + slug(floor.label),
+                label: floor.label,
+                icon: floor.icon,
+                iconColor: floor.iconColor,
+                activeSessionCount: 0
+            });
+        }
+
+        this.setState({ floors });
+    }
+
+    render() {
+        const { enableDebug, event } = this.props;
+        const { floors, volunteersLabel } = this.state;
 
         let debugOptions: JSX.Element | null = null;
 
         // Users for whom the debug mode is enabled get a number of additional options in the menu
         // that enable them to control and adjust various parts of the application.
-        if (this.props.enableDebug) {
+        if (enableDebug) {
             debugOptions = (
                 <div>
                     <Divider />
@@ -71,14 +145,7 @@ class Menu extends React.Component<Properties> {
             );
         }
 
-        const floors = event.getFloors();
         const volunteer = event.getCurrentVolunteer();
-
-        // Determine name to for the Volunteers menu item
-        // Only show as Volunteers if you have access to more than one group.
-        const volunteerGroups = Array.from(event.getVolunteerGroups());
-        const volunteerGroupName = volunteerGroups.length > 1 ?
-            'Volunteers' : volunteerGroups[0].label;
 
         // Link to the page that contains the schedule of the volunteer that's currently logged in,
         // if the user is associated with a volunteer.
@@ -115,7 +182,7 @@ class Menu extends React.Component<Properties> {
                         <ListItemIcon>
                             <PeopleIcon />
                         </ListItemIcon>
-                        <ListItemText primary={volunteerGroupName} />
+                        <ListItemText primary={volunteersLabel} />
                     </MenuListItem>
 
                 </List>
@@ -124,25 +191,23 @@ class Menu extends React.Component<Properties> {
 
                 <List>
 
-                    { Array.from(floors).map((floor: Floor) => {
-                        const destination = '/schedule/floors/' + floor.id + '/' + slug(floor.label);
-
+                    { floors.map((floor: FloorDisplayInfo) => {
                         return (
                             <MenuListItem
                                 key={floor.id}
-                                to={destination}
+                                to={floor.link}
                                 onClick={this.props.onClick}>
 
-                                { floor.icon && <ListItemIcon>
-                                                    <SvgIcon nativeColor={floor.iconColor}>
-                                                        <use xlinkHref={floor.icon} />
-                                                    </SvgIcon>
-                                                </ListItemIcon> }
+                                <ListItemIcon>
+                                    <SvgIcon nativeColor={floor.iconColor}>
+                                        <use xlinkHref={floor.icon} />
+                                    </SvgIcon>
+                                </ListItemIcon>
 
                                 <ListItemText primary={floor.label} />
 
-                                { /* TODO: Include a count of active sessions in this location. */ }
-                                <MenuSessionIndicator color={floor.iconColor} count={0} />
+                                <MenuSessionIndicator color={floor.iconColor}
+                                                      count={floor.activeSessionCount} />
 
                             </MenuListItem>
                         );
