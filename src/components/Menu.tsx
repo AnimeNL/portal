@@ -4,8 +4,8 @@
 
 import React from 'react';
 
+import Clock from '../app/Clock';
 import Event from '../app/Event';
-import { Floor } from '../app/Floor';
 import MenuListItem from './MenuListItem';
 import MenuSessionIndicator from './MenuSessionIndicator';
 import slug from '../app/util/Slug';
@@ -24,6 +24,11 @@ import SvgIcon from '@material-ui/core/SvgIcon';
  * Properties accepted by the <Menu> element.
  */
 interface Properties {
+    /**
+     * Clock used to determine the active and upcoming sessions for this page.
+     */
+    clock: Clock;
+
     /**
      * Setting on whether debug mode should be enabled for this user.
      */
@@ -98,12 +103,25 @@ class Menu extends React.Component<Properties, State> {
      * happen for all the sessions to determine the active ones.
      */
     private computeFloorInformation(): void {
-        const event = this.props.event;
+        const { clock, event } = this.props;
+
+        const currentTime = clock.getMoment();
         const floors: FloorDisplayInfo[] = [];
 
         for (const floor of event.getFloors()) {
             if (!floor.icon || !floor.iconColor)
                 continue;
+
+            let activeSessionCount = 0;
+
+            for (const location of floor.locations) {
+                for (const session of location.sessions) {
+                    if (session.endTime < currentTime || session.beginTime > currentTime)
+                        continue;
+
+                    ++activeSessionCount;
+                }
+            }
 
             floors.push({
                 id: floor.id,
@@ -111,7 +129,7 @@ class Menu extends React.Component<Properties, State> {
                 label: floor.label,
                 icon: floor.icon,
                 iconColor: floor.iconColor,
-                activeSessionCount: 0
+                activeSessionCount
             });
         }
 

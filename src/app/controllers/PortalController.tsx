@@ -48,7 +48,7 @@ class PortalController extends React.Component<ApplicationProperties> {
     }
 
     render() {
-        const { event, user, environment } = this.props;
+        const { clock, event, user, environment } = this.props;
 
         // Utility element that enables using components for routing that should be receiving the
         // same properties as the <PortalController>, on top of the existing routing properties.
@@ -60,7 +60,8 @@ class PortalController extends React.Component<ApplicationProperties> {
         };
 
         return (
-            <PortalView enableDebug={user.enableDebug}
+            <PortalView clock={clock}
+                        enableDebug={user.enableDebug}
                         event={event}
                         portalTitle={environment.portalTitle}
                         onLogout={this.onLogout}

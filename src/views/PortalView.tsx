@@ -8,6 +8,7 @@ import React from 'react';
 import bind from 'bind-decorator';
 import moment from 'moment';
 
+import Clock from '../app/Clock';
 import Event from '../app/Event';
 import { Header, HeaderEvents } from '../components/Header';
 import Menu from '../components/Menu';
@@ -35,6 +36,11 @@ const styles = (theme: Theme) =>
  * effectively route user interaction to the appropriate place, and provide access to the app model.
  */
 interface Properties extends WithStyles<typeof styles> {
+    /**
+     * Clock used to determine the active and upcoming sessions for this page.
+     */
+    clock: Clock;
+
     /**
      * Setting on whether debug mode should be enabled for this user.
      */
@@ -116,7 +122,7 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
     }
 
     render() {
-        const { children, classes, enableDebug, event, onLogout, onRefresh } = this.props;
+        const { children, classes, clock, enableDebug, event, onLogout, onRefresh } = this.props;
 
         return (
             <BrowserRouter>
@@ -131,14 +137,13 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
 
                         </Header>
 
-                        <ResponsiveDrawer
-                            onClose={this.closeDrawer}
-                            open={this.state.drawerOpen}>
+                        <ResponsiveDrawer onClose={this.closeDrawer}
+                                          open={this.state.drawerOpen}>
 
-                            <Menu
-                                enableDebug={enableDebug}
-                                event={event}
-                                onClick={this.closeDrawer} />
+                            <Menu clock={clock}
+                                  enableDebug={enableDebug}
+                                  event={event}
+                                  onClick={this.closeDrawer} />
 
                         </ResponsiveDrawer>
 
