@@ -86,6 +86,7 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
     }
 
     render() {
+        const { event, user } = this.props;
         const { volunteer } = this.state;
 
         // |volunteer| won't be set if an invalid slug was passed on the URL, so display an error
@@ -93,9 +94,17 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
         if (!volunteer)
             return <NotFound />;
 
-        // TODO: Only enable editting when we should.
+        // Picture upload is enabled for users who can manipulate all avatars, as well as for users
+        // looking at their own profile if this feature has been enabled.
+        const enablePictureUpload = user.hasAbility('update-avatar-all') ||
+                                   (user.hasAbility('update-avatar-self') &&
+                                        volunteer === event.getCurrentVolunteer());
+
+        const onPictureUpdated = enablePictureUpload ? this.onPictureUpdated
+                                                     : undefined;
+
         return (
-            <VolunteerSchedulePage onPictureUpdated={this.onPictureUpdated}
+            <VolunteerSchedulePage onPictureUpdated={onPictureUpdated}
                                    volunteer={volunteer} />
         );
     }

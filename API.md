@@ -42,7 +42,7 @@ the input data and return user status when successful. Must accept `POST` reques
 | `expirationTime` | `number`   | Time, in milliseconds since the UNIX epoch, at which the session expires. |
 | `abilities`      | `string[]` | Abilities that are available for this user. |
 
-The following `abilities` will be recognized: `debug`.
+The following `abilities` will be recognized: `debug`, `update-avatar-self`, `update-avatar-all`.
 
 #### 🡄 Failure response
 
