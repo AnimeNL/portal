@@ -13,7 +13,6 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
 import IconButton from '@material-ui/core/IconButton';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -164,8 +163,10 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
 
         // The |onPictureUpdated| event must be set in order for uploading photos to be enabled. A
         // picture has to be selected in order to upload anything at all.
-        if (!onPictureUpdated || !selectedPicture)
+        if (!onPictureUpdated || !selectedPicture) {
+            this.cancelAvatarUploadDialog();
             return;
+        }
 
         this.setState({ uploadSaving: true });
 
@@ -205,10 +206,6 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
 
                 <Dialog open={this.state.uploadDialogOpen}
                         onClose={this.cancelAvatarUploadDialog}>
-
-                    <DialogTitle>
-                        Update picture
-                    </DialogTitle>
 
                     <DialogContent className={classes.uploadBackground}>
                         <div className={classes.uploadSheet}
