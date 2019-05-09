@@ -107,18 +107,21 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
                 return false;
             }
 
-            if (!data.success) {
+            if (!data.success || !data.avatar) {
                 console.error('The upload response failed for some reason.', data);
                 return false;
             }
+
+            this.state.volunteer.info.avatar = data.avatar;
+            return true;
 
         } catch (e) {
             console.error('Unable to handle the upload request.', e);
             return false;
         }
 
-        this.state.volunteer.info.avatar = imageData;
-        return true;
+        // not-reached
+        return false;
     }
 
     render() {
