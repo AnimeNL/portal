@@ -126,9 +126,9 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
                     continue;
 
                 sessions.push({
-                    internal: undefined,
+                    internal: session.event.internal,
                     label: session.name,
-                    state: 'active',
+                    state: session.beginTime >= currentTime ? 'pending' : 'active',
                     timing: undefined,
                 });
 

@@ -5,27 +5,25 @@
 import React from 'react';
 
 import ListItem from '@material-ui/core/ListItem';
-import LockIcon from '@material-ui/icons/Lock';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemText from '@material-ui/core/ListItemText';
+import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
-        activeSession: {
-            // TODO: Styling for active sessions in the location card.
-            color: 'red',
+        label: {
+            '&:first-child': {
+                paddingLeft: '32px',
+            },
         },
-        pendingSession: {
-            // TODO: Styling for future sessions in the location card.
-            color: 'blue',
-        },
-        internalEvent: {
-            backgroundColor: 'yellow',
-        },
-
-        internalIcon: {
-            marginRight: theme.spacing.unit / 2,
+        playContainer: { marginRight: '0px' },
+        play: {
+            marginTop: -1,
+            color: 'rgba(255, 0, 0, .8)',
+            fontSize: '16px',
         },
     });
 
@@ -60,23 +58,21 @@ interface Properties {
 class LocationSession extends React.Component<Properties & WithStyles<typeof styles>> {
     render() {
         const { classes, internal, label, state } = this.props;
-        // TODO: Use |timing|
-
-        let internalLock: JSX.Element | null = null;
-
-        if (internal) {
-            internalLock = <LockIcon className={classes.internalIcon}
-                                     fontSize="inherit" />;
-        }
 
         // TODO: Use |internal|
-        const className = state === 'active' ? classes.activeSession
-                                             : classes.pendingSession;
+        // TODO: Use |timing|
 
         return (
-            <ListItem className={ className }>
-                {internalLock}
-                {label}
+            <ListItem>
+                { state == 'active' &&
+                    <ListItemIcon className={classes.playContainer}>
+                        <PlayCircleOutlineIcon className={classes.play} />
+                    </ListItemIcon> }
+
+                <ListItemText className={classes.label}>
+                    {label}
+                </ListItemText>
+
             </ListItem>
         );
     }
