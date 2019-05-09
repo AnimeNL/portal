@@ -2,39 +2,26 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import { RouteComponentProps, withRouter } from 'react-router-dom';
 import React from 'react';
 
 import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
 import { Location } from '../app/Location';
 import { LocationCard } from '../components/LocationCard';
+import { LocationFinished } from '../components/LocationFinished';
 import { LocationSession } from '../components/LocationSession';
 import { ProgramSession } from '../app/ProgramSession';
 import slug from '../app/util/Slug';
-
-import ListItem from '@material-ui/core/ListItem';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import createStyles from '@material-ui/core/styles/createStyles';
-import grey from '@material-ui/core/colors/grey';
-import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 /**
  * Number of active sessions that will be displayed at most for a particular location.
  */
 const kMaximumActiveSessions = 3;
 
-const styles = (theme: Theme) =>
-    createStyles({
-        noSession: {
-            color: grey[600],
-        },
-    });
-
 /**
  * Properties accepted by the <FloorSchedulePage> element.
  */
-interface Properties extends WithStyles<typeof styles> {
+interface Properties {
     /**
      * Clock used to determine the active and upcoming sessions for this page.
      */
@@ -65,14 +52,14 @@ interface SessionDisplayInfo {
  * The floor schedule page is responsible for displaying the locations available on a particular
  * floor, together with the events that are happening in them at the current time.
  */
-class FloorSchedulePage extends React.Component<Properties & RouteComponentProps> {
+export class FloorSchedulePage extends React.Component<Properties> {
     /**
      * Creates the selection of sessions that should be displayed for the given |location|. A
      * maximum of |kMaximumActiveSessions| will be returned, preferring active ones, then proceeding
      * with upcoming sessions. An empty array will be returned if there are no more sessions.
      */
     private createSessionSelectionForLocation(location: Location): SessionDisplayInfo[] {
-        const { classes, clock } = this.props;
+        const { clock } = this.props;
 
         const currentTime = clock.getMoment();
         const selection: SessionDisplayInfo[] = [];
@@ -99,7 +86,7 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
     }
 
     render() {
-        const { classes, floor } = this.props;
+        const { floor } = this.props;
 
         // Create a sorted list (by label) of the locations on this floor.
         const locations = Array.from(floor.locations).sort((lhs, rhs) => {
@@ -117,15 +104,12 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
                     return (
                         <LocationCard name={location.label} to={path}>
 
-                            { !sessions.length &&
-                              <ListItem className={classes.noSession}>
-                                  <i>No more scheduled events in this location.</i>
-                              </ListItem> }
-
                             { sessions.map(displayInfo =>
                                 <LocationSession label={displayInfo.session.name}
                                                  state="active" />
                             ) }
+
+                            { !sessions.length && <LocationFinished /> }
 
                         </LocationCard>
                     );
@@ -136,6 +120,3 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
         );
     }
 }
-
-const StyledFloorSchedulePage = withRouter(withStyles(styles)(FloorSchedulePage));
-export { StyledFloorSchedulePage as FloorSchedulePage };

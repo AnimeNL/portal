@@ -70,8 +70,8 @@ class LocationSession extends React.Component<Properties & WithStyles<typeof sty
         }
 
         // TODO: Use |internal|
-        const className = state == 'active' ? classes.activeSession
-                                            : classes.pendingSession;
+        const className = state === 'active' ? classes.activeSession
+                                             : classes.pendingSession;
 
         return (
             <ListItem className={ className }>
