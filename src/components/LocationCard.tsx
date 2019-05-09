@@ -34,6 +34,11 @@ const styles = (theme: Theme) =>
  */
 interface Properties extends RouteComponentProps {
     /**
+     * Whether this location is internal, meaning that it's not been announced to the public.
+     */
+    internal?: boolean;
+
+    /**
      * Name of the location that should be displayed in the header.
      */
     name: string;
@@ -67,6 +72,7 @@ class LocationCard extends React.Component<Properties & WithStyles<typeof styles
 
     render() {
         const { children, classes, name } = this.props;
+        // TODO: Use |internal|
 
         return (
             <Card className={classes.location}>

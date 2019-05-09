@@ -6,12 +6,10 @@ import React from 'react';
 
 import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
-import { Location } from '../app/Location';
 import { LocationCard } from '../components/LocationCard';
 import { LocationFinished } from '../components/LocationFinished';
 import { LocationSession } from '../components/LocationSession';
-import { ProgramSession } from '../app/ProgramSession';
-import slug from '../app/util/Slug';
+import createSlug from '../app/util/Slug';
 
 /**
  * Number of active sessions that will be displayed at most for a particular location.
@@ -34,88 +32,145 @@ interface Properties {
 }
 
 /**
- * Properties required to appropriately display a session on the location card.
+ * Interface of the details that must be known to display a location's session.
  */
 interface SessionDisplayInfo {
     /**
-     * The program session that's about to be displayed on this page.
+     * Whether this session is internal, meaning that it's not been announced to the public.
      */
-    session: ProgramSession;
+    internal?: boolean;
 
     /**
-     * The class name that should be used to control presentation of this session.
+     * Label of the session that this element is describing.
      */
-    className: string;
+    label: string;
+
+    /**
+     * Whether the session described by this list item is active, or still pending.
+     */
+    state: "active" | "pending";
+
+    /**
+     * Timing, if any, to display as part of this element.
+     */
+    timing?: string;
+}
+
+/**
+ * Interface of the details that must be known to display an individual location.
+ */
+interface LocationDisplayInfo {
+    /**
+     * Whether this location is internal, meaning that it's not been announced to the public.
+     */
+    internal?: boolean;
+
+    /**
+     * Name to display that identifies this location.
+     */
+    label: string;
+
+    /**
+     * Sorted list of SessionDisplayInfo objects.
+     */
+    sessions: SessionDisplayInfo[];
+
+    /**
+     * URL of the page that the user should be linked to after clicking on the location.
+     */
+    to: string;
+}
+
+/**
+ * State of the <FloorSchedulePage> element. Will be periodically updated.
+ */
+interface State {
+    /**
+     * Sorted list of LocationDisplayInfo objects.
+     */
+    locations: LocationDisplayInfo[];
 }
 
 /**
  * The floor schedule page is responsible for displaying the locations available on a particular
  * floor, together with the events that are happening in them at the current time.
  */
-export class FloorSchedulePage extends React.Component<Properties> {
+export class FloorSchedulePage extends React.Component<Properties, State> {
+    state: State = {
+        locations: []
+    }
+
     /**
-     * Creates the selection of sessions that should be displayed for the given |location|. A
-     * maximum of |kMaximumActiveSessions| will be returned, preferring active ones, then proceeding
-     * with upcoming sessions. An empty array will be returned if there are no more sessions.
+     * Called when the component mounts or updates, to compute the state. This will trigger React to
+     * request a re-render of the element and the displayed information.
      */
-    private createSessionSelectionForLocation(location: Location): SessionDisplayInfo[] {
-        const { clock } = this.props;
+    static getDerivedStateFromProps(props: Properties) {
+        const { clock, floor } = props;
 
         const currentTime = clock.getMoment();
-        const selection: SessionDisplayInfo[] = [];
+        const locations: LocationDisplayInfo[] = [];
 
-        // Create a sorted list of all the sessions in the |location| by their starting time.
-        const sessions = Array.from(location.sessions).sort((lhs, rhs) => {
-            return lhs.beginTime > rhs.beginTime ? 1 : -1;
-        });
+        for (const location of floor.locations) {
+            const sessions: SessionDisplayInfo[] = [];
+            const to = '/schedule/locations/' + location.id + '/' + createSlug(location.label);
 
-        // Select the |kMaximumActiveSessions| first sessions that aren't in the past.
-        for (const session of sessions) {
-            if (session.endTime < currentTime)
-                continue;
+            // TODO: Doing this each time for each view is expensive. Perhaps we should have a one-
+            // time sorting routine on the Location object?
+            const sortedSessions = Array.from(location.sessions).sort((lhs, rhs) => {
+                return lhs.beginTime > rhs.beginTime ? 1 : -1;
+            });
 
-            const className = 'fixme';
+            // Select the |kMaximumActiveSessions| first sessions that aren't in the past.
+            for (const session of sortedSessions) {
+                if (session.endTime < currentTime)
+                    continue;
 
-            selection.push({ session, className });
+                sessions.push({
+                    internal: undefined,
+                    label: session.name,
+                    state: 'active',
+                    timing: undefined,
+                });
 
-            if (selection.length >= kMaximumActiveSessions)
-                break;
+                if (sessions.length >= kMaximumActiveSessions)
+                    break;
+            }
+
+            locations.push({
+                internal: undefined,
+                label: location.label,
+                sessions, to
+            });
         }
 
-        return selection;
+        locations.sort((lhs, rhs) => lhs.label.localeCompare(rhs.label));
+
+        return { locations };
     }
 
     render() {
-        const { floor } = this.props;
-
-        // Create a sorted list (by label) of the locations on this floor.
-        const locations = Array.from(floor.locations).sort((lhs, rhs) => {
-            return lhs.label.localeCompare(rhs.label);
-        });
+        const { locations } = this.state;
 
         return (
             <React.Fragment>
-
                 { locations.map(location => {
-
-                    const path = '/schedule/locations/' + location.id + '/' + slug(location.label);
-                    const sessions = this.createSessionSelectionForLocation(location);
-
                     return (
-                        <LocationCard name={location.label} to={path}>
+                        <LocationCard internal={location.internal}
+                                      name={location.label}
+                                      to={location.to}>
 
-                            { sessions.map(displayInfo =>
-                                <LocationSession label={displayInfo.session.name}
-                                                 state="active" />
+                            { location.sessions.map(session =>
+                                <LocationSession internal={session.internal}
+                                                 label={session.label}
+                                                 state={session.state}
+                                                 timing={session.timing} />
                             ) }
 
-                            { !sessions.length && <LocationFinished /> }
+                            { !location.sessions.length && <LocationFinished /> }
 
                         </LocationCard>
                     );
-
                 }) }
-
             </React.Fragment>
         );
     }

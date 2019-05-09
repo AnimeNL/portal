@@ -75,7 +75,7 @@ class LocationSession extends React.Component<Properties & WithStyles<typeof sty
 
         return (
             <ListItem className={ className }>
-                {internal}
+                {internalLock}
                 {label}
             </ListItem>
         );
