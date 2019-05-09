@@ -18,6 +18,13 @@ export class Volunteer {
     }
 
     /**
+     * The token that uniquely identifies this volunteer.
+     */
+    get userToken(): string {
+        return this.info.userToken;
+    }
+
+    /**
      * The group that this volunteer is part of.
      */
     get group(): VolunteerGroup {

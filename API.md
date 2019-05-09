@@ -20,7 +20,6 @@ particular event or group of volunteers. Must accept `GET` requests.
 _Not applicable. This is a data-only call that must be supported._
 
 ### /api/login
-
 Handles user authentication requests in response to someone submitting the login form. Must validate
 the input data and return user status when successful. Must accept `POST` requests.
 
@@ -132,3 +131,33 @@ requests. May be cached offline.
 | Property  | Type      | Description |
 | :---      | :---      | :--- |
 | `success` | `boolean` | Always set to `false` to indicate that event data is not available. |
+
+### /api/upload
+Handles data uploads from the portal, for instance uploading a new avatar. Authentication must
+happen dilligently on the server side. Must accept `POST` requests.
+
+#### 🡆 POST fields
+
+| Property     | Type     | Description |
+| :---         | :---     | :--- |
+| `authToken`  | `string` | The token that authenticates this user. Should be pseudo-anonymous. |
+| `type`       | `string` | Type of data upload that should occur. |
+
+##### Type: `update-avatar`
+
+| Property           | Type     | Description |
+| :---               | :---     | :--- |
+| `targetUserToken`  | `string` | The token that identifies the target volunteer. |
+| `targetUserAvatar` | `string` | Base64-encoded image data of the avatar that is to be updated. |
+
+#### 🡄 Success response
+
+| Property  | Type      | Description |
+| :---      | :---      | :--- |
+| `success` | `boolean` | Always set to `true` to indicate that the data upload succeeded. |
+
+#### 🡄 Failure response
+
+| Property  | Type      | Description |
+| :---      | :---      | :--- |
+| `success` | `boolean` | Always set to `false` to indicate that the data upload failed. |

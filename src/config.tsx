@@ -42,6 +42,11 @@ export const EventPath = `${host}/${directory}/event`;
 export const UserLoginPath = `${host}/${directory}/login`;
 
 /**
+ * Path to the service that enables data changes to be uploaded to the server.
+ */
+export const UploadPath = `${host}/${directory}/upload`;
+
+/**
  * @see https://material-ui.com/customization/themes/
  */
 export const AppTheme = {

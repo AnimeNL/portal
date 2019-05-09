@@ -8,6 +8,7 @@ import bind from 'bind-decorator';
 
 import ApplicationProperties from '../ApplicationProperties';
 import NotFound from '../../views/NotFound';
+import { UploadPath, mockableFetch } from '../../config';
 import { Volunteer } from '../Volunteer';
 import { VolunteerSchedulePage } from '../../views/VolunteerSchedulePage';
 import createSlug from '../util/Slug';
@@ -79,7 +80,42 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
         if (!this.state.volunteer)
             return false;
 
-        // TODO: Actually upload the photo.
+        const { user } = this.props;
+        const { volunteer } = this.state;
+
+        try {
+            const requestBody = new FormData();
+            requestBody.append('authToken', user.authToken);
+            requestBody.append('type', 'update-avatar');
+
+            requestBody.append('targetUserAvatar', imageData);
+            requestBody.append('targetUserToken', volunteer.userToken);
+
+            const response = await mockableFetch(UploadPath, {
+                method: 'POST',
+                body: requestBody
+            });
+
+            if (!response.ok) {
+                console.error('Unable to fulfil the upload request.')
+                return false;
+            }
+
+            const data = JSON.parse(await response.text());
+            if (!data) {
+                console.error('Unable to parse the upload response.');
+                return false;
+            }
+
+            if (!data.success) {
+                console.error('The upload response failed for some reason.', data);
+                return false;
+            }
+
+        } catch (e) {
+            console.error('Unable to handle the upload request.', e);
+            return false;
+        }
 
         this.state.volunteer.info.avatar = imageData;
         return true;
