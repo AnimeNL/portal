@@ -7,6 +7,7 @@ import React from 'react';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -14,16 +15,25 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
-        label: {
-            '&:first-child': {
-                paddingLeft: '32px',
-            },
-        },
-        playContainer: { marginRight: '0px' },
-        play: {
+        iconContainer: { marginRight: '0px' },
+
+        iconActive: {
             marginTop: -1,
             color: 'rgba(255, 0, 0, .8)',
             fontSize: '16px',
+        },
+        iconPending: {
+            color: 'rgba(0, 0, 0, .2)',
+            fontSize: '16px',
+        },
+
+        label: {
+            // TODO: Make this work correctly on desktop.
+            maxWidth: 'calc(100vw - 32px - ' + (6 * theme.spacing.unit) + 'px)',
+
+            '&:first-child': {
+                paddingLeft: '32px',
+            },
         },
     });
 
@@ -64,12 +74,13 @@ class LocationSession extends React.Component<Properties & WithStyles<typeof sty
 
         return (
             <ListItem>
-                { state == 'active' &&
-                    <ListItemIcon className={classes.playContainer}>
-                        <PlayCircleOutlineIcon className={classes.play} />
-                    </ListItemIcon> }
+                <ListItemIcon className={classes.iconContainer}>
+                    { state === 'active' ? <PlayCircleOutlineIcon className={classes.iconActive} />
+                                         : <MoreHorizIcon className={classes.iconPending} /> }
+                </ListItemIcon>
 
-                <ListItemText className={classes.label}>
+                <ListItemText className={classes.label}
+                              primaryTypographyProps={{ noWrap: true }}>
                     {label}
                 </ListItemText>
 
