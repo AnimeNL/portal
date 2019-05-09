@@ -6,6 +6,8 @@ import React from 'react';
 import bind from 'bind-decorator';
 import moment from 'moment';
 
+import Event from '../app/Event';
+
 import AccessTimeIcon from '@material-ui/icons/AccessTimeOutlined';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -14,8 +16,14 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Paper from '@material-ui/core/Paper';
 import RestoreIcon from '@material-ui/icons/Restore';
+import Table from '@material-ui/core/Table';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import TodayIcon from '@material-ui/icons/TodayOutlined';
+import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
@@ -35,6 +43,11 @@ interface Properties {
      * change should be applied immediately to the entire application.
      */
     onTimeChanged: (time: moment.Moment) => void;
+
+    /**
+     * The event for which this portal is being rendered.
+     */
+    event: Event;
 
     /**
      * The time and date actual at the moment this page got mounted. We won't live-update the page
@@ -150,47 +163,75 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, event } = this.props;
         const { currentTime } = this.state;
 
         return (
-            <Paper square elevation={1}>
-                <List subheader={<ListSubheader>Date and time configuration</ListSubheader>}>
-                    <ListItem button divider onClick={this.openDatePicker}>
-                        <ListItemIcon>
-                            <TodayIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Change the date" secondary={currentTime.format('dddd, MMMM D')} />
-                    </ListItem>
+            <>
+                <Paper square elevation={1}>
+                    <List subheader={<ListSubheader>Date and time configuration</ListSubheader>}>
+                        <ListItem button divider onClick={this.openDatePicker}>
+                            <ListItemIcon>
+                                <TodayIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Change the date" secondary={currentTime.format('dddd, MMMM D')} />
+                        </ListItem>
 
-                    <ListItem button divider onClick={this.openTimePicker}>
-                        <ListItemIcon>
-                            <AccessTimeIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Change the time" secondary={currentTime.format('H:mm')} />
-                    </ListItem>
+                        <ListItem button divider onClick={this.openTimePicker}>
+                            <ListItemIcon>
+                                <AccessTimeIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Change the time" secondary={currentTime.format('H:mm')} />
+                        </ListItem>
 
-                    <ListItem button onClick={this.resetTime}>
-                        <ListItemIcon>
-                            <RestoreIcon />
-                        </ListItemIcon>
-                        <ListItemText primary="Reset time time" />
-                    </ListItem>
-                </List>
+                        <ListItem button onClick={this.resetTime}>
+                            <ListItemIcon>
+                                <RestoreIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Reset time time" />
+                        </ListItem>
+                    </List>
+                </Paper>
 
-                <div className={classes.hidden}>
-                    <DatePicker
-                        ref={this.datePickerRef}
-                        onChange={this.onTimeChanged}
-                        value={currentTime} />
-                    <TimePicker
-                        ref={this.timePickerRef}
-                        onChange={this.onTimeChanged}
-                        value={currentTime}
-                        ampm={false} />
-                </div>
+                <Paper style={{ marginTop: '20px' }} square elevation={1}>
+                    <Table padding="dense">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Internal note</TableCell>
+                                <TableCell>Value</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
 
-            </Paper>
+                            { Object.entries(event.getInternalNotes()).map((entry, index) => {
+                                return (
+                                    <TableRow hover key={index}>
+                                        <TableCell style={{ fontWeight: 500 }}>
+                                            {entry[0]}
+                                        </TableCell>
+                                        <TableCell>
+                                            {entry[1]}
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            }) }
+
+                        </TableBody>
+                    </Table>
+
+                    <div className={classes.hidden}>
+                        <DatePicker
+                            ref={this.datePickerRef}
+                            onChange={this.onTimeChanged}
+                            value={currentTime} />
+                        <TimePicker
+                            ref={this.timePickerRef}
+                            onChange={this.onTimeChanged}
+                            value={currentTime}
+                            ampm={false} />
+                    </div>
+                </Paper>
+            </>
         );
     }
 }

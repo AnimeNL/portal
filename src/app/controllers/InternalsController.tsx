@@ -25,9 +25,10 @@ class InternalsController extends React.Component<ApplicationProperties> {
     }
 
     render() {
-        const { clock } = this.props;
+        const { clock, event } = this.props;
 
-        return <InternalsPage initialTime={clock.getMoment()}
+        return <InternalsPage event={event}
+                              initialTime={clock.getMoment()}
                               onTimeChanged={this.onTimeChanged} />;
     }
 }
