@@ -8,17 +8,14 @@ import React from 'react';
 import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
 import { Location } from '../app/Location';
+import { LocationCard } from '../components/LocationCard';
 import { ProgramSession } from '../app/ProgramSession';
 import slug from '../app/util/Slug';
 
-import Card from '@material-ui/core/Card';
-import CardActionArea from '@material-ui/core/CardActionArea';
-import Divider from '@material-ui/core/Divider';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import LockIcon from '@material-ui/icons/Lock';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import grey from '@material-ui/core/colors/grey';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
@@ -30,16 +27,6 @@ const kMaximumActiveSessions = 3;
 
 const styles = (theme: Theme) =>
     createStyles({
-        location: {
-            margin: theme.spacing.unit * 2,
-        },
-        locationName: {
-            // TODO: Make this work correctly on desktop.
-            maxWidth: 'calc(100vw - ' + (4 * theme.spacing.unit) + 'px)',
-
-            padding: theme.spacing.unit,
-            fontWeight: 500,
-        },
         activeSession: {
             // TODO: Styling for active sessions in the location card.
             color: 'red',
@@ -131,7 +118,7 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
     }
 
     render() {
-        const { classes, floor, history } = this.props;
+        const { classes, floor } = this.props;
 
         // Create a sorted list (by label) of the locations on this floor.
         const locations = Array.from(floor.locations).sort((lhs, rhs) => {
@@ -147,14 +134,7 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
                     const sessions = this.createSessionSelectionForLocation(location);
 
                     return (
-                        <Card className={classes.location}>
-                            <CardActionArea onClick={() => history.push(path)}>
-
-                                <Typography className={classes.locationName} noWrap variant="body2">
-                                    {location.label}
-                                </Typography>
-
-                                <Divider />
+                        <LocationCard name={location.label} to={path}>
 
                                 <List dense>
 
@@ -181,8 +161,7 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
 
                                 </List>
 
-                            </CardActionArea>
-                        </Card>
+                        </LocationCard>
                     );
 
                 }) }
