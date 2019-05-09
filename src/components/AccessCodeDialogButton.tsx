@@ -91,7 +91,7 @@ class AccessCodeDialogButton extends React.Component<Properties, State> {
     }
 
     render() {
-        const { volunteer } = this.props;
+        const { children, volunteer } = this.props;
         if (!volunteer.accessCode)
             return <></>;
 
@@ -101,6 +101,7 @@ class AccessCodeDialogButton extends React.Component<Properties, State> {
         return (
             <>
                 <ListItemSecondaryAction>
+                    {children}
                     <IconButton onClick={this.openDialog} aria-label="Display access code">
                         <LockIcon />
                     </IconButton>

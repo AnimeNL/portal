@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
 
 import AccessCodeDialogButton from './AccessCodeDialogButton';
 import AvatarDialogButton from './AvatarDialogButton';
@@ -10,8 +11,10 @@ import ConditionalLink from './ConditionalLink';
 import { Volunteer } from '../app/Volunteer';
 import slug from '../app/util/Slug';
 
+import IconButton from '@material-ui/core/IconButton';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
+import PhoneIcon from '@material-ui/icons/Phone';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
@@ -55,6 +58,22 @@ interface Properties {
  * property can be used to influence which subset of information should be presented.
  */
 class VolunteerListItem extends React.Component<Properties & WithStyles<typeof styles>> {
+    /**
+     * Opens the dialer on the device (if any) to make a phone call to this volunteer. Should only
+     * be called when the volunteer has a known telephone number.
+     */
+    @bind
+    openDialer() {
+        const { volunteer } = this.props;
+
+        if (!volunteer.telephone)
+            return;
+
+        // "Redirect" them to the dialer. Mobile behaviour is obvious, desktop browsers do different
+        // things. Users with Skype (or similar apps) installed can still make phone calls.
+        document.location.href = 'tel:' + volunteer.telephone;
+    }
+
     render() {
         const { classes, onPictureUpdated, type, volunteer } = this.props;
 
@@ -69,7 +88,12 @@ class VolunteerListItem extends React.Component<Properties & WithStyles<typeof s
                 location = undefined;
                 secondary = volunteer.title;
                 actions = (
-                    <AccessCodeDialogButton volunteer={volunteer} />
+                    <AccessCodeDialogButton volunteer={volunteer}>
+                        { volunteer.telephone &&
+                              <IconButton onClick={this.openDialer} aria-label="Call this person">
+                                  <PhoneIcon />
+                              </IconButton> }
+                    </AccessCodeDialogButton>
                 );
                 break;
             case 'status':
