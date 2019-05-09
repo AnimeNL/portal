@@ -67,6 +67,7 @@ requests. May be cached offline.
 | `success`         | `boolean`          | Always set to `true` to indicate that event data is available. |
 | `events`          | `ProgramEvent[]`   | Array with information about the events that will take place. |
 | `floors`          | `Floor[]`          | Array with information about the floors available for the event. |
+| `internalNotes?`  | `object`           | Object of string => string pairs with notes that should be displayed on the Internals page. |
 | `locations`       | `Location[]`       | Array with information about the locations available for the event. |
 | `volunteerGroups` | `VolunteerGroup[]` | Array with information about the different groups of volunteers. |
 | `volunteers`      | `VolunteerInfo[]`  | Array with information for all the event's volunteers. |

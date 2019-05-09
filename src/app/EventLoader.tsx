@@ -176,6 +176,20 @@ class EventLoader {
                 return false;
         }
 
+        if (event.hasOwnProperty('internalNotes')) {
+            if (typeof event.internalNotes !== 'object') {
+                console.error('Unable to validate IEvent.internalNotes');
+                return false;
+            }
+
+            for (const key of Object.keys(event.internalNotes)) {
+                if (!isString(key) || !isString(event.internalNotes[key])) {
+                    console.error('Unable to validate IEvent.internalNotes');
+                    return false;
+                }
+            }
+        }
+
         if (!event.hasOwnProperty('locations') || !Array.isArray(event.locations)) {
             console.error('Unable to validate IEvent.locations');
             return false;

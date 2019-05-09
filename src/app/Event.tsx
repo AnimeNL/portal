@@ -29,6 +29,11 @@ class Event {
     private floors: Map<number, Floor> = new Map();
 
     /**
+     * Object of string => string pairs with notes that should be displayed on the Internals page.
+     */
+    private internalNotes: { [key: string]: string } = {};
+
+    /**
      * Mapping from a location identifier to an object detailing it.
      */
     private locations: Map<number, Location> = new Map();
@@ -109,6 +114,9 @@ class Event {
 
             this.volunteer = this.volunteers.get(user.userToken);
 
+            if (eventData.internalNotes)
+                this.internalNotes = eventData.internalNotes;
+
         } catch (e) {
             console.error('Unable to import the event data.', e);
             return;
@@ -136,6 +144,13 @@ class Event {
      */
     getFloors(): IterableIterator<Floor> {
         return this.floors.values();
+    }
+
+    /**
+     * Returns an object with notes to display on the Internals page.
+     */
+    getInternalNotes(): { [key: string]: string } {
+        return this.internalNotes;
     }
 
     /**

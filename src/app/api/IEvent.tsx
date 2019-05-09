@@ -15,6 +15,7 @@ export interface IEvent {
     success: boolean;
     events: IProgramEvent[];
     floors: IFloor[];
+    internalNotes?: { [key: string]: string };
     locations: ILocation[];
     volunteerGroups: IVolunteerGroup[];
     volunteers: IVolunteerInfo[];
