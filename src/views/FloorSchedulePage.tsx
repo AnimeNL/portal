@@ -9,12 +9,11 @@ import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
 import { Location } from '../app/Location';
 import { LocationCard } from '../components/LocationCard';
+import { LocationSession } from '../components/LocationSession';
 import { ProgramSession } from '../app/ProgramSession';
 import slug from '../app/util/Slug';
 
-import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
-import LockIcon from '@material-ui/icons/Lock';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import grey from '@material-ui/core/colors/grey';
@@ -27,22 +26,8 @@ const kMaximumActiveSessions = 3;
 
 const styles = (theme: Theme) =>
     createStyles({
-        activeSession: {
-            // TODO: Styling for active sessions in the location card.
-            color: 'red',
-        },
-        futureSession: {
-            // TODO: Styling for future sessions in the location card.
-            color: 'blue',
-        },
         noSession: {
             color: grey[600],
-        },
-        internalEvent: {
-            backgroundColor: 'yellow',
-        },
-        internalIcon: {
-            marginRight: theme.spacing.unit / 2,
         },
     });
 
@@ -102,11 +87,7 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
             if (session.endTime < currentTime)
                 continue;
 
-            const className = session.event.internal ?
-                classes.internalEvent :
-                (session.beginTime <= currentTime ?
-                    classes.activeSession :
-                    classes.futureSession);
+            const className = 'fixme';
 
             selection.push({ session, className });
 
@@ -128,7 +109,7 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
         return (
             <React.Fragment>
 
-                { locations.map((location: Location) => {
+                { locations.map(location => {
 
                     const path = '/schedule/locations/' + location.id + '/' + slug(location.label);
                     const sessions = this.createSessionSelectionForLocation(location);
@@ -136,30 +117,15 @@ class FloorSchedulePage extends React.Component<Properties & RouteComponentProps
                     return (
                         <LocationCard name={location.label} to={path}>
 
-                                <List dense>
+                            { !sessions.length &&
+                              <ListItem className={classes.noSession}>
+                                  <i>No more scheduled events in this location.</i>
+                              </ListItem> }
 
-                                    { sessions.map((displayInfo: SessionDisplayInfo) => {
-                                        let internal: JSX.Element | null = null;
-                                        if (displayInfo.session.event.internal) {
-                                            internal = <LockIcon className={classes.internalIcon}
-                                                                 fontSize="inherit" />;
-                                        }
-
-                                        return (
-                                            <ListItem className={displayInfo.className}>
-                                                {internal}
-                                                {displayInfo.session.name}
-                                            </ListItem>
-                                        );
-                                    }) }
-
-                                    { !sessions.length &&
-                                        <ListItem className={classes.noSession}>
-                                            <i>No more scheduled events in this location.</i>
-                                        </ListItem>
-                                    }
-
-                                </List>
+                            { sessions.map(displayInfo =>
+                                <LocationSession label={displayInfo.session.name}
+                                                 state="active" />
+                            ) }
 
                         </LocationCard>
                     );

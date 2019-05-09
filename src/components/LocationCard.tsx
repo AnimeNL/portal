@@ -6,11 +6,10 @@ import { RouteComponentProps, withRouter } from 'react-router-dom';
 import React from 'react';
 import bind from 'bind-decorator';
 
-import slug from '../app/util/Slug';
-
 import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import Divider from '@material-ui/core/Divider';
+import List from '@material-ui/core/List';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -78,7 +77,9 @@ class LocationCard extends React.Component<Properties & WithStyles<typeof styles
 
                     <Divider />
 
-                    {children}
+                    <List dense>
+                        {children}
+                    </List>
 
                 </CardActionArea>
             </Card>
