@@ -23,7 +23,6 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import TodayIcon from '@material-ui/icons/TodayOutlined';
-import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
