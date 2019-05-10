@@ -125,11 +125,15 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
                 if (session.endTime < currentTime)
                     continue;
 
+                const isActive = session.beginTime <= currentTime;
+                const timing = isActive ? undefined
+                                        : currentTime.to(session.beginTime);
+
                 sessions.push({
                     internal: session.event.internal,
                     label: session.name,
-                    state: session.beginTime >= currentTime ? 'pending' : 'active',
-                    timing: undefined,
+                    state: isActive ? 'active' : 'pending',
+                    timing
                 });
 
                 if (sessions.length >= kMaximumActiveSessions)

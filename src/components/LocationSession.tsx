@@ -6,10 +6,12 @@ import React from 'react';
 
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListItemText from '@material-ui/core/ListItemText';
 import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
@@ -29,12 +31,19 @@ const styles = (theme: Theme) =>
 
         label: {
             // TODO: Make this work correctly on desktop.
-            maxWidth: 'calc(100vw - 32px - ' + (6 * theme.spacing.unit) + 'px)',
+            // TODO: 50px to compensate for time-until. Dismiss when |!timing|?
+            maxWidth: 'calc(100vw - 50px - 32px - ' + (6 * theme.spacing.unit) + 'px)',
 
             '&:first-child': {
                 paddingLeft: '32px',
             },
         },
+
+        timing: {
+            color: 'rgba(0, 0, 0, .5)',
+            fontSize: '11px',
+            paddingRight: theme.spacing.unit * 2,
+        }
     });
 
 /**
@@ -67,10 +76,9 @@ interface Properties {
  */
 class LocationSession extends React.Component<Properties & WithStyles<typeof styles>> {
     render() {
-        const { classes, internal, label, state } = this.props;
+        const { classes, internal, label, state, timing } = this.props;
 
         // TODO: Use |internal|
-        // TODO: Use |timing|
 
         return (
             <ListItem>
@@ -83,6 +91,13 @@ class LocationSession extends React.Component<Properties & WithStyles<typeof sty
                               primaryTypographyProps={{ noWrap: true }}>
                     {label}
                 </ListItemText>
+
+                { timing &&
+                    <ListItemSecondaryAction>
+                        <Typography className={classes.timing} variant="body1">
+                            {timing}
+                        </Typography>
+                    </ListItemSecondaryAction>}
 
             </ListItem>
         );

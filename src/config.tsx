@@ -2,6 +2,8 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import moment from 'moment';
+
 /**
  * Boolean to indicate whether the current build environment is production or development. API calls
  * will be incepted and mocked out for development.
@@ -62,6 +64,29 @@ export const AppTheme = {
         useNextVariants: true,
     },
 };
+
+/**
+ * Change the momentJS locale to create short time-until notations.
+ * https://github.com/moment/moment/issues/2781
+ */
+moment.locale('en', {
+    relativeTime: {
+        future: 'in %s',
+        past: '%s ago',
+        s:  'seconds',
+        ss: '%ss',
+        m:  '1m',
+        mm: '%dm',
+        h:  '1h',
+        hh: '%dh',
+        d:  '1d',
+        dd: '%dd',
+        M:  '1m',
+        MM: '%dM',
+        y:  '1y',
+        yy: '%dY'
+    }
+});
 
 /**
  * Proxy to the fetch() function that can be mocked when in development.
