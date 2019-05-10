@@ -3,6 +3,8 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
+import moment from 'moment';
 
 import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
@@ -89,6 +91,11 @@ interface State {
      * Sorted list of LocationDisplayInfo objects.
      */
     locations: LocationDisplayInfo[];
+
+    /**
+     * Moment at which the next automated update of this page should occur.
+     */
+    nextUpdate?: moment.Moment;
 }
 
 /**
@@ -96,8 +103,45 @@ interface State {
  * floor, together with the events that are happening in them at the current time.
  */
 export class FloorSchedulePage extends React.Component<Properties, State> {
+    updateTimer?: NodeJS.Timeout;
     state: State = {
-        locations: []
+        locations: [],
+    }
+
+    componentDidMount() { this.refreshUpdateTimer(); }
+    componentDidUpdate() { this.refreshUpdateTimer(); }
+
+    /**
+     * Refreshes the |updateTimer| by clearing the current one and setting a new one. This seems to
+     * be necessary due to React's lifetime semantics.
+     */
+    private refreshUpdateTimer() {
+        const { clock } = this.props;
+        const { nextUpdate } = this.state;
+
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
+
+        // It's possible that there are no future updates, for example when the last session in a
+        // room happened in the past. Bail out in that case.
+        if (!nextUpdate)
+            return;
+
+        this.updateTimer = setTimeout(this.refreshState, nextUpdate.diff(clock.getMoment()));
+    }
+
+    /**
+     * Called by the |updateTimer| as an event listed on the page has finished or is about to start.
+     */
+    @bind
+    private refreshState() {
+        this.setState(FloorSchedulePage.getDerivedStateFromProps(this.props));
+        this.refreshUpdateTimer();
+    }
+
+    componentWillUnmount() {
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
     }
 
     /**
@@ -108,7 +152,9 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
         const { clock, floor } = props;
 
         const currentTime = clock.getMoment();
-        const locations: LocationDisplayInfo[] = [];
+
+        let locations: LocationDisplayInfo[] = [];
+        let nextUpdate = currentTime.clone().add({ years: 1 });;
 
         for (const location of floor.locations) {
             const sessions: SessionDisplayInfo[] = [];
@@ -128,6 +174,10 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
                 const isActive = session.beginTime <= currentTime;
                 const timing = isActive ? undefined
                                         : currentTime.to(session.beginTime);
+
+                // Consider this |session| for scheduling the next page update.
+                nextUpdate = moment.min(nextUpdate, isActive ? session.endTime
+                                                             : session.beginTime);
 
                 sessions.push({
                     internal: session.event.internal,
@@ -149,7 +199,7 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
 
         locations.sort((lhs, rhs) => lhs.label.localeCompare(rhs.label));
 
-        return { locations };
+        return { locations, nextUpdate };
     }
 
     render() {
