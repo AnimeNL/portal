@@ -197,7 +197,13 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
             });
         }
 
-        locations.sort((lhs, rhs) => lhs.label.localeCompare(rhs.label));
+        // Sort alphabetically. Locations without upcoming sessions will be listed last.
+        locations.sort((lhs, rhs) => {
+            if (!lhs.sessions.length && rhs.sessions.length)
+                return 1;
+
+            return lhs.label.localeCompare(rhs.label);
+        });
 
         let nextUpdateSeconds = nextScheduleUpdate.diff(currentTime, 'seconds');
         let nextUpdate: number = 3600;
