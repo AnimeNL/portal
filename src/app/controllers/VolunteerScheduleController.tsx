@@ -119,9 +119,6 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
             console.error('Unable to handle the upload request.', e);
             return false;
         }
-
-        // not-reached
-        return false;
     }
 
     render() {

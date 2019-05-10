@@ -11,7 +11,6 @@ import FloorScheduleController from './FloorScheduleController';
 import InternalsController from './InternalsController';
 import LocationScheduleController from './LocationScheduleController';
 import OverviewController from './OverviewController';
-import ScheduleController from './ScheduleController';
 import VolunteerListController from './VolunteerListController';
 import VolunteerScheduleController from './VolunteerScheduleController';
 
