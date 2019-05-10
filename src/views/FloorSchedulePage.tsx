@@ -154,7 +154,7 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
         const currentTime = clock.getMoment();
 
         let locations: LocationDisplayInfo[] = [];
-        let nextUpdate = currentTime.clone().add({ years: 1 });;
+        let nextScheduleUpdate = currentTime.clone().add({ years: 1 });;
 
         for (const location of floor.locations) {
             const sessions: SessionDisplayInfo[] = [];
@@ -176,8 +176,8 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
                                         : currentTime.to(session.beginTime);
 
                 // Consider this |session| for scheduling the next page update.
-                nextUpdate = moment.min(nextUpdate, isActive ? session.endTime
-                                                             : session.beginTime);
+                nextScheduleUpdate = moment.min(nextScheduleUpdate, isActive ? session.endTime
+                                                                             : session.beginTime);
 
                 sessions.push({
                     internal: session.event.internal,
@@ -199,7 +199,22 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
 
         locations.sort((lhs, rhs) => lhs.label.localeCompare(rhs.label));
 
-        return { locations, nextUpdate };
+        let nextUpdateSeconds = nextScheduleUpdate.diff(currentTime, 'seconds');
+        let nextUpdate: number = 3600;
+
+        // The next update depends on when the next schedule update happens, together with rounding
+        // applied in MomentJS: https://momentjs.com/docs/#/displaying/fromnow/
+        if (nextUpdateSeconds <= 44 * 60) {
+            nextUpdate = 1 + (30 + nextUpdateSeconds) % 60;                // nearest X:30 minutes
+        } else if (nextUpdateSeconds <= 21 * 60 * 60) {
+            nextUpdate = Math.min(nextUpdateSeconds - 44 * 60,             // 44 minutes remaining
+                                  1 + (1800 + nextUpdateSeconds) % 3600);  // nearest X:30 hours
+        }
+
+        return {
+            locations,
+            nextUpdate: clock.getMoment().add({ seconds: nextUpdate })
+        };
     }
 
     render() {
