@@ -39,20 +39,13 @@ interface State {
 class LocationScheduleController extends React.Component<Properties, State> {
     state: State = {}
 
-    componentWillMount(): void {
-        this.updateLocationFromIdentifier(this.props.match.params.location);
-    }
-
-    componentWillReceiveProps(nextProps: Properties): void {
-        this.updateLocationFromIdentifier(nextProps.match.params.location);
-    }
-
     /**
-     * Update the location which is being displayed given the |identifier|.
+     * Called when the properties for this element are set. Identifies the location that has to be
+     * displayed, if any.
      */
-    private updateLocationFromIdentifier(identifier: string): void {
-        const { event, setTitle } = this.props;
-        const locationId = parseInt(identifier);
+    static getDerivedStateFromProps(props: Properties) {
+        const { event, setTitle } = props;
+        const locationId = parseInt(props.match.params.location);
 
         for (const location of event.getLocations()) {
             if (location.id !== locationId)
@@ -60,13 +53,12 @@ class LocationScheduleController extends React.Component<Properties, State> {
 
             setTitle(location.label);
 
-            this.setState({ location });
-            return;
+            return { location };
         }
 
         setTitle(null);
 
-        this.setState({ location: undefined });
+        return { location: undefined };
     }
 
     render() {

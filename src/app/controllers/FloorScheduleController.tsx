@@ -40,20 +40,13 @@ interface State {
 class FloorScheduleController extends React.Component<Properties, State> {
     state: State = {}
 
-    componentWillMount(): void {
-        this.updateFloorFromIdentifier(this.props.match.params.floor);
-    }
-
-    componentWillReceiveProps(nextProps: Properties): void {
-        this.updateFloorFromIdentifier(nextProps.match.params.floor);
-    }
-
     /**
-     * Update the floor which is being displayed given the |identifier|.
+     * Called when the properties for this element are set. Identifies the floor that has to be
+     * displays and returns the derived state.
      */
-    private updateFloorFromIdentifier(identifier: string): void {
-        const { event, setTitle } = this.props;
-        const floorId = parseInt(identifier);
+    static getDerivedStateFromProps(props: Properties) {
+        const { event, setTitle } = props;
+        const floorId = parseInt(props.match.params.floor);
 
         for (const floor of event.getFloors()) {
             if (floor.id !== floorId)
@@ -61,13 +54,12 @@ class FloorScheduleController extends React.Component<Properties, State> {
 
             setTitle(floor.label);
 
-            this.setState({ floor });
-            return;
+            return { floor };
         }
 
         setTitle(null);
 
-        this.setState({ floor: undefined });
+        return { floor: undefined };
     }
 
     render() {
