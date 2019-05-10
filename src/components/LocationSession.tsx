@@ -12,6 +12,8 @@ import MoreHorizIcon from '@material-ui/icons/MoreHoriz';
 import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import blueGrey from '@material-ui/core/colors/blueGrey';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
@@ -29,6 +31,14 @@ const styles = (theme: Theme) =>
             fontSize: '16px',
         },
 
+        labelInternal: {
+            color: blueGrey[400],
+            fontSize: 'inherit',
+        },
+        labelPublic: {
+            fontSize: 'inherit',
+        },
+
         label: {
             // TODO: Make this work correctly on desktop.
             // TODO: 50px to compensate for time-until. Dismiss when |!timing|?
@@ -37,6 +47,12 @@ const styles = (theme: Theme) =>
             '&:first-child': {
                 paddingLeft: '32px',
             },
+        },
+        labelIconInternal: {
+            fontSize: '11px',
+            position: 'relative',
+            left: theme.spacing.unit,
+            top: 2,
         },
 
         timing: {
@@ -78,8 +94,6 @@ class LocationSession extends React.Component<Properties & WithStyles<typeof sty
     render() {
         const { classes, internal, label, state, timing } = this.props;
 
-        // TODO: Use |internal|
-
         return (
             <ListItem>
                 <ListItemIcon className={classes.iconContainer}>
@@ -88,8 +102,14 @@ class LocationSession extends React.Component<Properties & WithStyles<typeof sty
                 </ListItemIcon>
 
                 <ListItemText className={classes.label}
-                              primaryTypographyProps={{ noWrap: true }}>
+                              primaryTypographyProps={{ className: internal ? classes.labelInternal
+                                                                            : classes.labelPublic,
+                                                        noWrap: true }}>
+
                     {label}
+
+                    { internal && <VisibilityOff className={classes.labelIconInternal} /> }
+
                 </ListItemText>
 
                 { timing &&
