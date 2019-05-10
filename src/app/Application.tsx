@@ -4,6 +4,7 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import bind from 'bind-decorator';
 
 import Clock from './Clock';
 import Environment from './Environment';
@@ -91,13 +92,24 @@ class Application {
     }
 
     /**
+     * Updates the page title based on the content that's being displayed. The name of the portal
+     * that's being displayed will automatically be appended.
+     */
+    @bind
+    private setTitle(title: string | null): void {
+        document.title = title ? title + ' | ' + this.environment.portalTitle
+                               : this.environment.portalTitle;
+    }
+
+    /**
      * Displays the portal view containing the information that's actually useful for the volunteer.
      */
     private displayPortalView(): void {
         ReactDOM.render(<PortalController clock={this.clock}
                                           environment={this.environment}
                                           event={this.event}
-                                          user={this.user} />, this.container);
+                                          user={this.user}
+                                          setTitle={this.setTitle} />, this.container);
     }
 
     /**

@@ -15,6 +15,12 @@ import InternalsPage from '../../views/InternalsPage';
  * possible to observe the state of the application at any given point in the future.
  */
 class InternalsController extends React.Component<ApplicationProperties> {
+    componentWillMount() {
+        const { setTitle } = this.props;
+
+        setTitle('Internals');
+    }
+
     /**
      * Called when the date or time has been changed on the internals page. The new |time| should
      * take effect throughout the application.

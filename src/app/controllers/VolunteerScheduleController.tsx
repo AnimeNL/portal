@@ -58,15 +58,19 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
      * @param slug The slug of the volunteer's name as made available through the URL.
      */
     private updateVolunteerFromSlug(slug: string): void {
-        const { event } = this.props;
+        const { event, setTitle } = this.props;
 
         for (const volunteer of event.getVolunteers()) {
             if (createSlug(volunteer.name) !== slug)
                 continue;
 
+            setTitle(volunteer.name);
+
             this.setState({ volunteer });
             return;
         }
+
+        setTitle(null);
 
         this.setState({ volunteer: undefined });
     }

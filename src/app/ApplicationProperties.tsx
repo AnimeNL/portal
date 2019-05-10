@@ -16,4 +16,7 @@ export default interface ApplicationProperties {
     environment: Environment;
     event: Event;
     user: User;
+
+    // Updates the title of the page that's currently displaying.
+    setTitle: (title: string | null) => void;
 }

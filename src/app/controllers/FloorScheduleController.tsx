@@ -52,16 +52,20 @@ class FloorScheduleController extends React.Component<Properties, State> {
      * Update the floor which is being displayed given the |identifier|.
      */
     private updateFloorFromIdentifier(identifier: string): void {
-        const { event } = this.props;
+        const { event, setTitle } = this.props;
         const floorId = parseInt(identifier);
 
         for (const floor of event.getFloors()) {
             if (floor.id !== floorId)
                 continue;
 
+            setTitle(floor.label);
+
             this.setState({ floor });
             return;
         }
+
+        setTitle(null);
 
         this.setState({ floor: undefined });
     }

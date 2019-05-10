@@ -51,16 +51,20 @@ class LocationScheduleController extends React.Component<Properties, State> {
      * Update the location which is being displayed given the |identifier|.
      */
     private updateLocationFromIdentifier(identifier: string): void {
-        const { event } = this.props;
+        const { event, setTitle } = this.props;
         const locationId = parseInt(identifier);
 
         for (const location of event.getLocations()) {
             if (location.id !== locationId)
                 continue;
 
+            setTitle(location.label);
+
             this.setState({ location });
             return;
         }
+
+        setTitle(null);
 
         this.setState({ location: undefined });
     }

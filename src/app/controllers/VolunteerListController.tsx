@@ -35,7 +35,7 @@ class VolunteerListController extends React.Component<ApplicationProperties, Sta
      * should be displayed on these pages, and set that as state.
      */
     componentWillMount(): void {
-        const { event } = this.props;
+        const { event, setTitle } = this.props;
         const state: State = this.state;
 
         for (const group of event.getVolunteerGroups()) {
@@ -46,6 +46,8 @@ class VolunteerListController extends React.Component<ApplicationProperties, Sta
 
             state.groups.push(group);
         }
+
+        setTitle('Volunteers');
 
         this.setState(state);
     }
