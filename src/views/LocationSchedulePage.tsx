@@ -68,6 +68,11 @@ interface SessionDayDisplayInfo {
      * Array with the sessions that will take place on this day. Must be sorted.
      */
     sessions: SessionDisplayInfo[];
+
+    /**
+     * UNIX timestamp of the time at which this day starts.
+     */
+    timestamp: number;
 }
 
 /**
@@ -168,11 +173,22 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
                 days.set(dayIdentifier, {
                     label: session.beginTime.format('dddd'),
                     sessions: [ sessionDisplayInfo ],
+                    timestamp: dayIdentifier,
                 });
             }
         }
 
-        return { header, days: Array.from(days.values()) };
+        // (1) Sort the days that are to be displayed on the location page.
+        const sortedDays = Array.from(days.values()).sort((lhs, rhs) => {
+            // TODO: Sort past days to the bottom of the list.
+            return lhs.timestamp > rhs.timestamp ? 1 : -1;
+        });
+
+        // (2) Sort the events within the days that will be displayed on the page.
+        for (const displayInfo of sortedDays)
+            displayInfo.sessions.sort((lhs, rhs) => lhs.beginTime > rhs.beginTime ? 1 : -1);
+
+        return { header, days: sortedDays };
     }
 
     /**
