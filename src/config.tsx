@@ -67,7 +67,7 @@ export const AppTheme = {
  * Change the momentJS locale to create short time-until notations.
  * https://github.com/moment/moment/issues/2781
  */
-moment.locale('en', {
+moment.updateLocale('en', {
     relativeTime: {
         future: 'in %s',
         past: '%s ago',
@@ -79,7 +79,7 @@ moment.locale('en', {
         hh: '%dh',
         d:  '1d',
         dd: '%dd',
-        M:  '1m',
+        M:  '1M',
         MM: '%dM',
         y:  '1y',
         yy: '%dY'
