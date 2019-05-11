@@ -68,6 +68,14 @@ export class UpdateTimeTracker extends React.Component<Properties> {
         this.updateTimer = setInterval(this.update, 1000);
     }
 
+    componentDidUpdate(prevProps: Properties) {
+        if (prevProps.label && prevProps.label !== this.props.label)
+            UpdateTimeTracker.updateTimerMap.delete(prevProps.label);
+
+        if (this.props.label)
+            UpdateTimeTracker.updateTimerMap.set(this.props.label, this.props.moment!);
+    }
+
     componentWillUnmount() {
         if (this.updateTimer)
             clearInterval(this.updateTimer);
