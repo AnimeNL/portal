@@ -7,12 +7,20 @@ import React from 'react';
 import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
-        // ...
+        label: {
+            paddingLeft: theme.spacing.unit * 2,
+
+            marginTop: theme.spacing.unit * 1.8,
+            marginBottom: theme.spacing.unit * 1.8,
+
+            color: theme.palette.text.secondary,
+        },
     });
 
 /**
@@ -34,7 +42,9 @@ class LabeledSessionList extends React.Component<Properties & WithStyles<typeof 
 
         return (
             <React.Fragment>
-                <h1>{label}</h1>
+                <Typography className={classes.label} variant="subtitle2">
+                    {label}
+                </Typography>
 
                 <Paper square>
                     <List>
