@@ -61,9 +61,9 @@ export class VolunteerListPage extends React.Component<Properties> {
                         textColor="primary"
                         variant="fullWidth">
 
-                        {groups.map(group => {
+                        {groups.map((group, index) => {
                             return (
-                                <Tab label={group.label} />
+                                <Tab key={index} label={group.label} />
                             );
                         })}
 
@@ -76,9 +76,10 @@ export class VolunteerListPage extends React.Component<Properties> {
             <>
                 {tabs}
                 <List>
-                    {volunteers.map(volunteer => {
-                        return <VolunteerListItem volunteer={volunteer} type="status" />;
-                    })}
+                    {volunteers.map(volunteer =>
+                        <VolunteerListItem key={volunteer.userToken}
+                                           type="status"
+                                           volunteer={volunteer} /> )}
                 </List>
             </>
         );
