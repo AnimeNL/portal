@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import moment from 'moment';
 
 import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
@@ -135,6 +136,7 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
         const floorIdentifier = LocationSchedulePage.getFloorDescription(floor);
         const sessionCount = sessions.length + ' session' + (sessions.length !== 1 ? 's' : '');
 
+        const days: Map<number, SessionDayDisplayInfo> = new Map();
         const header = {
             icon: floor.icon,
             iconColor: floor.iconColor,
@@ -142,30 +144,35 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
             title: location.label,
         };
 
-        // TODO: Split up the |days| in several days.
-        // TODO: Sort the sessions by start time.
-
-        const firstDay: SessionDayDisplayInfo = {
-            label: 'Weekend',
-            sessions: []
-        };
-
         for (const session of sessions) {
-            // The key for this |session| will be the event ID together with the begin time of
-            // the session on the schedule. This should hopefully be globally unique.
-            const key = `${session.event.id}-${session.beginTime.unix()}`;
-
-            firstDay.sessions.push({
+            const sessionDisplayInfo: SessionDisplayInfo = {
                 beginTime: session.beginTime,
                 endTime: session.endTime,
                 description: session.description || undefined,
                 internal: session.event.internal,
                 title: session.name,
-                key
-            });
+
+                // The key for this |session| will be the event ID together with the begin time of
+                // the session on the schedule. This should hopefully be globally unique.
+                key: `${session.event.id}-${session.beginTime.unix()}`,
+            };
+
+            // Gets an identifier for the current day consistent throughout the sessions. A UNIX
+            // timestamp is used rather than a Moment instance as Map can store multiple of those.
+            const dayIdentifier = moment(session.beginTime).startOf('day').unix();
+            const day = days.get(dayIdentifier);
+
+            if (day) {
+                day.sessions.push(sessionDisplayInfo);
+            } else {
+                days.set(dayIdentifier, {
+                    label: session.beginTime.format('dddd'),
+                    sessions: [ sessionDisplayInfo ],
+                });
+            }
         }
 
-        return { header, days: [ firstDay ] };
+        return { header, days: Array.from(days.values()) };
     }
 
     /**
