@@ -33,6 +33,10 @@ const styles = (theme: Theme) =>
             },
             marginBottom: theme.spacing(2),
         },
+        noWrap: {
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+        },
     });
 
 /**
@@ -245,7 +249,8 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
                                     </Avatar>
                                 </ListItemAvatar>}
 
-                            <ListItemText primary={header.title}
+                            <ListItemText className={classes.noWrap}
+                                          primary={header.title}
                                           primaryTypographyProps={{ noWrap: true }}
                                           secondary={header.subtitle}
                                           secondaryTypographyProps={{ noWrap: true }} />

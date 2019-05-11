@@ -18,6 +18,10 @@ const styles = (theme: Theme) =>
             fontSize: 9,
             verticalAlign: 'top',
         },
+        noWrap: {
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+        },
 
         times: {
             minWidth: 56,
@@ -130,7 +134,8 @@ class TimedListItem extends React.Component<TimedListItemProps & WithStyles<type
                     {times}
                 </div>
 
-                <ListItemText primary={title}
+                <ListItemText className={classes.noWrap}
+                              primary={title}
                               primaryTypographyProps={{ noWrap: true }}
                               secondary={description}
                               secondaryTypographyProps={{ noWrap: true }} />
