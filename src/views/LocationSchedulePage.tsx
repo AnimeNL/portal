@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
 import moment from 'moment';
 
 import Clock from '../app/Clock';
@@ -10,6 +11,7 @@ import { Floor } from '../app/Floor';
 import { LabeledSessionList } from '../components/LabeledSessionList';
 import { Location } from '../app/Location';
 import { TimedListItem, TimedListItemProps } from '../components/TimedListItem';
+import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
 import { kDrawerWidth } from '../config';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -123,6 +125,11 @@ interface State {
      * Array of the various days during which sessions will take place in this location.
      */
     days: SessionDayDisplayInfo[];
+
+    /**
+     * Moment at which the next automated update of this page should occur.
+     */
+    nextUpdate?: moment.Moment;
 }
 
 /**
@@ -130,6 +137,7 @@ interface State {
  * take place in that location. Events with volunteer coverage will be highlighted.
  */
 class LocationSchedulePage extends React.Component<Properties & WithStyles<typeof styles>, State> {
+    updateTimer?: NodeJS.Timeout;
     state: State = {
         header: {
             subtitle: '',
@@ -137,6 +145,43 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
         },
         days: []
     };
+
+    componentDidMount() { this.refreshUpdateTimer(); }
+    componentDidUpdate() { this.refreshUpdateTimer(); }
+
+    /**
+     * Refreshes the |updateTimer| by clearing the current one and setting a new one. This seems to
+     * be necessary due to React's lifetime semantics.
+     */
+    private refreshUpdateTimer() {
+        const { clock } = this.props;
+        const { nextUpdate } = this.state;
+
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
+
+        // It's possible that there are no future updates, for example when the last session in this
+        // location has passed already.
+        if (!nextUpdate)
+            return;
+
+        this.updateTimer = setTimeout(this.refreshState, nextUpdate.diff(clock.getMoment()));
+    }
+
+    /**
+     * Called by the |updateTimer| as an event listed on the page has finished or is about to start.
+     */
+    @bind
+    private refreshState() {
+        console.log('UPDATE');
+        this.setState(LocationSchedulePage.getDerivedStateFromProps(this.props));
+        this.refreshUpdateTimer();
+    }
+
+    componentWillUnmount() {
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
+    }
 
     /**
      * Called when the component mounts or updates, to compute the state. This will trigger React to
@@ -148,13 +193,15 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
 
         const currentTime = clock.getMoment();
 
+        let nextScheduleUpdate = currentTime.clone().add({ years: 1 });;
+
         // Compile the information necessary to display the header.
         const floorIdentifier = LocationSchedulePage.getFloorDescription(floor);
         const sessionCount = sessions.length + ' session' + (sessions.length !== 1 ? 's' : '');
 
         const days: Map<number, SessionDayDisplayInfo> = new Map();
         const header = {
-            icon: floor.icon,
+            icon: floor.icon || undefined,
             iconColor: floor.iconColor,
             subtitle: floorIdentifier + ' — ' + sessionCount,
             title: location.label,
@@ -179,6 +226,16 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
             };
 
             const activeIncrement = state !== 'past' ? 1 : 0;
+
+            // Consider this |session| for scheduling the next page update.
+            switch (state) {
+                case 'active':
+                    nextScheduleUpdate = moment.min(nextScheduleUpdate, session.endTime);
+                    break;
+                case 'pending':
+                    nextScheduleUpdate = moment.min(nextScheduleUpdate, session.beginTime);
+                    break;
+            }
 
             // Gets an identifier for the current day consistent throughout the sessions. A UNIX
             // timestamp is used rather than a Moment instance as Map can store multiple of those.
@@ -216,7 +273,11 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
             });
         }
 
-        return { header, days: sortedDays };
+        return {
+            header,
+            days: sortedDays,
+            nextUpdate: nextScheduleUpdate,
+        };
     }
 
     /**
@@ -242,7 +303,7 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
 
     render() {
         const { classes } = this.props;
-        const { header, days } = this.state;
+        const { header, days, nextUpdate } = this.state;
 
         return (
             <React.Fragment>
@@ -278,6 +339,8 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
 
                     </LabeledSessionList>
                 ) }
+
+                <UpdateTimeTracker label={header.title} moment={nextUpdate} />
 
             </React.Fragment>
         );
