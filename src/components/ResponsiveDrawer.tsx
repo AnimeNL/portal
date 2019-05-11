@@ -26,7 +26,7 @@ const styles = (theme: Theme) =>
             width: kDrawerWidth,
             [theme.breakpoints.up('sm')]: {
                 // https://github.com/mui-org/material-ui/blob/next/packages/material-ui/src/styles/createMixins.js
-                paddingTop: (theme.mixins.toolbar.minHeight as number) + theme.spacing.unit
+                paddingTop: (theme.mixins.toolbar.minHeight as number) + theme.spacing(1)
             },
         },
         toolbar: theme.mixins.toolbar,

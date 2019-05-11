@@ -42,7 +42,7 @@ const styles = (theme: Theme) =>
         label: {
             // TODO: Make this work correctly on desktop.
             // TODO: 50px to compensate for time-until. Dismiss when |!timing|?
-            maxWidth: 'calc(100vw - 50px - 32px - ' + (6 * theme.spacing.unit) + 'px)',
+            maxWidth: 'calc(100vw - 50px - 32px - ' + (6 * theme.spacing(1)) + 'px)',
 
             '&:first-child': {
                 paddingLeft: '32px',
@@ -51,14 +51,14 @@ const styles = (theme: Theme) =>
         labelIconInternal: {
             fontSize: '11px',
             position: 'relative',
-            left: theme.spacing.unit,
+            left: theme.spacing(1),
             top: 2,
         },
 
         timing: {
             color: 'rgba(0, 0, 0, .5)',
             fontSize: '11px',
-            paddingRight: theme.spacing.unit * 2,
+            paddingRight: theme.spacing(2),
         }
     });
 

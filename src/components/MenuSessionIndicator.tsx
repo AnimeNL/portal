@@ -13,8 +13,8 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 const styles = (theme: Theme) =>
     createStyles({
         bubble: {
-            padding: `2px ${theme.spacing.unit}px`,
-            marginRight: theme.spacing.unit,
+            padding: `2px ${theme.spacing(1)}px`,
+            marginRight: theme.spacing(1),
 
             borderRadius: '11px',
             fontSize: '.8em',

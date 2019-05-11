@@ -3,8 +3,9 @@
 // be found in the LICENSE file.
 
 import * as React from 'react';
-import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
 import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@material-ui/styles';
+import { createMuiTheme } from '@material-ui/core/styles';
 
 import { AppTheme } from './config';
 
@@ -13,10 +14,10 @@ const theme = createMuiTheme(AppTheme);
 function withRoot<P>(Component: React.ComponentType<P>) {
     function WithRoot(props: P) {
         return (
-            <MuiThemeProvider theme={theme}>
+            <ThemeProvider theme={theme}>
                 <CssBaseline />
                 <Component {...props} />
-            </MuiThemeProvider>
+            </ThemeProvider>
         );
     }
 

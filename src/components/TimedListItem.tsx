@@ -15,7 +15,7 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 const styles = (theme: Theme) =>
     createStyles({
         timesItem: {
-            marginRight: theme.spacing.unit,
+            marginRight: theme.spacing(1),
             textAlign: 'right',
         },
     });

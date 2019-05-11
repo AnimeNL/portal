@@ -28,6 +28,21 @@ const styles = (theme: Theme) =>
     });
 
 /**
+ * Work-around for an issue where the `button` property for the <ListItem> component became a
+ * discriminant for the component's properties, meaning it can't be set dynamically.
+ *
+ * @see https://github.com/mui-org/material-ui/pull/15049
+ */
+function ConditionalListItem(props: { button: boolean, children: React.ReactNode }): JSX.Element {
+  const { button, children } = props;
+
+  if (button)
+    return <ListItem button>{children}</ListItem>;
+
+  return <ListItem>{children}</ListItem>;
+}
+
+/**
  * Properties accepted by the <Volunteer> element.
  */
 interface Properties {
@@ -106,13 +121,13 @@ class VolunteerListItem extends React.Component<Properties & WithStyles<typeof s
 
         return (
             <ConditionalLink className={classes.link} to={location}>
-                <ListItem button={!!location}>
+                <ConditionalListItem button={!!location}>
                     <AvatarDialogButton volunteer={volunteer} onPictureUpdated={onPictureUpdated} />
                     <ListItemText
                         primary={primary}
                         secondary={secondary} />
                     {actions}
-                </ListItem>
+                </ConditionalListItem>
             </ConditionalLink>
         );
     }

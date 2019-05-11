@@ -14,7 +14,7 @@ const styles = (theme: Theme) =>
     createStyles({
         link: {
             color: 'unset',
-            marginRight: theme.spacing.unit,
+            marginRight: theme.spacing(1),
             textDecoration: 'none',
 
             display: 'block',

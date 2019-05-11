@@ -14,10 +14,10 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 const styles = (theme: Theme) =>
     createStyles({
         label: {
-            paddingLeft: theme.spacing.unit * 2,
+            paddingLeft: theme.spacing(2),
 
-            marginTop: theme.spacing.unit * 1.8,
-            marginBottom: theme.spacing.unit * 1.8,
+            marginTop: theme.spacing(1.8),
+            marginBottom: theme.spacing(1.8),
 
             color: theme.palette.text.secondary,
         },

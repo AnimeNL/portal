@@ -14,6 +14,7 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import IconButton from '@material-ui/core/IconButton';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import PhotoCamera from '@material-ui/icons/PhotoCamera';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -29,14 +30,14 @@ const styles = (theme: Theme) =>
             borderBottom: '1px solid #d0d0d0',
             backgroundColor: theme.palette.divider,
 
-            padding: theme.spacing.unit * 2,
+            padding: theme.spacing(2),
         },
 
         uploadSheet: {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            padding: theme.spacing.unit,
+            padding: theme.spacing(1),
 
             backgroundSize: 'cover',
             backgroundColor: 'white',
@@ -54,7 +55,7 @@ const styles = (theme: Theme) =>
             marginLeft: -12,
         },
         saveButtonWrapper: {
-            margin: theme.spacing.unit,
+            margin: theme.spacing(1),
             position: 'relative',
         },
     });
@@ -186,9 +187,11 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
         // the ability to upload new photos is limited to the current user and admins.
         if (!onPictureUpdated) {
             return (
-                <Avatar src={volunteer.avatar}>
-                    {nameInitials(volunteer.name)}
-                </Avatar>
+                <ListItemAvatar>
+                    <Avatar src={volunteer.avatar}>
+                        {nameInitials(volunteer.name)}
+                    </Avatar>
+                </ListItemAvatar>
             );
         }
 
@@ -198,11 +201,13 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
 
         return (
             <>
-                <Avatar src={volunteer.avatar}
-                        className={classes.clickable}
-                        onClick={this.openAvatarUploadDialog}>
-                    {nameInitials(volunteer.name)}
-                </Avatar>
+                <ListItemAvatar>
+                    <Avatar src={volunteer.avatar}
+                            className={classes.clickable}
+                            onClick={this.openAvatarUploadDialog}>
+                        {nameInitials(volunteer.name)}
+                    </Avatar>
+                </ListItemAvatar>
 
                 <Dialog open={this.state.uploadDialogOpen}
                         onClose={this.cancelAvatarUploadDialog}>

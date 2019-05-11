@@ -18,13 +18,13 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 const styles = (theme: Theme) =>
     createStyles({
         location: {
-            margin: theme.spacing.unit * 2,
+            margin: theme.spacing(2),
         },
         locationName: {
             // TODO: Make this work correctly on desktop.
-            maxWidth: 'calc(100vw - ' + (4 * theme.spacing.unit) + 'px)',
+            maxWidth: 'calc(100vw - ' + (4 * theme.spacing(1)) + 'px)',
 
-            padding: theme.spacing.unit,
+            padding: theme.spacing(1),
             fontWeight: 500,
         },
     });

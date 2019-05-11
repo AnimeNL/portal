@@ -16,10 +16,10 @@ import { withStyles } from '@material-ui/core/styles';
 const styles = (theme: Theme) =>
     createStyles({
         root: {
-            padding: theme.spacing.unit * 3
+            padding: theme.spacing(3)
         },
         message: {
-            paddingTop: theme.spacing.unit * 3
+            paddingTop: theme.spacing(3)
         }
     });
 

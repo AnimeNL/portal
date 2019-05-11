@@ -24,13 +24,13 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 const styles = (theme: Theme) =>
     createStyles({
         root: {
-            padding: `${theme.spacing.unit * 2}px ${theme.spacing.unit * 3}px`,
+            padding: `${theme.spacing(2)}px ${theme.spacing(3)}px`,
         },
         form: {
             width: '100%',  // Internet Explorer 11 fix
         },
         submit: {
-            marginTop: theme.spacing.unit * 3
+            marginTop: theme.spacing(3)
         },
     });
 

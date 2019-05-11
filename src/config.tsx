@@ -60,9 +60,7 @@ export const AppTheme = {
             selected: '#E8EAF6',
         },
     },
-    typography: {
-        useNextVariants: true,
-    },
+
 };
 
 /**

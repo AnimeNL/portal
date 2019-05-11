@@ -15,6 +15,7 @@ import TimedListItem from '../components/TimedListItem';
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
 import SvgIcon from '@material-ui/core/SvgIcon';
@@ -32,7 +33,7 @@ const styles = (theme: Theme) =>
                 // Take away an extra 17px to compensate for the scrollbar that's always visible.
                 maxWidth: 'calc(100vw - 17px - ' + kDrawerWidth + 'px)',
             },
-            marginBottom: theme.spacing.unit * 2,
+            marginBottom: theme.spacing(2),
         },
         sessionName: {
             fontWeight: 'bold',
@@ -44,7 +45,7 @@ const styles = (theme: Theme) =>
             whiteSpace: 'nowrap',
         },
         internalIcon: {
-            marginRight: theme.spacing.unit / 2,
+            marginRight: theme.spacing(0.5),
         },
     });
 
@@ -236,11 +237,13 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
                         <ListItem>
 
                             { header.icon &&
-                                <Avatar style={{ backgroundColor: header.iconColor }}>
-                                    <SvgIcon nativeColor="white">
-                                        <use xlinkHref={header.icon} />
-                                    </SvgIcon>
-                                </Avatar> }
+                                <ListItemAvatar>
+                                    <Avatar style={{ backgroundColor: header.iconColor }}>
+                                        <SvgIcon htmlColor="white">
+                                            <use xlinkHref={header.icon} />
+                                        </SvgIcon>
+                                    </Avatar>
+                                </ListItemAvatar>}
 
                             <ListItemText primary={header.title}
                                           primaryTypographyProps={{ noWrap: true }}

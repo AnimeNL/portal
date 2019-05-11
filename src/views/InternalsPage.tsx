@@ -193,7 +193,7 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
                 </Paper>
 
                 <Paper style={{ marginTop: '20px' }} square elevation={1}>
-                    <Table padding="dense">
+                    <Table padding="default">
                         <TableHead>
                             <TableRow>
                                 <TableCell>Internal note</TableCell>
