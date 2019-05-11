@@ -10,6 +10,7 @@ import Clock from '../app/Clock';
 import Event from '../app/Event';
 import MenuListItem from './MenuListItem';
 import MenuSessionIndicator from './MenuSessionIndicator';
+import { UpdateTimeTracker } from './UpdateTimeTracker';
 import slug from '../app/util/Slug';
 
 import Divider from '@material-ui/core/Divider';
@@ -186,6 +187,9 @@ class Menu extends React.Component<Properties, State> {
                         </MenuListItem>
 
                     </List>
+
+                    <UpdateTimeTracker output clock={this.props.clock} />
+
                 </div>
             );
         }

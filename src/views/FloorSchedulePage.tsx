@@ -11,7 +11,9 @@ import { Floor } from '../app/Floor';
 import { LocationCard, LocationCardProps } from '../components/LocationCard';
 import { LocationFinished } from '../components/LocationFinished';
 import { LocationSession, LocationSessionProps } from '../components/LocationSession';
+import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
 import createSlug from '../app/util/Slug';
+import { determineUpdateMoment } from '../app/util/determineUpdateMoment';
 
 /**
  * Number of active sessions that will be displayed at most for a particular location.
@@ -173,26 +175,15 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
             return lhs.card.label.localeCompare(rhs.card.label);
         });
 
-        let nextUpdateSeconds = nextScheduleUpdate.diff(currentTime, 'seconds');
-        let nextUpdate: number = 3600;
-
-        // The next update depends on when the next schedule update happens, together with rounding
-        // applied in MomentJS: https://momentjs.com/docs/#/displaying/fromnow/
-        if (nextUpdateSeconds <= 44 * 60) {
-            nextUpdate = 1 + (30 + nextUpdateSeconds) % 60;                // nearest X:30 minutes
-        } else if (nextUpdateSeconds <= 21 * 60 * 60) {
-            nextUpdate = Math.min(nextUpdateSeconds - 44 * 60,             // 44 minutes remaining
-                                  1 + (1800 + nextUpdateSeconds) % 3600);  // nearest X:30 hours
-        }
-
         return {
             locations,
-            nextUpdate: clock.getMoment().add({ seconds: nextUpdate })
+            nextUpdate: determineUpdateMoment(currentTime, nextScheduleUpdate)
         };
     }
 
     render() {
-        const { locations } = this.state;
+        const { floor } = this.props;
+        const { locations, nextUpdate } = this.state;
 
         return (
             <React.Fragment>
@@ -206,6 +197,9 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
                         </LocationCard>
                     );
                 }) }
+
+                <UpdateTimeTracker label={floor.label} moment={nextUpdate} />
+
             </React.Fragment>
         );
     }
