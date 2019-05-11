@@ -14,10 +14,9 @@ const styles = (theme: Theme) =>
     createStyles({
         bubble: {
             padding: `2px ${theme.spacing(1)}px`,
-            marginRight: theme.spacing(1),
 
             borderRadius: '11px',
-            fontSize: '.8em',
+            fontSize: '.9em',
             color: 'white',
         },
     });
