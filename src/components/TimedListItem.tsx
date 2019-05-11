@@ -5,15 +5,24 @@
 import React from 'react';
 import moment from 'moment';
 
-import Grid from '@material-ui/core/Grid';
 import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
+        dateDifference: {
+            color: 'red',
+            fontSize: 9,
+            verticalAlign: 'top',
+        },
+
+        times: {
+            minWidth: 56,
+        },
+
         timesItem: {
             marginRight: theme.spacing(1),
             textAlign: 'right',
@@ -23,51 +32,74 @@ const styles = (theme: Theme) =>
 /**
  * Properties accepted by the <TimedListItem> element.
  */
-interface Properties {
+export interface TimedListItemProps {
     /**
-     * The begin time of the item
+     * Time at which the item begins.
      */
     beginTime: moment.Moment;
 
     /**
-     * The end time of the item
+     * Description of the item that's being displayed in the TimedListItem.
+     */
+    description?: string;
+
+    /**
+     * Time at which the item finishes. Does not have to be on the same day as |beginTime|.
      */
     endTime: moment.Moment;
 
     /**
-     * @ignore
+     * Whether this session is internal, which means it hasn't been announced to visitors.
      */
-    className: string;
+    internal?: boolean;
 
     /**
-     * The <TimedListItem> element accepts children.
-     * TypeScript requires us to be explicit.
+     * Title of the item that's being displayed in this item.
      */
-    children?: React.ReactNode;
+    title: string;
 }
 
 /**
- * The <TimedListItem> element represents an item that has a starting and
- * ending time.
+ * The <TimedListItem> element represents an item that has a starting and ending time.
  */
-class TimedListItem extends React.Component<Properties & WithStyles<typeof styles>> {
+class TimedListItem extends React.Component<TimedListItemProps & WithStyles<typeof styles>> {
+    /**
+     * Returns an indicator that tells the user that the |endTime| is on a different day than the
+     * |beginTime| when this is the case, or an empty fragment otherwise.
+     */
+    renderDifference(beginTime: moment.Moment, endTime: moment.Moment): JSX.Element {
+        const beginDay = moment(beginTime).startOf('day');
+        const endDay = moment(endTime).startOf('day');
+
+        const diff = endDay.diff(beginDay, 'days');
+        if (!diff)
+            return <></>
+
+        const { classes } = this.props;
+
+        return <span className={classes.dateDifference}>+{diff}</span>;
+    }
+
+
     render() {
-        const { beginTime, endTime, className, children, classes, } = this.props;
+        const { beginTime, classes, description, endTime, title } = this.props;
 
         return (
-            <ListItem className={className}>
-                <Grid container>
-                    <Grid item className={classes.timesItem}>
-                        <Typography>{beginTime.format('HH:mm')}</Typography>
-                        <Typography>{endTime.format('HH:mm')}</Typography>
-                    </Grid>
-                    <Grid item xs zeroMinWidth>
-                        {children}
-                    </Grid>
-                </Grid>
+            <ListItem>
+                <div className={classes.times}>
+                    {beginTime.format('HH:mm')}–<br />
+                    {endTime.format('HH:mm')}
+                    {this.renderDifference(beginTime, endTime)}
+                </div>
+
+                <ListItemText primary={title}
+                              primaryTypographyProps={{ noWrap: true }}
+                              secondary={description}
+                              secondaryTypographyProps={{ noWrap: true }} />
             </ListItem>
         );
     }
 }
 
-export default withStyles(styles)(TimedListItem);
+const StyledTimedListItem = withStyles(styles)(TimedListItem);
+export { StyledTimedListItem as TimedListItem };

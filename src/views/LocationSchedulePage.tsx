@@ -3,14 +3,13 @@
 // be found in the LICENSE file.
 
 import React from 'react';
-import moment from 'moment';
 
 import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
 import { LabeledSessionList } from '../components/LabeledSessionList';
 import { Location } from '../app/Location';
+import { TimedListItem, TimedListItemProps } from '../components/TimedListItem';
 import { kDrawerWidth } from '../config';
-import TimedListItem from '../components/TimedListItem';
 
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
@@ -20,9 +19,7 @@ import ListItemText from '@material-ui/core/ListItemText';
 import Paper from '@material-ui/core/Paper';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
-import grey from '@material-ui/core/colors/grey';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
@@ -34,18 +31,6 @@ const styles = (theme: Theme) =>
                 maxWidth: 'calc(100vw - 17px - ' + kDrawerWidth + 'px)',
             },
             marginBottom: theme.spacing(2),
-        },
-        sessionName: {
-            fontWeight: 'bold',
-        },
-        sessionDescription: {
-            color: grey[600],
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
-        },
-        internalIcon: {
-            marginRight: theme.spacing(0.5),
         },
     });
 
@@ -65,35 +50,9 @@ interface Properties {
 }
 
 /**
- * Information required to render an individual session on this page.
+ * TimedListItemProps, with a `key` field to ensure uniqueness in the list.
  */
-interface SessionDisplayInfo {
-    /**
-     * Time at which the session will commence.
-     */
-    beginTime: moment.Moment;
-
-    /**
-     * Time at which the session will be finished. Does not have to be on the same day as the
-     * |beginTime|.
-     */
-    endTime: moment.Moment;
-
-    /**
-     * Textual description of the session. May be tripped to fit display needs. Optional.
-     */
-    description?: string;
-
-    /**
-     * Whether this session is internal, which means it hasn't been announced to visitors.
-     */
-    internal?: boolean;
-
-    /**
-     * Title identifying this particular session.
-     */
-    title: string;
-}
+type SessionDisplayInfo = TimedListItemProps & { key: string };
 
 /**
  * Information necessary to render a section containing sessions for a particular day.
@@ -192,12 +151,17 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
         };
 
         for (const session of sessions) {
+            // The key for this |session| will be the event ID together with the begin time of
+            // the session on the schedule. This should hopefully be globally unique.
+            const key = `${session.event.id}-${session.beginTime.unix()}`;
+
             firstDay.sessions.push({
                 beginTime: session.beginTime,
                 endTime: session.endTime,
                 description: session.description || undefined,
                 internal: session.event.internal,
                 title: session.name,
+                key
             });
         }
 
@@ -255,23 +219,11 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
                 </Paper>
 
                 { days.map(day =>
-                    <LabeledSessionList label={day.label}>
-                        { day.sessions.map(session => {
-                            return (
-                                <TimedListItem className="" beginTime={session.beginTime}
-                                               endTime={session.endTime}>
+                    <LabeledSessionList key={day.label} label={day.label}>
 
-                                    <Typography className={classes.sessionName}>
-                                        {session.title}
-                                    </Typography>
+                        { day.sessions.map(session =>
+                            <TimedListItem {...session} /> )}
 
-                                    <Typography className={classes.sessionDescription}>
-                                        {session.description}
-                                    </Typography>
-
-                                </TimedListItem>
-                            );
-                        }) }
                     </LabeledSessionList>
                 ) }
 

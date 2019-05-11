@@ -4,6 +4,8 @@
 
 import React from 'react';
 
+import { kDrawerWidth } from '../config';
+
 import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -20,6 +22,13 @@ const styles = (theme: Theme) =>
             marginBottom: theme.spacing(1.8),
 
             color: theme.palette.text.secondary,
+        },
+        maxWidth: {
+            maxWidth: '100vw',
+            [theme.breakpoints.up('sm')]: {
+                // Take away an extra 17px to compensate for the scrollbar that's always visible.
+                maxWidth: 'calc(100vw - 17px - ' + kDrawerWidth + 'px)',
+            },
         },
     });
 
@@ -46,7 +55,7 @@ class LabeledSessionList extends React.Component<Properties & WithStyles<typeof 
                     {label}
                 </Typography>
 
-                <Paper square>
+                <Paper className={classes.maxWidth} square>
                     <List>
                         {children}
                     </List>
