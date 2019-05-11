@@ -85,7 +85,8 @@ class TimedListItem extends React.Component<TimedListItemProps & WithStyles<type
         const { beginTime, classes, description, endTime, title } = this.props;
 
         return (
-            <ListItem>
+            <ListItem divider>
+
                 <div className={classes.times}>
                     {beginTime.format('HH:mm')}–<br />
                     {endTime.format('HH:mm')}
@@ -96,6 +97,7 @@ class TimedListItem extends React.Component<TimedListItemProps & WithStyles<type
                               primaryTypographyProps={{ noWrap: true }}
                               secondary={description}
                               secondaryTypographyProps={{ noWrap: true }} />
+
             </ListItem>
         );
     }

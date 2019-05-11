@@ -56,7 +56,7 @@ class LabeledSessionList extends React.Component<Properties & WithStyles<typeof 
                 </Typography>
 
                 <Paper className={classes.maxWidth} square>
-                    <List>
+                    <List disablePadding>
                         {children}
                     </List>
                 </Paper>
