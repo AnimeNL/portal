@@ -7,6 +7,7 @@ import moment from 'moment';
 
 import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
+import { LabeledSessionList } from '../components/LabeledSessionList';
 import { Location } from '../app/Location';
 import { kDrawerWidth } from '../config';
 import TimedListItem from '../components/TimedListItem';
@@ -100,7 +101,7 @@ interface SessionDayDisplayInfo {
     /**
      * Title identifying the day during which these sessions will take place.
      */
-    title: string;
+    label: string;
 
     /**
      * Array with the sessions that will take place on this day. Must be sorted.
@@ -185,7 +186,7 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
         // TODO: Sort the sessions by start time.
 
         const firstDay: SessionDayDisplayInfo = {
-            title: 'Weekend',
+            label: 'Weekend',
             sessions: []
         };
 
@@ -251,29 +252,24 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
                 </Paper>
 
                 { days.map(day =>
-                    <Paper className={classes.maximumWidthHeader} square>
-                        <h1>{day.title}</h1>
-                        <List>
+                    <LabeledSessionList label={day.label}>
+                        { day.sessions.map(session => {
+                            return (
+                                <TimedListItem className="" beginTime={session.beginTime}
+                                               endTime={session.endTime}>
 
-                            { day.sessions.map(session => {
-                                return (
-                                    <TimedListItem className="" beginTime={session.beginTime}
-                                                   endTime={session.endTime}>
+                                    <Typography className={classes.sessionName}>
+                                        {session.title}
+                                    </Typography>
 
-                                        <Typography className={classes.sessionName}>
-                                            {session.title}
-                                        </Typography>
+                                    <Typography className={classes.sessionDescription}>
+                                        {session.description}
+                                    </Typography>
 
-                                        <Typography className={classes.sessionDescription}>
-                                            {session.description}
-                                        </Typography>
-
-                                    </TimedListItem>
-                                );
-                            }) }
-
-                        </List>
-                    </Paper>
+                                </TimedListItem>
+                            );
+                        }) }
+                    </LabeledSessionList>
                 ) }
 
             </React.Fragment>
