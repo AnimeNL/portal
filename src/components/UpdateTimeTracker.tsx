@@ -125,7 +125,7 @@ export class UpdateTimeTracker extends React.Component<Properties> {
                 <Divider />
                 <Typography component="p" variant="caption" style={{ margin: '16px 0 0 16px' }}>
                     { Array.from(timers).map(([ label, seconds ]) =>
-                        <React.Fragment>
+                        <React.Fragment key={label}>
                             <strong>{label}</strong>: {seconds}s<br />
                         </React.Fragment>) }
                 </Typography>

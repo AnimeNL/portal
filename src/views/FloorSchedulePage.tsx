@@ -36,6 +36,11 @@ interface Properties {
 }
 
 /**
+ * LocationSessionProps, with a `key` field to ensure uniqueness in the list.
+ */
+type SessionDisplayInfo = LocationSessionProps & { key: string };
+
+/**
  * Interface of the details that must be known to display an individual location.
  */
 interface LocationDisplayInfo {
@@ -47,7 +52,7 @@ interface LocationDisplayInfo {
     /**
      * Sorted list of session display properties.
      */
-    sessions: LocationSessionProps[];
+    sessions: SessionDisplayInfo[];
 }
 
 /**
@@ -124,7 +129,7 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
         let nextScheduleUpdate = currentTime.clone().add({ years: 1 });;
 
         for (const location of floor.locations) {
-            const sessions: LocationSessionProps[] = [];
+            const sessions: SessionDisplayInfo[] = [];
             const to = '/schedule/locations/' + location.id + '/' + createSlug(location.label);
 
             // TODO: Doing this each time for each view is expensive. Perhaps we should have a one-
@@ -138,6 +143,10 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
                 if (session.endTime < currentTime)
                     continue;
 
+                // The key for this |session| will be the event ID together with the begin time of
+                // the session on the schedule. This should hopefully be globally unique.
+                const key = `${session.event.id}-${session.beginTime.unix()}`;
+
                 const isActive = session.beginTime <= currentTime;
                 const timing = isActive ? undefined
                                         : currentTime.to(session.beginTime);
@@ -150,7 +159,7 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
                     internal: session.event.internal,
                     label: session.name,
                     state: isActive ? 'active' : 'pending',
-                    timing
+                    timing, key
                 });
 
                 if (sessions.length >= kMaximumActiveSessions)
@@ -189,9 +198,10 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
             <React.Fragment>
                 { locations.map(location => {
                     return (
-                        <LocationCard {...location.card}>
+                        <LocationCard key={location.card.label} {...location.card}>
 
-                            { location.sessions.map(session => <LocationSession {...session} />) }
+                            { location.sessions.map(session =>
+                                <LocationSession {...session} />) }
                             { !location.sessions.length && <LocationFinished /> }
 
                         </LocationCard>
