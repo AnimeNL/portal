@@ -8,9 +8,9 @@ import moment from 'moment';
 
 import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
-import { LocationCard } from '../components/LocationCard';
+import { LocationCard, LocationCardProps } from '../components/LocationCard';
 import { LocationFinished } from '../components/LocationFinished';
-import { LocationSession } from '../components/LocationSession';
+import { LocationSession, LocationSessionProps } from '../components/LocationSession';
 import createSlug from '../app/util/Slug';
 
 /**
@@ -34,53 +34,18 @@ interface Properties {
 }
 
 /**
- * Interface of the details that must be known to display a location's session.
- */
-interface SessionDisplayInfo {
-    /**
-     * Whether this session is internal, meaning that it's not been announced to the public.
-     */
-    internal?: boolean;
-
-    /**
-     * Label of the session that this element is describing.
-     */
-    label: string;
-
-    /**
-     * Whether the session described by this list item is active, or still pending.
-     */
-    state: "active" | "pending";
-
-    /**
-     * Timing, if any, to display as part of this element.
-     */
-    timing?: string;
-}
-
-/**
  * Interface of the details that must be known to display an individual location.
  */
 interface LocationDisplayInfo {
     /**
-     * Whether this location is internal, meaning that it's not been announced to the public.
+     * Properties that influence display of the location card itself.
      */
-    internal?: boolean;
+    card: LocationCardProps;
 
     /**
-     * Name to display that identifies this location.
+     * Sorted list of session display properties.
      */
-    label: string;
-
-    /**
-     * Sorted list of SessionDisplayInfo objects.
-     */
-    sessions: SessionDisplayInfo[];
-
-    /**
-     * URL of the page that the user should be linked to after clicking on the location.
-     */
-    to: string;
+    sessions: LocationSessionProps[];
 }
 
 /**
@@ -157,7 +122,7 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
         let nextScheduleUpdate = currentTime.clone().add({ years: 1 });;
 
         for (const location of floor.locations) {
-            const sessions: SessionDisplayInfo[] = [];
+            const sessions: LocationSessionProps[] = [];
             const to = '/schedule/locations/' + location.id + '/' + createSlug(location.label);
 
             // TODO: Doing this each time for each view is expensive. Perhaps we should have a one-
@@ -191,9 +156,12 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
             }
 
             locations.push({
-                internal: undefined,
-                label: location.label,
-                sessions, to
+                card: {
+                    internal: undefined,
+                    label: location.label,
+                    to,
+                },
+                sessions
             });
         }
 
@@ -202,7 +170,7 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
             if (!lhs.sessions.length && rhs.sessions.length)
                 return 1;
 
-            return lhs.label.localeCompare(rhs.label);
+            return lhs.card.label.localeCompare(rhs.card.label);
         });
 
         let nextUpdateSeconds = nextScheduleUpdate.diff(currentTime, 'seconds');
@@ -230,17 +198,9 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
             <React.Fragment>
                 { locations.map(location => {
                     return (
-                        <LocationCard internal={location.internal}
-                                      name={location.label}
-                                      to={location.to}>
+                        <LocationCard {...location.card}>
 
-                            { location.sessions.map(session =>
-                                <LocationSession internal={session.internal}
-                                                 label={session.label}
-                                                 state={session.state}
-                                                 timing={session.timing} />
-                            ) }
-
+                            { location.sessions.map(session => <LocationSession {...session} />) }
                             { !location.sessions.length && <LocationFinished /> }
 
                         </LocationCard>

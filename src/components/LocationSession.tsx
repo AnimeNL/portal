@@ -63,7 +63,7 @@ const styles = (theme: Theme) =>
 /**
  * Properties accepted by the <LocationSession> element.
  */
-interface Properties {
+export interface LocationSessionProps {
     /**
      * Whether this session is internal, meaning that it's not been announced to the public.
      */
@@ -88,7 +88,7 @@ interface Properties {
 /**
  * Represents a row that's to be displayed in a <LocationCard>, detailing a single session.
  */
-class LocationSession extends React.Component<Properties & WithStyles<typeof styles>> {
+class LocationSession extends React.Component<LocationSessionProps & WithStyles<typeof styles>> {
     render() {
         const { classes, internal, label, state, timing } = this.props;
 

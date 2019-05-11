@@ -32,16 +32,16 @@ const styles = (theme: Theme) =>
 /**
  * Properties accepted by the <LocationCard> element.
  */
-interface Properties extends RouteComponentProps {
+export interface LocationCardProps {
     /**
      * Whether this location is internal, meaning that it's not been announced to the public.
      */
     internal?: boolean;
 
     /**
-     * Name of the location that should be displayed in the header.
+     * Label of the location that should be displayed in the header.
      */
-    name: string;
+    label: string;
 
     /**
      * Destination where the user should go to after clicking on the destination.
@@ -54,7 +54,8 @@ interface Properties extends RouteComponentProps {
  * indicate the active and upcoming events within this location. If the `to` attribute has been
  * specified, clicking on this location card will trigger a navigation.
  */
-class LocationCard extends React.Component<Properties & WithStyles<typeof styles>> {
+class LocationCard extends React.Component<
+                               LocationCardProps & RouteComponentProps & WithStyles<typeof styles>> {
     /**
      * Called when the user clicks on the card.
      */
@@ -71,14 +72,14 @@ class LocationCard extends React.Component<Properties & WithStyles<typeof styles
     }
 
     render() {
-        const { children, classes, name } = this.props;
+        const { children, classes, label } = this.props;
         // TODO: Use |internal|
 
         return (
             <Card className={classes.location}>
                 <CardActionArea onClick={this.onClick}>
                     <Typography className={classes.locationName} noWrap variant="body2">
-                        {name}
+                        {label}
                     </Typography>
 
                     <Divider />
