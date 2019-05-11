@@ -134,8 +134,10 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
      * request a re-render of the element and the displayed information.
      */
     static getDerivedStateFromProps(props: Properties) {
-        const { location } = props;
+        const { clock, location } = props;
         const { floor, sessions } = location;
+
+        const currentTime = clock.getMoment();
 
         // Compile the information necessary to display the header.
         const floorIdentifier = LocationSchedulePage.getFloorDescription(floor);
@@ -150,11 +152,16 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
         };
 
         for (const session of sessions) {
+            const state = session.beginTime > currentTime
+                              ? 'pending'
+                              : (session.endTime < currentTime ? 'past' : 'active');
+
             const sessionDisplayInfo: SessionDisplayInfo = {
                 beginTime: session.beginTime,
                 endTime: session.endTime,
                 description: session.description || undefined,
                 internal: session.event.internal,
+                state: state,
                 title: session.name,
 
                 // The key for this |session| will be the event ID together with the begin time of

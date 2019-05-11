@@ -54,6 +54,11 @@ export interface TimedListItemProps {
     internal?: boolean;
 
     /**
+     * State of the event, so that the visual representation can be personalized.
+     */
+    state: "past" | "active" | "pending";
+
+    /**
      * Title of the item that's being displayed in this item.
      */
     title: string;
@@ -82,7 +87,10 @@ class TimedListItem extends React.Component<TimedListItemProps & WithStyles<type
 
 
     render() {
-        const { beginTime, classes, description, endTime, title } = this.props;
+        const { beginTime, classes, description, endTime, state, title } = this.props;
+
+        // TODO: Represent this in a visual way :).
+        const header = `${title} (${state})`;
 
         return (
             <ListItem divider>
@@ -93,7 +101,7 @@ class TimedListItem extends React.Component<TimedListItemProps & WithStyles<type
                     {this.renderDifference(beginTime, endTime)}
                 </div>
 
-                <ListItemText primary={title}
+                <ListItemText primary={header}
                               primaryTypographyProps={{ noWrap: true }}
                               secondary={description}
                               secondaryTypographyProps={{ noWrap: true }} />
