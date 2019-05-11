@@ -69,6 +69,11 @@ interface SessionDayDisplayInfo {
     label: string;
 
     /**
+     * The number of sessions that have not yet finished.
+     */
+    pending: number;
+
+    /**
      * Array with the sessions that will take place on this day. Must be sorted.
      */
     sessions: SessionDisplayInfo[];
@@ -173,6 +178,8 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
                 key: `${session.event.id}-${session.beginTime.unix()}`,
             };
 
+            const activeIncrement = state !== 'past' ? 1 : 0;
+
             // Gets an identifier for the current day consistent throughout the sessions. A UNIX
             // timestamp is used rather than a Moment instance as Map can store multiple of those.
             const dayIdentifier = moment(session.beginTime).startOf('day').unix();
@@ -180,9 +187,11 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
 
             if (day) {
                 day.sessions.push(sessionDisplayInfo);
+                day.pending += activeIncrement;
             } else {
                 days.set(dayIdentifier, {
                     label: session.beginTime.format('dddd'),
+                    pending: activeIncrement,
                     sessions: [ sessionDisplayInfo ],
                     timestamp: dayIdentifier,
                 });
@@ -191,7 +200,9 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
 
         // (1) Sort the days that are to be displayed on the location page.
         const sortedDays = Array.from(days.values()).sort((lhs, rhs) => {
-            // TODO: Sort past days to the bottom of the list.
+            if (!rhs.pending && lhs.pending)
+                return -1;
+
             return lhs.timestamp > rhs.timestamp ? 1 : -1;
         });
 
