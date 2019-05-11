@@ -19,6 +19,10 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
+        dense: {
+            paddingTop: 2,
+            paddingBottom: 2,
+        },
         iconContainer: { minWidth: theme.spacing(4) },
 
         iconActive: {
@@ -93,7 +97,7 @@ class LocationSession extends React.Component<LocationSessionProps & WithStyles<
         const { classes, internal, label, state, timing } = this.props;
 
         return (
-            <ListItem>
+            <ListItem className={classes.dense}>
                 <ListItemIcon className={classes.iconContainer}>
                     { state === 'active' ? <PlayCircleOutlineIcon className={classes.iconActive} />
                                          : <MoreHorizIcon className={classes.iconPending} /> }
