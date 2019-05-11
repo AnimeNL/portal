@@ -180,6 +180,8 @@ export class FloorSchedulePage extends React.Component<Properties, State> {
         locations.sort((lhs, rhs) => {
             if (!lhs.sessions.length && rhs.sessions.length)
                 return 1;
+            if (!rhs.sessions.length && lhs.sessions.length)
+                return -1;
 
             return lhs.card.label.localeCompare(rhs.card.label);
         });

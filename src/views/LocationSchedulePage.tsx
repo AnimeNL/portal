@@ -257,6 +257,8 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
 
         // (1) Sort the days that are to be displayed on the location page.
         const sortedDays = Array.from(days.values()).sort((lhs, rhs) => {
+            if (!lhs.pending && rhs.pending)
+                return -1;
             if (!rhs.pending && lhs.pending)
                 return -1;
 
@@ -266,6 +268,8 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
         // (2) Sort the events within the days that will be displayed on the page.
         for (const displayInfo of sortedDays) {
             displayInfo.sessions.sort((lhs, rhs) => {
+                if (lhs.endTime < currentTime && rhs.endTime >= currentTime)
+                    return 1;
                 if (rhs.endTime < currentTime && lhs.endTime >= currentTime)
                     return -1;
 
