@@ -192,8 +192,14 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
         });
 
         // (2) Sort the events within the days that will be displayed on the page.
-        for (const displayInfo of sortedDays)
-            displayInfo.sessions.sort((lhs, rhs) => lhs.beginTime > rhs.beginTime ? 1 : -1);
+        for (const displayInfo of sortedDays) {
+            displayInfo.sessions.sort((lhs, rhs) => {
+                if (rhs.endTime < currentTime && lhs.endTime >= currentTime)
+                    return -1;
+
+                return lhs.beginTime > rhs.beginTime ? 1 : -1;
+            });
+        }
 
         return { header, days: sortedDays };
     }

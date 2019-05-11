@@ -23,6 +23,18 @@ const styles = (theme: Theme) =>
             minWidth: 56,
         },
 
+        past: {
+            backgroundColor: '#ECEFF1',
+
+            paddingTop: 0,
+            paddingBottom: 0,
+            minHeight: 36,
+        },
+        active: {
+            backgroundColor: '#FFF8E1',
+        },
+        pending: {},
+
         timesItem: {
             marginRight: theme.spacing(1),
             textAlign: 'right',
@@ -87,21 +99,38 @@ class TimedListItem extends React.Component<TimedListItemProps & WithStyles<type
 
 
     render() {
-        const { beginTime, classes, description, endTime, state, title } = this.props;
+        const { beginTime, classes, endTime, state } = this.props;
 
-        // TODO: Represent this in a visual way :).
-        const header = `${title} (${state})`;
+        let times: JSX.Element | undefined;
+        let title: string = this.props.title;
+        let description: string | undefined;
+
+        switch (state) {
+            case 'past':
+                times = <>{beginTime.format('HH:mm')}</>;
+                break;
+
+            case 'active':
+            case 'pending':
+                times = <React.Fragment>
+                            {beginTime.format('HH:mm')}–<br />
+                            {endTime.format('HH:mm')}
+                            {this.renderDifference(beginTime, endTime)}
+                        </React.Fragment>;
+
+                description = this.props.description;
+                break;
+        }
+
 
         return (
-            <ListItem divider>
+            <ListItem className={classes[state]} divider>
 
                 <div className={classes.times}>
-                    {beginTime.format('HH:mm')}–<br />
-                    {endTime.format('HH:mm')}
-                    {this.renderDifference(beginTime, endTime)}
+                    {times}
                 </div>
 
-                <ListItemText primary={header}
+                <ListItemText primary={title}
                               primaryTypographyProps={{ noWrap: true }}
                               secondary={description}
                               secondaryTypographyProps={{ noWrap: true }} />
