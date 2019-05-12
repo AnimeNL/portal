@@ -2,7 +2,7 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import moment from 'moment';
+import moment from 'moment-timezone';
 
 type ObserverFn = (time: moment.Moment) => void;
 
@@ -25,6 +25,7 @@ const kMaximumDifferenceMs: number = 5 * 365 * 24 * 60 * 60 * 1000;  // 5 years
 class Clock {
     observers: Set<ObserverFn>;
     offset?: number;
+    timezone?: string;
 
     /**
      * Loads the configured time difference, if any, from local storage.
@@ -43,16 +44,43 @@ class Clock {
     }
 
     /**
-     * Returns the current time in Moment representation. It will have been adjusted for any local
-     * modifications that have been made to the time.
+     * Sets the timezone in which the event will be taking place. This must be one of the zone
+     * indicators supported by momentJS timezone. The timezone must be set before using `getMoment`.
      *
+     * @see https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+     */
+    setTimezone(timezone: string): void {
+        this.timezone = timezone;
+    }
+
+    /**
+     * Returns the time in Moment representation. It will have been adjusted for any local
+     * modifications that have been made to the time, as well as for the timezone of the event.
+     *
+     * @param input Input to the `moment()` constructor. Timestamps should be in UTC. Optional.
      * @see https://momentjs.com/docs/
      */
-    getMoment(): moment.Moment {
-        if (this.offset !== undefined)
-            return moment().add(this.offset);
+    getMoment(input?: moment.MomentInput): moment.Moment {
+        if (!this.timezone)
+            throw new Error('The timezone must be set before obtaining a moment.');
 
-        return moment();
+        if (this.offset !== undefined)
+            return moment.tz(input, this.timezone).add(this.offset);
+
+        return moment(input, this.timezone);
+    }
+
+    /**
+     * Returns a Moment instance for the given |timestamp|, which is expected to be a UNIX
+     * timestamp in UTC. The Moment will be set to the appropriate timezone.
+     *
+     * @param timestamp The timestamp that should be converted to a Moment instance.
+     */
+    getMomentFromUnixTimestamp(timestamp: number): moment.Moment {
+        if (!this.timezone)
+            throw new Error('The timezone must be set before obtaining a moment.');
+
+        return moment.unix(timestamp).utc().tz(this.timezone);
     }
 
     /**

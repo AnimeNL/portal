@@ -4,6 +4,7 @@
 
 import moment from 'moment';
 
+import Clock from './Clock';
 import { IProgramSession } from './api/IProgramSession';
 import { Location } from './Location';
 import { ProgramEvent } from './ProgramEvent';
@@ -19,11 +20,11 @@ export class ProgramSession {
     event_: ProgramEvent;
     location_: Location;
 
-    constructor(info: IProgramSession, event: ProgramEvent, location: Location) {
+    constructor(info: IProgramSession, event: ProgramEvent, location: Location, clock: Clock) {
         this.info = info;
 
-        this.beginTime_ = moment.unix(info.beginTime);
-        this.endTime_ = moment.unix(info.endTime);
+        this.beginTime_ = clock.getMomentFromUnixTimestamp(info.beginTime);
+        this.endTime_ = clock.getMomentFromUnixTimestamp(info.endTime);
 
         this.event_ = event;
         this.location_ = location;

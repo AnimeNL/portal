@@ -71,6 +71,7 @@ class Application {
             return;
         }
 
+        this.clock.setTimezone(this.environment.timezone);
         this.user.initializeFromLocalStorage();
 
         // Lock the user in to an authentication dialog if they haven't identified themselves yet.
@@ -79,7 +80,7 @@ class Application {
             return;
         }
 
-        await this.event.load(this.user);
+        await this.event.load(this.user, this.clock);
 
         // The event must be available in order to display anything sensible in the volunteer
         // portal. Bail out if it can't be loaded for any reason.

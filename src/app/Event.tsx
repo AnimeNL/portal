@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import EventLoader from './EventLoader';
+import Clock from './Clock';
 import { Floor } from './Floor';
 import { Location } from './Location';
 import { ProgramEvent } from './ProgramEvent';
@@ -58,7 +59,7 @@ class Event {
      * Asynchronously loads the event using the EventLoader. The |user| instance will be used to
      * obtain their authentication token, and to sign them out in case their data expired.
      */
-    async load(user: User): Promise<void> {
+    async load(user: User, clock: Clock): Promise<void> {
         const eventLoader = new EventLoader();
 
         // Wait until loading has been completed. If loading failed due to a user error, sign them
@@ -95,7 +96,7 @@ class Event {
                     if (!location)
                         throw new Error('Invalid location for session: ' + info.id);
 
-                    sessions.push(new ProgramSession(sessionInfo, event, location));
+                    sessions.push(new ProgramSession(sessionInfo, event, location, clock));
                 }
 
                 this.events.set(info.id, event);
