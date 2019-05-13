@@ -14,7 +14,8 @@
         "moment-timezone": "^0.5.25",
         "react": "^16.8.6",
         "react-dom": "^16.8.6",
-        "react-router-dom": "^5.0.0"
+        "react-router-dom": "^5.0.0",
+        "serve": "*"
     },
     "devDependencies": {
         "@types/chai": "^4.1.7",
@@ -44,6 +45,7 @@
         "start-gophers": "cross-env REACT_APP_API_HOST=https://gophers.team react-scripts start",
         "start-stewards": "cross-env REACT_APP_API_HOST=https://stewards.team react-scripts start",
         "build": "react-scripts build",
-        "test": "react-scripts test"
+        "test": "react-scripts test",
+        "serve": "serve -l tcp://0.0.0.0:8080 -s build"
     }
 }
