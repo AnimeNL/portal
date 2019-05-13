@@ -7,6 +7,7 @@ import bind from 'bind-decorator';
 
 import Event from '../app/Event';
 import { SearchResult, SearchResultProps } from './SearchResult';
+import { SearchResultMore } from './SearchResultMore';
 import { SearchResultNone } from './SearchResultNone';
 import slug from '../app/util/Slug';
 
@@ -100,6 +101,23 @@ interface Properties {
 }
 
 /**
+ * Results from the search query, both the items and a total count of matches.
+ */
+interface Results {
+    /**
+     * The ranked search results.
+     */
+     hits: SearchResultProps[];
+
+     /**
+      * The total number of results found.
+      */
+     hitCount: number;
+}
+
+const EmptyResults = { hits: [], hitCount: 0 };
+
+/**
  * State maintained by the <SearchBox> component.
  */
 interface State {
@@ -120,10 +138,10 @@ interface State {
     query: string;
 
     /**
-     * The search results that should be displayed as suggestions. This array will have at most
+     * The search results that should be displayed as suggestions. This list will have at most
      * |kMaximumSearchResults| entries in it, already sorted by importance.
      */
-    results: SearchResultProps[];
+    results: Results;
 }
 
 /**
@@ -135,7 +153,7 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
         anchor: undefined,
         expanded: false,
         query: '',
-        results: [],
+        results: EmptyResults
     };
 
     /**
@@ -172,11 +190,13 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
      *
      * Searches are not case sensitive.
      */
-    getResultsForQuery(query: string): SearchResultProps[] {
+    getResultsForQuery(query: string): Results {
         const { event } = this.props;
 
-        let resultCount = 0;
-        let results: SearchResultProps[] = [];
+        let results: Results = {
+            hits: [],
+            hitCount: 0,
+        };
 
         // Lowercase the |query| to make sure we can do case insensitive searches.
         const lowercaseQuery = query.toLowerCase();
@@ -186,10 +206,10 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
             if (!volunteer.name.toLowerCase().includes(lowercaseQuery))
                 continue;
 
-            if (++resultCount > kMaximumSearchResults)
+            if (++results.hitCount > kMaximumSearchResults)
                 continue;
 
-            results.push({
+            results.hits.push({
                 iconSrc: volunteer.avatar,
                 iconType: 'avatar',
                 label: volunteer.name,
@@ -202,10 +222,10 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
             if (!location.label.toLowerCase().includes(lowercaseQuery))
                 continue;
 
-            if (++resultCount > kMaximumSearchResults)
+            if (++results.hitCount > kMaximumSearchResults)
                 continue;
 
-            results.push({
+            results.hits.push({
                 iconColor: location.floor.iconColor,
                 iconSrc: location.floor.icon || undefined,
                 iconType: 'icon',
@@ -214,9 +234,7 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
             });
         }
 
-        // TODO: Query events.
-
-        // TODO: Return the |resultCount|?
+        // TODO: Include the list of events/sessions in the matches.
 
         return results;
     }
@@ -230,7 +248,7 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
         const query = event.currentTarget.value;
         const expanded = query.length >= kMinimumQueryLength;
         const results = expanded ? this.getResultsForQuery(query)
-                                 : [];
+                                 : EmptyResults;
 
         this.setState({ expanded, query, results });
     }
@@ -268,8 +286,11 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
                     <Typography className={classes.padding}>
                         <List dense>
 
-                            { !results.length && <SearchResultNone /> }
-                            { results.map(result => <SearchResult {...result} />) }
+                            { !results.hitCount && <SearchResultNone /> }
+
+                            { results.hits.map(result => <SearchResult {...result} />) }
+                            { results.hits.length < results.hitCount &&
+                                <SearchResultMore hits={results.hitCount - kMaximumSearchResults} /> }
 
                         </List>
                     </Typography>
