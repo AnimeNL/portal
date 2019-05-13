@@ -71,22 +71,22 @@ class SearchResult extends React.Component<SearchResultProps & WithStyles<typeof
         return (
             <Link className={classes.link} to={to}>
                 <ListItem button>
-                    <ListItemAvatar>
 
-                        { isAvatar &&
+                    { isAvatar &&
+                        <ListItemAvatar>
                             <Avatar src={iconSrc}>
                                 {nameInitials(label)}
-                            </Avatar> }
+                            </Avatar>
+                        </ListItemAvatar> }
 
-                        { isIcon &&
+                    { isIcon &&
+                        <ListItemAvatar>
                             <Avatar style={{ backgroundColor: iconColor }}>
                                 <SvgIcon htmlColor="white">
                                     <use xlinkHref={iconSrc} />
                                 </SvgIcon>
                             </Avatar>
-                        }
-
-                    </ListItemAvatar>
+                        </ListItemAvatar> }
 
                     <ListItemText className={classes.noWrap}
                                   primary={label}

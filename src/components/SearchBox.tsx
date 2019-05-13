@@ -16,7 +16,6 @@ import List from '@material-ui/core/List';
 import Popover from '@material-ui/core/Popover';
 import SearchIcon from '@material-ui/icons/Search';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
@@ -283,17 +282,15 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
                          open={expanded}
                          onClose={this.onClose}>
 
-                    <Typography className={classes.padding}>
-                        <List dense>
+                    <List dense>
 
-                            { !results.hitCount && <SearchResultNone /> }
+                        { !results.hitCount && <SearchResultNone /> }
 
-                            { results.hits.map(result => <SearchResult {...result} />) }
-                            { results.hits.length < results.hitCount &&
-                                <SearchResultMore hits={results.hitCount - kMaximumSearchResults} /> }
+                        { results.hits.map(result => <SearchResult key={result.to} {...result} />) }
+                        { results.hits.length < results.hitCount &&
+                            <SearchResultMore hits={results.hitCount - kMaximumSearchResults} /> }
 
-                        </List>
-                    </Typography>
+                    </List>
 
                 </Popover>
 

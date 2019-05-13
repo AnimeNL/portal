@@ -40,7 +40,7 @@ class SearchResultMore extends React.Component<Properties & WithStyles<typeof st
         const { classes, hits } = this.props;
 
         // We like to be pedantic in finishing the details.
-        const plural = hits != 1 ? 's' : '';
+        const plural = hits !== 1 ? 's' : '';
 
         return (
             <ListItem className={classes.moreResults}>
