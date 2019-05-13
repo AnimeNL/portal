@@ -5,6 +5,7 @@
 import React from 'react';
 import bind from 'bind-decorator';
 
+import { SearchBox } from './SearchBox';
 import { kDrawerWidth } from '../config';
 
 import AppBar from '@material-ui/core/AppBar';
@@ -26,6 +27,8 @@ const styles = (theme: Theme) =>
     createStyles({
         grow: {
             flexGrow: 1,
+            overflow: 'hidden',
+            whiteSpace: 'nowrap',
         },
         appBar: {
             marginLeft: kDrawerWidth,
@@ -33,6 +36,13 @@ const styles = (theme: Theme) =>
             [theme.breakpoints.up('sm')]: {
                 zIndex: theme.zIndex.drawer + 1,
             },
+        },
+        toolbar: {
+
+        },
+        buttons: {
+            display: 'flex',
+            alignItems: 'center',
         },
         menuButton: {
             marginLeft: -12,
@@ -143,7 +153,9 @@ class Header extends React.Component<Properties, State> {
                         {children}
                     </Typography>
 
-                    <div>
+                    <div className={classes.buttons}>
+                        <SearchBox />
+
                         <IconButton
                             aria-label="Overflow menu"
                             aria-owns={this.state.overflowMenuOpened ? 'overflow-menu' : undefined}
