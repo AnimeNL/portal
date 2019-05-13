@@ -129,7 +129,8 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
                 <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
                     <div className={classes.root}>
 
-                        <Header onMenuClick={this.openDrawer}
+                        <Header event={event}
+                                onMenuClick={this.openDrawer}
                                 onLogout={onLogout}
                                 onRefresh={onRefresh}>
 

@@ -3,8 +3,12 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
+
+import Event from '../app/Event';
 
 import InputBase from '@material-ui/core/InputBase';
+import Popper from '@material-ui/core/Popper';
 import SearchIcon from '@material-ui/icons/Search';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -59,7 +63,11 @@ const styles = (theme: Theme) =>
  * Properties accepted by the <SearchBox> component.
  */
 interface Properties {
-
+    /**
+     * The event for which this search box is being rendered. This will be used to automatically
+     * populate the suggestions box.
+     */
+    event: Event;
 }
 
 /**
@@ -71,6 +79,11 @@ interface State {
      * except for the control buttons on either side.
      */
     expanded: boolean;
+
+    /**
+     * The search query that's currently being searched for.
+     */
+    query: string;
 }
 
 /**
@@ -80,10 +93,46 @@ interface State {
 class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, State> {
     state: State = {
         expanded: true,
+        query: '',
     };
+
+    /**
+     * Called when the search field gains focus. We can now begin to expect search queries to arrive
+     * from the `onChange` event on the input field.
+     */
+    @bind
+    onFocus() {
+        this.setState({
+            expanded: true,
+        });
+    }
+
+    /**
+     * Called when the search field loses focus. Clear the query that the user was searching for,
+     * and make sure that any suggestion UI has been appropriately closed.
+     */
+    @bind
+    onBlur() {
+        this.setState({
+            expanded: false,
+            query: '',
+        });
+    }
+
+    /**
+     * Called when the value of the search box has changed. This is the appropriate time to fire off
+     * a new search query that should populate the suggestions.
+     */
+    @bind
+    onChange(event: React.ChangeEvent<HTMLInputElement>): void {
+        this.setState({
+            query: event.target.value,
+        });
+    }
 
     render() {
         const { classes } = this.props;
+        const { query } = this.state;
 
         return (
             <div className={classes.search}>
@@ -91,11 +140,16 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
                     <SearchIcon />
                 </div>
 
-                <InputBase placeholder="Search…"
+                <InputBase autoComplete="off"
+                           placeholder="Search…"
+                           value={query}
                            classes={{
                                root: classes.inputRoot,
                                input: classes.inputInput,
-                           }} />
+                           }}
+                           onFocus={this.onFocus}
+                           onBlur={this.onBlur}
+                           onChange={this.onChange} />
 
             </div>
         );

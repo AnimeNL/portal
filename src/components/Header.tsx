@@ -5,6 +5,7 @@
 import React from 'react';
 import bind from 'bind-decorator';
 
+import Event from '../app/Event';
 import { SearchBox } from './SearchBox';
 import { kDrawerWidth } from '../config';
 
@@ -80,6 +81,11 @@ interface Properties extends HeaderEvents, WithStyles<typeof styles> {
      * Event to be called when the menu button in the header has been clicked on.
      */
     onMenuClick: () => void;
+
+    /**
+     * The event for which the portal is being rendered. Used for and by the search box.
+     */
+    event: Event;
 }
 
 /**
@@ -133,7 +139,7 @@ class Header extends React.Component<Properties, State> {
     }
 
     render() {
-        const { children, classes, onMenuClick, onLogout, onRefresh } = this.props;
+        const { children, classes, event, onMenuClick, onLogout, onRefresh } = this.props;
 
         return (
             <AppBar position="fixed" className={classes.appBar}>
@@ -154,7 +160,8 @@ class Header extends React.Component<Properties, State> {
                     </Typography>
 
                     <div className={classes.buttons}>
-                        <SearchBox />
+
+                        <SearchBox event={event} />
 
                         <IconButton
                             aria-label="Overflow menu"
