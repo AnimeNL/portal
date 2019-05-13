@@ -6,8 +6,11 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import Event from '../app/Event';
+import { SearchResult, SearchResultProps } from './SearchResult';
+import slug from '../app/util/Slug';
 
 import InputBase from '@material-ui/core/InputBase';
+import List from '@material-ui/core/List';
 import Popover from '@material-ui/core/Popover';
 import SearchIcon from '@material-ui/icons/Search';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -15,6 +18,16 @@ import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
+
+/**
+ * Minimum number of characters in the query to start a search.
+ */
+const kMinimumQueryLength = 2;
+
+/**
+ * Maximum number of results that should be returned by a search.
+ */
+const kMaximumSearchResults = 5;
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -70,7 +83,7 @@ const styles = (theme: Theme) =>
         },
 
         padding: {
-            padding: theme.spacing(2),
+            padding: theme.spacing(0, 1, 0, 1),
         },
     });
 
@@ -104,6 +117,12 @@ interface State {
      * The search query that's currently being searched for.
      */
     query: string;
+
+    /**
+     * The search results that should be displayed as suggestions. This array will have at most
+     * |kMaximumSearchResults| entries in it, already sorted by importance.
+     */
+    results: SearchResultProps[];
 }
 
 /**
@@ -112,8 +131,10 @@ interface State {
  */
 class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, State> {
     state: State = {
+        anchor: undefined,
         expanded: false,
         query: '',
+        results: [],
     };
 
     /**
@@ -141,22 +162,65 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
     }
 
     /**
+     * Queries the event data for the |query|. Returns at most |kMaximumSearchResults| results. In
+     * search results, results will be naively ranked based on the following priorities:
+     *
+     *     1. Volunteers
+     *     2. Locations
+     *     3. Events
+     *
+     * Searches are not case sensitive.
+     */
+    getResultsForQuery(query: string): SearchResultProps[] {
+        const { event } = this.props;
+
+        let resultCount = 0;
+        let results: SearchResultProps[] = [];
+
+        // Lowercase the |query| to make sure we can do case insensitive searches.
+        const lowercaseQuery = query.toLowerCase();
+
+        // (1) Query the list of volunteers for matches.
+        for (const volunteer of event.getVolunteers()) {
+            if (!volunteer.name.toLowerCase().includes(lowercaseQuery))
+                continue;
+
+            if (++resultCount > kMaximumSearchResults)
+                continue;
+
+            results.push({
+                iconSrc: volunteer.avatar,
+                iconType: "avatar",
+                label: volunteer.name,
+                to: '/volunteers/' + slug(volunteer.name),
+            });
+        }
+
+        // TODO: Query locations.
+        // TODO: Query events.
+
+        // TODO: Return the |resultCount|?
+
+        return results;
+    }
+
+    /**
      * Called when the value of the search box has changed. This is the appropriate time to fire off
      * a new search query that should populate the suggestions.
      */
     @bind
     onChange(event: React.ChangeEvent<HTMLInputElement>): void {
         const query = event.currentTarget.value;
-        const expanded = !!query.length;
+        const expanded = query.length >= kMinimumQueryLength;
+        const results = expanded ? this.getResultsForQuery(query)
+                                 : [];
 
-        // TODO: Actually perform a search and prepare a number of suggestions.
-
-        this.setState({ expanded, query });
+        this.setState({ expanded, query, results });
     }
 
     render() {
         const { classes } = this.props;
-        const { anchor, expanded, query } = this.state;
+        const { anchor, expanded, query, results } = this.state;
 
         return (
             <div className={classes.search}>
@@ -185,7 +249,11 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
                          onClose={this.onClose}>
 
                     <Typography className={classes.padding}>
-                        Suggestions go here
+                        <List dense>
+
+                            { results.map(result => <SearchResult {...result} />) }
+
+                        </List>
                     </Typography>
 
                 </Popover>
