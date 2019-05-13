@@ -7,6 +7,7 @@ import bind from 'bind-decorator';
 
 import Event from '../app/Event';
 import { SearchResult, SearchResultProps } from './SearchResult';
+import { SearchResultNone } from './SearchResultNone';
 import slug from '../app/util/Slug';
 
 import InputBase from '@material-ui/core/InputBase';
@@ -251,6 +252,7 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
                     <Typography className={classes.padding}>
                         <List dense>
 
+                            { !results.length && <SearchResultNone /> }
                             { results.map(result => <SearchResult {...result} />) }
 
                         </List>
