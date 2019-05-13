@@ -42,11 +42,11 @@ const styles = (theme: Theme) =>
                 // Use the full width of the screen, except for:
                 //   68px for the menu icon (only on mobile)
                 //   48px for the overflow menu (mobile & desktop)
-                //   52px for margins on desktop;
+                //   52px for margins on desktop (+1 for unknown reasons);
                 //    8px for margins on mobile.
                 width: 'calc(100vw - 124px)',
                 [theme.breakpoints.up('sm')]: {
-                    width: 'calc(100vw - 100px)',
+                    width: 'calc(100vw - 101px)',
                 },
             },
 
