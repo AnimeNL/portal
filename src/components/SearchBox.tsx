@@ -8,9 +8,10 @@ import bind from 'bind-decorator';
 import Event from '../app/Event';
 
 import InputBase from '@material-ui/core/InputBase';
-import Popper from '@material-ui/core/Popper';
+import Popover from '@material-ui/core/Popover';
 import SearchIcon from '@material-ui/icons/Search';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
@@ -57,6 +58,20 @@ const styles = (theme: Theme) =>
             width: 24,
             height: 36,
         },
+
+        suggestions: {
+            marginTop: theme.spacing(.5),
+
+            // Use the full width. Must remain equal to the &:focus block above.
+            width: 'calc(100vw - 124px)',
+            [theme.breakpoints.up('sm')]: {
+                width: 'calc(100vw - 101px)',
+            },
+        },
+
+        padding: {
+            padding: theme.spacing(2),
+        },
     });
 
 /**
@@ -75,6 +90,11 @@ interface Properties {
  */
 interface State {
     /**
+     * The anchor to which the suggestions box should be attached.
+     */
+    anchor?: HTMLElement;
+
+    /**
      * Whether the search box should be expanded. It will take up the width of the entire header
      * except for the control buttons on either side.
      */
@@ -92,7 +112,7 @@ interface State {
  */
 class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, State> {
     state: State = {
-        expanded: true,
+        expanded: false,
         query: '',
     };
 
@@ -101,18 +121,19 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
      * from the `onChange` event on the input field.
      */
     @bind
-    onFocus() {
+    onFocus(event: React.FocusEvent<HTMLDivElement>): void {
         this.setState({
-            expanded: true,
+            anchor: event.currentTarget,
         });
     }
 
     /**
-     * Called when the search field loses focus. Clear the query that the user was searching for,
-     * and make sure that any suggestion UI has been appropriately closed.
+     * Called when the search field loses focus, or when the user clicks outside of the suggestions
+     * box. Clear the query that the user was searching for, and make sure that any suggestion UI
+     * has been appropriately closed.
      */
     @bind
-    onBlur() {
+    onClose() {
         this.setState({
             expanded: false,
             query: '',
@@ -125,14 +146,17 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
      */
     @bind
     onChange(event: React.ChangeEvent<HTMLInputElement>): void {
-        this.setState({
-            query: event.target.value,
-        });
+        const query = event.currentTarget.value;
+        const expanded = !!query.length;
+
+        // TODO: Actually perform a search and prepare a number of suggestions.
+
+        this.setState({ expanded, query });
     }
 
     render() {
         const { classes } = this.props;
-        const { query } = this.state;
+        const { anchor, expanded, query } = this.state;
 
         return (
             <div className={classes.search}>
@@ -148,8 +172,23 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
                                input: classes.inputInput,
                            }}
                            onFocus={this.onFocus}
-                           onBlur={this.onBlur}
+                           onBlur={this.onClose}
                            onChange={this.onChange} />
+
+                <Popover PaperProps={{ className: classes.suggestions }}
+                         anchorEl={anchor}
+                         anchorOrigin={{ horizontal: 'left', vertical: 'bottom' }}
+                         disableAutoFocus={true}
+                         disableEnforceFocus={true}
+                         disableRestoreFocus={true}
+                         open={expanded}
+                         onClose={this.onClose}>
+
+                    <Typography className={classes.padding}>
+                        Suggestions go here
+                    </Typography>
+
+                </Popover>
 
             </div>
         );
