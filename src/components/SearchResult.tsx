@@ -9,6 +9,7 @@ import Avatar from '@material-ui/core/Avatar';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
+import SvgIcon from '@material-ui/core/SvgIcon';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
@@ -23,13 +24,22 @@ const styles = (theme: Theme) =>
         link: {
             textDecoration: 'none',
             color: 'inherit',
-        }
+        },
+        noWrap: {
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+        },
     });
 
 /**
  * Structure of an individual search result that is to be rendered.
  */
 export interface SearchResultProps {
+    /**
+     * Colour of the icon that is to be displayed. Only applicable for 'icon' types.
+     */
+    iconColor?: string;
+
     /**
      * Source of the icon that should be displayed.
      */
@@ -53,7 +63,7 @@ export interface SearchResultProps {
 
 class SearchResult extends React.Component<SearchResultProps & WithStyles<typeof styles>> {
     render() {
-        const { classes, iconSrc, iconType, label, to } = this.props;
+        const { classes, iconColor, iconSrc, iconType, label, to } = this.props;
 
         const isAvatar = iconType === 'avatar';
         const isIcon = iconType === 'icon';
@@ -61,15 +71,26 @@ class SearchResult extends React.Component<SearchResultProps & WithStyles<typeof
         return (
             <Link className={classes.link} to={to}>
                 <ListItem button>
+                    <ListItemAvatar>
 
-                    { isAvatar &&
-                        <ListItemAvatar>
+                        { isAvatar &&
                             <Avatar src={iconSrc}>
                                 {nameInitials(label)}
-                            </Avatar>
-                        </ListItemAvatar> }
+                            </Avatar> }
 
-                    <ListItemText primary={label} />
+                        { isIcon &&
+                            <Avatar style={{ backgroundColor: iconColor }}>
+                                <SvgIcon htmlColor="white">
+                                    <use xlinkHref={iconSrc} />
+                                </SvgIcon>
+                            </Avatar>
+                        }
+
+                    </ListItemAvatar>
+
+                    <ListItemText className={classes.noWrap}
+                                  primary={label}
+                                  primaryTypographyProps={{ noWrap: true }} />
 
                 </ListItem>
             </Link>

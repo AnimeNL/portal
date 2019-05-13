@@ -191,13 +191,29 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
 
             results.push({
                 iconSrc: volunteer.avatar,
-                iconType: "avatar",
+                iconType: 'avatar',
                 label: volunteer.name,
                 to: '/volunteers/' + slug(volunteer.name),
             });
         }
 
-        // TODO: Query locations.
+        // (2) Query the list of locations for matches.
+        for (const location of event.getLocations()) {
+            if (!location.label.toLowerCase().includes(lowercaseQuery))
+                continue;
+
+            if (++resultCount > kMaximumSearchResults)
+                continue;
+
+            results.push({
+                iconColor: location.floor.iconColor,
+                iconSrc: location.floor.icon || undefined,
+                iconType: 'icon',
+                label: location.label,
+                to: '/schedule/locations/' + location.id + '/' + slug(location.label),
+            });
+        }
+
         // TODO: Query events.
 
         // TODO: Return the |resultCount|?

@@ -173,7 +173,6 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
      */
     @bind
     private refreshState() {
-        console.log('UPDATE');
         this.setState(LocationSchedulePage.getDerivedStateFromProps(this.props));
         this.refreshUpdateTimer();
     }
