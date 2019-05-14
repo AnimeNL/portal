@@ -169,6 +169,13 @@ class Event {
     }
 
     /**
+     * Returns the location identified by the given |id|, if any.
+     */
+    getLocation(id: number): Location | undefined {
+        return this.locations.get(id);
+    }
+
+    /**
      * Returns an iterator that provides access to all locations.
      */
     getLocations(): IterableIterator<Location> {

@@ -47,18 +47,12 @@ class LocationScheduleController extends React.Component<Properties, State> {
         const { event, setTitle } = props;
         const locationId = parseInt(props.match.params.location);
 
-        for (const location of event.getLocations()) {
-            if (location.id !== locationId)
-                continue;
+        const location = event.getLocation(locationId);
 
-            setTitle(location.label);
+        setTitle(location ? location.label
+                          : null);
 
-            return { location };
-        }
-
-        setTitle(null);
-
-        return { location: undefined };
+        return { location };
     }
 
     render() {
