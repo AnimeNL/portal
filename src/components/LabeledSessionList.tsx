@@ -15,6 +15,11 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
+        disableFinalDivider: {
+            '& :last-child': {
+                borderBottomWidth: 0,
+            }
+        },
         label: {
             paddingLeft: theme.spacing(2),
 
@@ -57,7 +62,7 @@ class LabeledSessionList extends React.Component<Properties & WithStyles<typeof 
                 </Typography>
 
                 <Paper className={classes.maxWidth} square>
-                    <List disablePadding>
+                    <List className={classes.disableFinalDivider} disablePadding>
                         {children}
                     </List>
                 </Paper>
