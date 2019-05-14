@@ -10,37 +10,10 @@ import Clock from '../app/Clock';
 import { Floor } from '../app/Floor';
 import { LabeledSessionList } from '../components/LabeledSessionList';
 import { Location } from '../app/Location';
+import { PageHeader, PageHeaderDefaults, PageHeaderProps } from '../components/PageHeader';
 import { TimedListItem, TimedListItemProps } from '../components/TimedListItem';
 import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
-import { kDrawerWidth } from '../config';
 import slug from '../app/util/Slug';
-
-import Avatar from '@material-ui/core/Avatar';
-import List from '@material-ui/core/List';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemAvatar from '@material-ui/core/ListItemAvatar';
-import ListItemText from '@material-ui/core/ListItemText';
-import Paper from '@material-ui/core/Paper';
-import SvgIcon from '@material-ui/core/SvgIcon';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import createStyles from '@material-ui/core/styles/createStyles';
-import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-
-const styles = (theme: Theme) =>
-    createStyles({
-        maximumWidthHeader: {
-            maxWidth: '100vw',
-            [theme.breakpoints.up('sm')]: {
-                // Take away an extra 17px to compensate for the scrollbar that's always visible.
-                maxWidth: 'calc(100vw - 17px - ' + kDrawerWidth + 'px)',
-            },
-            marginBottom: theme.spacing(2),
-        },
-        noWrap: {
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-        },
-    });
 
 /**
  * Properties accepted by the <LocationSchedulePage> element.
@@ -88,31 +61,6 @@ interface SessionDayDisplayInfo {
 }
 
 /**
- * Information necessary to render the header of the location page.
- */
-interface HeaderDisplayInfo {
-    /**
-     * Link to a reference contained in an SVG file to display as the icon for this location.
-     */
-    icon?: string;
-
-    /**
-     * Colour to render the icon in. Must be set when |icon| is given.
-     */
-    iconColor?: string;
-
-    /**
-     * Second line to display as part of the header for this location.
-     */
-    subtitle: string;
-
-    /**
-     * First line to display as part of the header for this location.
-     */
-    title: string;
-}
-
-/**
  * State of the <LocationSchedulePage> element. Will be updated on navigation, and periodically when
  * the state of one of the events in this location is changing.
  */
@@ -120,7 +68,7 @@ interface State {
     /**
      * Information necessary to render the header of the location page.
      */
-    header: HeaderDisplayInfo;
+    header: PageHeaderProps;
 
     /**
      * Array of the various days during which sessions will take place in this location.
@@ -137,13 +85,10 @@ interface State {
  * The location page displays an overview of a particular location, focused on the events that will
  * take place in that location. Events with volunteer coverage will be highlighted.
  */
-class LocationSchedulePage extends React.Component<Properties & WithStyles<typeof styles>, State> {
+class LocationSchedulePage extends React.Component<Properties, State> {
     updateTimer?: NodeJS.Timeout;
     state: State = {
-        header: {
-            subtitle: '',
-            title: '',
-        },
+        header: PageHeaderDefaults,
         days: []
     };
 
@@ -200,7 +145,7 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
         const sessionCount = sessions.length + ' session' + (sessions.length !== 1 ? 's' : '');
 
         const days: Map<number, SessionDayDisplayInfo> = new Map();
-        const header = {
+        const header: PageHeaderProps = {
             icon: floor.icon || undefined,
             iconColor: floor.iconColor,
             subtitle: floorIdentifier + ' — ' + sessionCount,
@@ -307,34 +252,12 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
     }
 
     render() {
-        const { classes } = this.props;
         const { header, days, nextUpdate } = this.state;
 
         return (
             <React.Fragment>
 
-                <Paper className={classes.maximumWidthHeader} square>
-                    <List>
-                        <ListItem>
-
-                            { header.icon &&
-                                <ListItemAvatar>
-                                    <Avatar style={{ backgroundColor: header.iconColor }}>
-                                        <SvgIcon htmlColor="white">
-                                            <use xlinkHref={header.icon} />
-                                        </SvgIcon>
-                                    </Avatar>
-                                </ListItemAvatar>}
-
-                            <ListItemText className={classes.noWrap}
-                                          primary={header.title}
-                                          primaryTypographyProps={{ noWrap: true }}
-                                          secondary={header.subtitle}
-                                          secondaryTypographyProps={{ noWrap: true }} />
-
-                        </ListItem>
-                    </List>
-                </Paper>
+                <PageHeader {...header} />
 
                 { days.map(day =>
                     <LabeledSessionList key={day.label} label={day.label}>
@@ -352,5 +275,4 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
     }
 }
 
-const StyledLocationSchedulePage = withStyles(styles)(LocationSchedulePage);
-export { StyledLocationSchedulePage as LocationSchedulePage };
+export { LocationSchedulePage };
