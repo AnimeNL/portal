@@ -5,7 +5,9 @@
 import React from 'react';
 import moment from 'moment';
 
-import ListItem from '@material-ui/core/ListItem';
+import ConditionalLink from './ConditionalLink';
+import ConditionalListItem from './ConditionalListItem';
+
 import ListItemText from '@material-ui/core/ListItemText';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -21,6 +23,10 @@ const styles = (theme: Theme) =>
         noWrap: {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
+        },
+        link: {
+            textDecoration: 'none',
+            color: 'inherit',
         },
 
         times: {
@@ -78,6 +84,11 @@ export interface TimedListItemProps {
      * Title of the item that's being displayed in this item.
      */
     title: string;
+
+    /**
+     * URL of the page the user should be navigating to after clicking on this item.
+     */
+    to?: string;
 }
 
 /**
@@ -103,7 +114,7 @@ class TimedListItem extends React.Component<TimedListItemProps & WithStyles<type
 
 
     render() {
-        const { beginTime, classes, endTime, state } = this.props;
+        const { beginTime, classes, endTime, state, to } = this.props;
 
         let times: JSX.Element | undefined;
         let title: string = this.props.title;
@@ -128,19 +139,21 @@ class TimedListItem extends React.Component<TimedListItemProps & WithStyles<type
 
 
         return (
-            <ListItem className={classes[state]} divider>
+            <ConditionalLink className={classes.link} to={to}>
+                <ConditionalListItem className={classes[state]} button={!!to} divider>
 
-                <div className={classes.times}>
-                    {times}
-                </div>
+                    <div className={classes.times}>
+                        {times}
+                    </div>
 
-                <ListItemText className={classes.noWrap}
-                              primary={title}
-                              primaryTypographyProps={{ noWrap: true }}
-                              secondary={description}
-                              secondaryTypographyProps={{ noWrap: true }} />
+                    <ListItemText className={classes.noWrap}
+                                  primary={title}
+                                  primaryTypographyProps={{ noWrap: true }}
+                                  secondary={description}
+                                  secondaryTypographyProps={{ noWrap: true }} />
 
-            </ListItem>
+                </ConditionalListItem>
+            </ConditionalLink>
         );
     }
 }

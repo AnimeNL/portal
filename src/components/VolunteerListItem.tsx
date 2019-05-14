@@ -8,11 +8,11 @@ import bind from 'bind-decorator';
 import AccessCodeDialogButton from './AccessCodeDialogButton';
 import AvatarDialogButton from './AvatarDialogButton';
 import ConditionalLink from './ConditionalLink';
+import ConditionalListItem from './ConditionalListItem';
 import { Volunteer } from '../app/Volunteer';
 import slug from '../app/util/Slug';
 
 import IconButton from '@material-ui/core/IconButton';
-import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import PhoneIcon from '@material-ui/icons/Phone';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -26,21 +26,6 @@ const styles = (theme: Theme) =>
             color: 'inherit',
         }
     });
-
-/**
- * Work-around for an issue where the `button` property for the <ListItem> component became a
- * discriminant for the component's properties, meaning it can't be set dynamically.
- *
- * @see https://github.com/mui-org/material-ui/pull/15049
- */
-function ConditionalListItem(props: { button: boolean, children: React.ReactNode }): JSX.Element {
-  const { button, children } = props;
-
-  if (button)
-    return <ListItem button>{children}</ListItem>;
-
-  return <ListItem>{children}</ListItem>;
-}
 
 /**
  * Properties accepted by the <Volunteer> element.
