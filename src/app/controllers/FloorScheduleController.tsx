@@ -48,18 +48,12 @@ class FloorScheduleController extends React.Component<Properties, State> {
         const { event, setTitle } = props;
         const floorId = parseInt(props.match.params.floor);
 
-        for (const floor of event.getFloors()) {
-            if (floor.id !== floorId)
-                continue;
+        const floor = event.getFloor(floorId);
 
-            setTitle(floor.label);
+        setTitle(floor ? floor.label
+                       : null);
 
-            return { floor };
-        }
-
-        setTitle(null);
-
-        return { floor: undefined };
+        return { floor };
     }
 
     render() {

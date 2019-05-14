@@ -148,6 +148,13 @@ class Event {
     }
 
     /**
+     * Returns the floor identified by the given |id|, if any.
+     */
+    getFloor(id: number): Floor | undefined {
+        return this.floors.get(id);
+    }
+
+    /**
      * Returns an iterator that provides access to all floors.
      */
     getFloors(): IterableIterator<Floor> {
