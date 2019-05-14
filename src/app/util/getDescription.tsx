@@ -18,7 +18,7 @@ export function getFloorDescription(floor: Floor): string {
 export function getLocationDescription(location: Location): string {
     // TODO: Technically this split is only necessary for Anime, and not very future proof either,
     // but introducing an entirely new API for this seems overkill.
-    const label = location.label.replace(/\s[\-\/].*/, '');
+    const label = location.label.replace(/\s[-/].*/, '');
 
     return label + ' (' + getFloorOrdinal(location.floor.id) + ')';
 }

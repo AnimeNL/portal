@@ -5,8 +5,10 @@
 import React from 'react';
 
 import Clock from '../app/Clock';
+import { LabeledSessionList } from '../components/LabeledSessionList';
 import { PageHeader, PageHeaderDefaults, PageHeaderProps } from '../components/PageHeader';
 import { ProgramEvent } from '../app/ProgramEvent';
+import { SessionListItem, SessionListItemProps } from '../components/SessionListItem';
 import { getLocationDescription } from '../app/util/getDescription';
 
 /**
@@ -25,6 +27,11 @@ interface Properties {
 }
 
 /**
+ * SessionListItemProps, with a `key` field to ensure uniqueness in the list.
+ */
+type SessionDisplayInfo = SessionListItemProps & { key: string };
+
+/**
  * State of the event schedule page. Details both the header as the content that should be displayed
  * on the page, such as sessions and shifts w/ volunteers.
  */
@@ -33,6 +40,11 @@ interface State {
      * Details required to display the page header.
      */
     header: PageHeaderProps;
+
+    /**
+     * List of sessions that will be hosted as part of this event.
+     */
+    sessions: SessionDisplayInfo[];
 }
 
 /**
@@ -42,6 +54,7 @@ interface State {
 class EventSchedulePage extends React.Component<Properties, State> {
     state: State = {
         header: PageHeaderDefaults,
+        sessions: [],
     }
 
     /**
@@ -54,7 +67,7 @@ class EventSchedulePage extends React.Component<Properties, State> {
         const firstSession = event.sessions[0];
         const firstSessionFloor = firstSession.location.floor;
 
-        // Compile the information that's to be displayed in the page header.
+        // (1) Compile the information that's to be displayed in the page header.
         const header: PageHeaderProps = {
             icon: firstSessionFloor.icon || undefined,
             iconColor: firstSessionFloor.iconColor,
@@ -62,16 +75,33 @@ class EventSchedulePage extends React.Component<Properties, State> {
             title: firstSession.name,
         };
 
-        return { header };
+        // (2) Compile the list of sessions that are part of this event.
+        const sessions: SessionDisplayInfo[] = [];
+        event.sessions.forEach((session, index) => {
+            sessions.push({
+                beginTime: session.beginTime,
+                endTime: session.endTime,
+                key: index.toString()
+            });
+        });
+
+        // TODO: List a detailed description for this event.
+        // TODO: List volunteer shifts on this page.
+
+        return { header, sessions };
     }
 
     render() {
-        const { header } = this.state;
+        const { header, sessions } = this.state;
 
         return (
             <React.Fragment>
 
                 <PageHeader {...header} />
+
+                <LabeledSessionList dense label="Sessions">
+                    { sessions.map(session => <SessionListItem {...session} /> ) }
+                </LabeledSessionList>
 
             </React.Fragment>
         );

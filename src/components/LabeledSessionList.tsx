@@ -43,6 +43,11 @@ const styles = (theme: Theme) =>
  */
 interface Properties {
     /**
+     * Whether the items in this list should be displayed in a dense manner.
+     */
+    dense?: boolean;
+
+    /**
      * Label that's to be displayed above the list of sessions.
      */
     label: string;
@@ -53,7 +58,7 @@ interface Properties {
  */
 class LabeledSessionList extends React.Component<Properties & WithStyles<typeof styles>> {
     render() {
-        const { children, classes, label } = this.props;
+        const { children, classes, dense, label } = this.props;
 
         return (
             <React.Fragment>
@@ -62,7 +67,7 @@ class LabeledSessionList extends React.Component<Properties & WithStyles<typeof 
                 </Typography>
 
                 <Paper className={classes.maxWidth} square>
-                    <List className={classes.disableFinalDivider} disablePadding>
+                    <List className={classes.disableFinalDivider} dense={dense} disablePadding>
                         {children}
                     </List>
                 </Paper>
