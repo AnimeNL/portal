@@ -35,6 +35,6 @@ export class ProgramEvent {
      * Array detailing the sessions that are part of this event.
      */
     get sessions(): ProgramSession[] {
-        return this.sessions;
+        return this.sessions_;
     }
 }

@@ -13,6 +13,7 @@ import { Location } from '../app/Location';
 import { TimedListItem, TimedListItemProps } from '../components/TimedListItem';
 import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
 import { kDrawerWidth } from '../config';
+import slug from '../app/util/Slug';
 
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
@@ -218,6 +219,7 @@ class LocationSchedulePage extends React.Component<Properties & WithStyles<typeo
                 internal: session.event.internal,
                 state: state,
                 title: session.name,
+                to: '/schedule/events/' + session.event.id + '/' + slug(session.name),
 
                 // The key for this |session| will be the event ID together with the begin time of
                 // the session on the schedule. This should hopefully be globally unique.
