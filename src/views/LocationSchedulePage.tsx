@@ -7,12 +7,12 @@ import bind from 'bind-decorator';
 import moment from 'moment';
 
 import Clock from '../app/Clock';
-import { Floor } from '../app/Floor';
 import { LabeledSessionList } from '../components/LabeledSessionList';
 import { Location } from '../app/Location';
 import { PageHeader, PageHeaderDefaults, PageHeaderProps } from '../components/PageHeader';
 import { TimedListItem, TimedListItemProps } from '../components/TimedListItem';
 import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
+import { getFloorDescription } from '../app/util/getDescription';
 import slug from '../app/util/Slug';
 
 /**
@@ -141,7 +141,7 @@ class LocationSchedulePage extends React.Component<Properties, State> {
         let nextScheduleUpdate = currentTime.clone().add({ years: 1 });;
 
         // Compile the information necessary to display the header.
-        const floorIdentifier = LocationSchedulePage.getFloorDescription(floor);
+        const floorIdentifier = getFloorDescription(floor);
         const sessionCount = sessions.length + ' session' + (sessions.length !== 1 ? 's' : '');
 
         const days: Map<number, SessionDayDisplayInfo> = new Map();
@@ -228,27 +228,6 @@ class LocationSchedulePage extends React.Component<Properties, State> {
             days: sortedDays,
             nextUpdate: nextScheduleUpdate,
         };
-    }
-
-    /**
-     * Returns a textual description of where the volunteer might be able to find the |floor|.
-     */
-    private static getFloorDescription(floor: Floor): string {
-        const ordinalIndicators = ['st', 'nd', 'rd'];
-        let floorIndicator = null;
-
-        switch (floor.id) {
-            case 0:
-                floorIndicator = 'ground';
-                break;
-            default:
-                // https://community.shopify.com/c/Shopify-Design/Ordinal-Number-in-javascript-1st-2nd-3rd-4th/m-p/72156
-                floorIndicator =
-                    floor.id + ordinalIndicators[((floor.id + 90) % 100 - 10) % 10 - 1] || 'th';
-                break;
-        }
-
-        return floor.label + ' (' + floorIndicator + ' floor)';
     }
 
     render() {

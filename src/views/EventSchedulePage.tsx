@@ -7,6 +7,7 @@ import React from 'react';
 import Clock from '../app/Clock';
 import { PageHeader, PageHeaderDefaults, PageHeaderProps } from '../components/PageHeader';
 import { ProgramEvent } from '../app/ProgramEvent';
+import { getLocationDescription } from '../app/util/getDescription';
 
 /**
  * Properties accepted by the <EventSchedulePage> component.
@@ -57,10 +58,7 @@ class EventSchedulePage extends React.Component<Properties, State> {
         const header: PageHeaderProps = {
             icon: firstSessionFloor.icon || undefined,
             iconColor: firstSessionFloor.iconColor,
-
-            // TODO: Add a location description to the subtitle.
-            subtitle: '',
-
+            subtitle: getLocationDescription(firstSession.location),
             title: firstSession.name,
         };
 
