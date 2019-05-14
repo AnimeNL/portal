@@ -233,7 +233,25 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
             });
         }
 
-        // TODO: Include the list of events/sessions in the matches.
+        // (3) Query the list of events for matches.
+        for (const programEvent of event.getEvents()) {
+            const firstSession = programEvent.sessions[0];
+
+            if (!firstSession.name.toLowerCase().includes(lowercaseQuery))
+                continue;
+
+            if (++results.hitCount > kMaximumSearchResults)
+                continue;
+
+            const floor = firstSession.location.floor;
+
+            results.hits.push({
+                iconColor: floor.iconColor,
+                iconType: 'event',
+                label: firstSession.name,
+                to: '/schedule/events/' + programEvent.id + '/' + slug(firstSession.name),
+            });
+        }
 
         return results;
     }

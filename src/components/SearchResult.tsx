@@ -6,6 +6,7 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 
 import Avatar from '@material-ui/core/Avatar';
+import EventIcon from '@material-ui/icons/Event';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
@@ -48,7 +49,7 @@ export interface SearchResultProps {
     /**
      * Type of icon that should be displayed in front of the search result.
      */
-    iconType: "avatar" | "icon";
+    iconType: "avatar" | "icon" | "event";
 
     /**
      * Label describing the result to the search query.
@@ -66,6 +67,7 @@ class SearchResult extends React.Component<SearchResultProps & WithStyles<typeof
         const { classes, iconColor, iconSrc, iconType, label, to } = this.props;
 
         const isAvatar = iconType === 'avatar';
+        const isEvent = iconType === 'event';
         const isIcon = iconType === 'icon';
 
         return (
@@ -79,12 +81,17 @@ class SearchResult extends React.Component<SearchResultProps & WithStyles<typeof
                             </Avatar>
                         </ListItemAvatar> }
 
-                    { isIcon &&
+                    { (isIcon || isEvent) &&
                         <ListItemAvatar>
                             <Avatar style={{ backgroundColor: iconColor }}>
-                                <SvgIcon htmlColor="white">
-                                    <use xlinkHref={iconSrc} />
-                                </SvgIcon>
+
+                                { isEvent && <EventIcon />}
+
+                                { isIcon &&
+                                    <SvgIcon htmlColor="white">
+                                        <use xlinkHref={iconSrc} />
+                                    </SvgIcon> }
+
                             </Avatar>
                         </ListItemAvatar> }
 

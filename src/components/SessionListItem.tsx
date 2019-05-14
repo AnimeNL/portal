@@ -49,7 +49,7 @@ class SessionListItem extends React.Component<SessionListItemProps & WithStyles<
                 differentDays = true;
         }
 
-        const begin = beginTime.format('dddd \\a\\t HH:mm');
+        const begin = beginTime.format('dddd \\f\\r\\o\\m HH:mm');
         const end = differentDays ? endTime.format('HH:mm \\o\\n dddd')
                                   : endTime.format('HH:mm');
 

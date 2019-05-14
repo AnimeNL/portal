@@ -148,6 +148,13 @@ class Event {
     }
 
     /**
+     * Returns an iterator that provides access to all events.
+     */
+    getEvents(): IterableIterator<ProgramEvent> {
+        return this.events.values();
+    }
+
+    /**
      * Returns the floor identified by the given |id|, if any.
      */
     getFloor(id: number): Floor | undefined {
