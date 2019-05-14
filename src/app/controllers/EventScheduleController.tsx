@@ -6,7 +6,7 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
 import ApplicationProperties from '../ApplicationProperties';
-import { LocationSchedulePage } from '../../views/LocationSchedulePage';
+import { EventSchedulePage } from '../../views/EventSchedulePage';
 import { ProgramEvent } from '../ProgramEvent';
 import NotFound from '../../views/NotFound';
 
@@ -64,7 +64,8 @@ class EventScheduleController extends React.Component<Properties, State> {
         if (!event)
             return <NotFound />;
 
-        return <b>{event.sessions[0].name}</b>;
+        return <EventSchedulePage clock={clock}
+                                  event={event} />
     }
 }
 
