@@ -31,6 +31,9 @@ const styles = (theme: Theme) =>
             overflow: 'hidden',
             textOverflow: 'ellipsis',
         },
+        hightlight: {
+            fontWeight: 'bold',
+        },
     });
 
 /**
@@ -78,9 +81,10 @@ class SearchResult extends React.Component<SearchResultProps & WithStyles<typeof
         const regex = new RegExp('(' + escapeStringRegexp(query) + ')', 'gi');
         const highlightedLabel = (
           <Typography noWrap>
-              { label.split(regex).map((part, i) =>
-                  <span key={i} style={part.toLowerCase() === query ? { fontWeight: 'bold'} : {}}>{part}</span>
-              )}
+              { label.split(regex).map((part, i) => {
+                  const className = part.toLowerCase() === query ? classes.hightlight : undefined;
+                  return <span key={i} className={className}>{part}</span>;
+              })}
           </Typography>
         );
 
