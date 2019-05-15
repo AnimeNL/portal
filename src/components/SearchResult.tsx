@@ -4,6 +4,7 @@
 
 import { Link } from 'react-router-dom';
 import React from 'react';
+import escapeStringRegexp from 'escape-string-regexp';
 
 import Avatar from '@material-ui/core/Avatar';
 import ListItem from '@material-ui/core/ListItem';
@@ -74,7 +75,7 @@ class SearchResult extends React.Component<SearchResultProps & WithStyles<typeof
         const isAvatar = iconType === 'avatar';
         const isIcon = iconType === 'icon';
 
-        const regex = new RegExp('(' + query + ')', 'gi');
+        const regex = new RegExp('(' + escapeStringRegexp(query) + ')', 'gi');
         const highlightedLabel = (
           <Typography noWrap>
               { label.split(regex).map((part, i) =>
