@@ -4,6 +4,7 @@
 
 import { Link } from 'react-router-dom';
 import React from 'react';
+import escapeStringRegexp from 'escape-string-regexp';
 
 import Avatar from '@material-ui/core/Avatar';
 import EventIcon from '@material-ui/icons/Event';
@@ -12,6 +13,7 @@ import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import SvgIcon from '@material-ui/core/SvgIcon';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
@@ -29,6 +31,9 @@ const styles = (theme: Theme) =>
         noWrap: {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
+        },
+        hightlight: {
+            fontWeight: 'bold',
         },
     });
 
@@ -52,6 +57,11 @@ export interface SearchResultProps {
     iconType: "avatar" | "icon" | "event";
 
     /**
+     * The (lowercase) query that was done
+     */
+    query: string;
+
+    /**
      * Label describing the result to the search query.
      */
     label: string;
@@ -64,11 +74,21 @@ export interface SearchResultProps {
 
 class SearchResult extends React.Component<SearchResultProps & WithStyles<typeof styles>> {
     render() {
-        const { classes, iconColor, iconSrc, iconType, label, to } = this.props;
+        const { classes, iconColor, iconSrc, iconType, query, label, to } = this.props;
 
         const isAvatar = iconType === 'avatar';
         const isEvent = iconType === 'event';
         const isIcon = iconType === 'icon';
+
+        const regex = new RegExp('(' + escapeStringRegexp(query) + ')', 'gi');
+        const highlightedLabel = (
+          <Typography noWrap>
+              { label.split(regex).map((part, i) => {
+                  const className = part.toLowerCase() === query ? classes.hightlight : undefined;
+                  return <span key={i} className={className}>{part}</span>;
+              })}
+          </Typography>
+        );
 
         return (
             <Link className={classes.link} to={to}>
@@ -96,8 +116,8 @@ class SearchResult extends React.Component<SearchResultProps & WithStyles<typeof
                         </ListItemAvatar> }
 
                     <ListItemText className={classes.noWrap}
-                                  primary={label}
-                                  primaryTypographyProps={{ noWrap: true }} />
+                                  disableTypography
+                                  primary={highlightedLabel} />
 
                 </ListItem>
             </Link>
