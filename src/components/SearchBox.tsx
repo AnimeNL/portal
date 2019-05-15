@@ -248,6 +248,7 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
             const floor = firstSession.location.floor;
 
             results.hits.push({
+                query: lowercaseQuery,
                 iconColor: floor.iconColor,
                 iconType: 'event',
                 label: firstSession.name,
