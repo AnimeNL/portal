@@ -79,7 +79,7 @@ class SearchResult extends React.Component<SearchResultProps & WithStyles<typeof
         const highlightedLabel = (
           <Typography noWrap>
               { label.split(regex).map((part, i) =>
-                <span key={i} style={part.toLowerCase() === query ? { fontWeight: 'bold'} : {}}>{part}</span>
+                  <span key={i} style={part.toLowerCase() === query ? { fontWeight: 'bold'} : {}}>{part}</span>
               )}
           </Typography>
         );
