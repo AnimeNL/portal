@@ -209,6 +209,7 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
                 continue;
 
             results.hits.push({
+                query: lowercaseQuery,
                 iconSrc: volunteer.avatar,
                 iconType: 'avatar',
                 label: volunteer.name,
@@ -225,6 +226,7 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
                 continue;
 
             results.hits.push({
+                query: lowercaseQuery,
                 iconColor: location.floor.iconColor,
                 iconSrc: location.floor.icon || undefined,
                 iconType: 'icon',
