@@ -4,6 +4,7 @@
 
 import { IProgramEvent } from './api/IProgramEvent';
 import { ProgramSession } from './ProgramSession';
+import { Shift } from './Shift';
 
 /**
  * Represents an event that's included on the program.
@@ -11,10 +12,18 @@ import { ProgramSession } from './ProgramSession';
 export class ProgramEvent {
     info: IProgramEvent;
     sessions_: ProgramSession[];
+    shifts_: Shift[] = [];
 
     constructor(info: IProgramEvent, sessions: ProgramSession[]) {
         this.info = info;
         this.sessions_ = sessions;
+    }
+
+    /**
+     * Adds the given |shift| to the list of shifts associated with this event.
+     */
+    addShift(shift: Shift): void {
+        this.shifts_.push(shift);
     }
 
     /**

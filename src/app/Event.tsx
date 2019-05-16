@@ -8,6 +8,7 @@ import { Floor } from './Floor';
 import { Location } from './Location';
 import { ProgramEvent } from './ProgramEvent';
 import { ProgramSession } from './ProgramSession';
+import { Shift } from './Shift';
 import User from './User';
 import { Volunteer } from './Volunteer';
 import { VolunteerGroup } from './VolunteerGroup';
@@ -111,6 +112,18 @@ class Event {
                     throw new Error('Invalid volunteer group for user ' + info.userToken);
 
                 this.volunteers.set(info.userToken, new Volunteer(info, volunteerGroup));
+            }
+
+            for (const info of eventData.shifts) {
+                const volunteer = this.volunteers.get(info.userToken);
+                const event = info.eventId !== null ? this.events.get(info.eventId) : undefined;
+
+                if (!volunteer)
+                    throw new Error('Invalid volunteer for shift.');
+
+                // The Shift instance will automatically "register" itself with the given
+                // |volunteer| and |event|, through which it will be accessible.
+                new Shift(info, volunteer, event, clock);
             }
 
             this.volunteer = this.volunteers.get(user.userToken);

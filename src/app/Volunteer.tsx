@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import { IVolunteerInfo } from './api/IVolunteerInfo';
+import { Shift } from './Shift';
 import { VolunteerGroup } from './VolunteerGroup';
 
 /**
@@ -11,10 +12,18 @@ import { VolunteerGroup } from './VolunteerGroup';
 export class Volunteer {
     info: IVolunteerInfo;
     volunteerGroup: VolunteerGroup;
+    shifts_: Shift[] = [];
 
     constructor(info: IVolunteerInfo, volunteerGroup: VolunteerGroup) {
         this.info = info;
         this.volunteerGroup = volunteerGroup;
+    }
+
+    /**
+     * Adds the given |shift| to the list of shifts this volunteer will be working.
+     */
+    addShift(shift: Shift): void {
+        this.shifts_.push(shift);
     }
 
     /**
