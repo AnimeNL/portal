@@ -7,6 +7,7 @@ import { IFloor } from './api/IFloor';
 import { ILocation } from './api/ILocation';
 import { IProgramEvent } from './api/IProgramEvent';
 import { IProgramSession } from './api/IProgramSession';
+import { IShift } from './api/IShift';
 import { IVolunteerInfo } from './api/IVolunteerInfo';
 import { IVolunteerGroup } from './api/IVolunteerGroup';
 import { EventPath, mockableFetch } from '../config';
@@ -200,6 +201,16 @@ class EventLoader {
                 return false;
         }
 
+        if (!event.hasOwnProperty('shifts') || !Array.isArray(event.shifts)) {
+            console.error('Unable to validate IEvent.shifts');
+            return false;
+        }
+
+        for (const shift of event.shifts) {
+            if (!this.validateShift(shift))
+                return false;
+        }
+
         if (!event.hasOwnProperty('volunteerGroups') || !Array.isArray(event.volunteerGroups)) {
             console.error('Unable to validate IEvent.volunteerGroups.');
             return false;
@@ -338,6 +349,36 @@ class EventLoader {
 
         if (!programSession.hasOwnProperty('endTime') || !isNumber(programSession.endTime)) {
             console.error('Unable to validate IProgramSession.endTime.');
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
+     * Validates that the given |shift| matches the IShift interface.
+     *
+     * @param location The data as fetched from an untrusted source.
+     * @return Whether the given |shift| conforms to the IShift interface.
+     */
+    private validateShift(shift: any): shift is IShift {
+        if (!shift.hasOwnProperty('userToken') || !isString(shift.userToken)) {
+            console.error('Unable to validate IShift.userToken.');
+            return false;
+        }
+
+        if (!shift.hasOwnProperty('eventId') || !isNumber(shift.eventId)) {
+            console.error('Unable to validate IShift.eventId.');
+            return false;
+        }
+
+        if (!shift.hasOwnProperty('beginTime') || !isNumber(shift.beginTime)) {
+            console.error('Unable to validate IShift.beginTime.');
+            return false;
+        }
+
+        if (!shift.hasOwnProperty('endTime') || !isNumber(shift.endTime)) {
+            console.error('Unable to validate IShift.endTime.');
             return false;
         }
 

@@ -70,6 +70,7 @@ requests. May be cached offline.
 | `floors`          | `Floor[]`          | Array with information about the floors available for the event. |
 | `internalNotes?`  | `object`           | Object of string => string pairs with notes that should be displayed on the Internals page. |
 | `locations`       | `Location[]`       | Array with information about the locations available for the event. |
+| `shifts`          | `Shift[]`          | Array with information about the shifts that will take place this event. |
 | `volunteerGroups` | `VolunteerGroup[]` | Array with information about the different groups of volunteers. |
 | `volunteers`      | `VolunteerInfo[]`  | Array with information for all the event's volunteers. |
 
@@ -107,6 +108,15 @@ requests. May be cached offline.
 | `locationId`     | `number`  | Id of the location in which the session will be taking place. |
 | `beginTime`      | `number`  | Time, in seconds since the UNIX epoch, at which session begins. |
 | `endTime`        | `number`  | Time, in seconds since the UNIX epoch, at which session ends. |
+
+##### `Shift` interface
+
+| Property         | Type      | Description |
+| :---             | :---      | :--- |
+| `userToken`      | `string`  | The token that identifies the volunteer taking this shift. |
+| `eventId`        | `number`  | Id (number) of the event that describes this shift. |
+| `beginTime`      | `number`  | Time, in seconds since the UNIX epoch, at which shift begins. |
+| `endTime`        | `number`  | Time, in seconds since the UNIX epoch, at which shift ends. |
 
 ##### `VolunteerGroup` interface
 

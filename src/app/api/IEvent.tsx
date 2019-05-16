@@ -5,6 +5,7 @@
 import { IFloor } from './IFloor';
 import { ILocation } from './ILocation';
 import { IProgramEvent } from './IProgramEvent';
+import { IShift } from './IShift';
 import { IVolunteerGroup } from './IVolunteerGroup';
 import { IVolunteerInfo } from './IVolunteerInfo';
 
@@ -17,6 +18,7 @@ export interface IEvent {
     floors: IFloor[];
     internalNotes?: { [key: string]: string };
     locations: ILocation[];
+    shifts: IShift[];
     volunteerGroups: IVolunteerGroup[];
     volunteers: IVolunteerInfo[];
 }
