@@ -33,7 +33,8 @@ const styles = (theme: Theme) =>
             textOverflow: 'ellipsis',
         },
         hightlight: {
-            fontWeight: 'bold',
+            color: theme.palette.primary.dark,
+            fontWeight: 600,
         },
     });
 
