@@ -6,6 +6,7 @@ import React from 'react';
 
 import Clock from '../app/Clock';
 import { LabeledSessionList } from '../components/LabeledSessionList';
+import { ExpandableDescriptionPaper } from '../components/ExpandableDescriptionPaper';
 import { PageHeader, PageHeaderDefaults, PageHeaderProps } from '../components/PageHeader';
 import { ProgramEvent } from '../app/ProgramEvent';
 import { SessionListItem, SessionListItemProps } from '../components/SessionListItem';
@@ -36,6 +37,11 @@ type SessionDisplayInfo = SessionListItemProps & { key: string };
  * on the page, such as sessions and shifts w/ volunteers.
  */
 interface State {
+    /**
+     * Description of the event, if there is one available.
+     */
+    description?: string;
+
     /**
      * Details required to display the page header.
      */
@@ -75,6 +81,9 @@ class EventSchedulePage extends React.Component<Properties, State> {
             title: firstSession.name,
         };
 
+        // (2) If a description is available for this session, set it to the state.
+        const description = firstSession.description || undefined;
+
         // (2) Compile the list of sessions that are part of this event.
         const sessions: SessionDisplayInfo[] = [];
         event.sessions.forEach((session, index) => {
@@ -85,19 +94,24 @@ class EventSchedulePage extends React.Component<Properties, State> {
             });
         });
 
-        // TODO: List a detailed description for this event.
+        // TODO: Be able to list an admin-provided description for this session.
         // TODO: List volunteer shifts on this page.
 
-        return { header, sessions };
+        return { description, header, sessions };
     }
 
     render() {
-        const { header, sessions } = this.state;
+        const { description, header, sessions } = this.state;
 
         return (
             <React.Fragment>
 
                 <PageHeader {...header} />
+
+                { description &&
+                    <ExpandableDescriptionPaper title="Event description">
+                        {description}
+                    </ExpandableDescriptionPaper> }
 
                 <LabeledSessionList dense label="Sessions">
                     { sessions.map(session => <SessionListItem {...session} /> ) }

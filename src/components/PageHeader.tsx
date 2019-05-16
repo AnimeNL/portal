@@ -25,7 +25,6 @@ const styles = (theme: Theme) =>
                 // Take away an extra 17px to compensate for the scrollbar that's always visible.
                 maxWidth: 'calc(100vw - 17px - ' + kDrawerWidth + 'px)',
             },
-            marginBottom: theme.spacing(2),
         },
         noWrap: {
             overflow: 'hidden',
