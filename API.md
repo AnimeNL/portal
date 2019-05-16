@@ -114,7 +114,8 @@ requests. May be cached offline.
 | Property         | Type      | Description |
 | :---             | :---      | :--- |
 | `userToken`      | `string`  | The token that identifies the volunteer taking this shift. |
-| `eventId`        | `number`  | Id (number) of the event that describes this shift. |
+| `type`           | `string`  | The type of shift this entry describes. Must be one of {available, unavailable, event}. |
+| `eventId`        | `number?` | Id (number) of the event that describes this shift. |
 | `beginTime`      | `number`  | Time, in seconds since the UNIX epoch, at which shift begins. |
 | `endTime`        | `number`  | Time, in seconds since the UNIX epoch, at which shift ends. |
 

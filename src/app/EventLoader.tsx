@@ -11,7 +11,7 @@ import { IShift } from './api/IShift';
 import { IVolunteerInfo } from './api/IVolunteerInfo';
 import { IVolunteerGroup } from './api/IVolunteerGroup';
 import { EventPath, mockableFetch } from '../config';
-import { isBoolean, isNumber, isString, isStringOrNull } from './util/Validators';
+import { isBoolean, isNumber, isNumberOrNull, isString, isStringOrNull } from './util/Validators';
 
 /**
  * Enumeration detailing the possible outcomes of loading the event data.
@@ -367,7 +367,13 @@ class EventLoader {
             return false;
         }
 
-        if (!shift.hasOwnProperty('eventId') || !isNumber(shift.eventId)) {
+        if (!shift.hasOwnProperty('type') || !isString(shift.type) ||
+            !['available', 'unavailable', 'event'].includes(shift.type)) {
+            console.error('Unable to validate IShift.type.');
+            return false;
+        }
+
+        if (!shift.hasOwnProperty('eventId') || !isNumberOrNull(shift.eventId)) {
             console.error('Unable to validate IShift.eventId.');
             return false;
         }

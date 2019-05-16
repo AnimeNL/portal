@@ -23,6 +23,16 @@ export function isNumber(input: any): input is number {
 }
 
 /**
+ * Validates that the given |input| is either a number or null.
+ *
+ * @param input The input variable, of any type.
+ * @return Whether the |input| is a number or null.
+ */
+export function isNumberOrNull(input: any): input is number | null {
+    return input === null || typeof input === 'number';
+}
+
+/**
  * Validates that the given |input| is a string.
  *
  * @param input The input variable, of any type.

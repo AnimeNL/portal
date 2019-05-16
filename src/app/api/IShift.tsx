@@ -7,7 +7,8 @@
  */
 export interface IShift {
     userToken: string;
-    eventId: number;
+    type: "available" | "unavailable" | "event";
+    eventId: number | null;
     beginTime: number;
     endTime: number;
 }
