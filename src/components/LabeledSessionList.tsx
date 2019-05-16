@@ -16,7 +16,7 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 const styles = (theme: Theme) =>
     createStyles({
         disableFinalDivider: {
-            '& :last-child': {
+            '& a:last-child > div': {
                 borderBottomWidth: 0,
             }
         },
