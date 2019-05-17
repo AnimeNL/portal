@@ -2,7 +2,9 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import moment from 'moment-timezone';
+import moment from 'moment-timezone/moment-timezone';
+
+import { timezoneData } from './util/timezoneData';
 
 type ObserverFn = (time: moment.Moment) => void;
 
@@ -32,6 +34,9 @@ class Clock {
      */
     constructor() {
         this.observers = new Set();
+
+        // Import the timezone data to moment-timezone.
+        moment.tz.load(timezoneData);
 
         try {
             const differenceString = localStorage.getItem(kTimeOffsetKey);
