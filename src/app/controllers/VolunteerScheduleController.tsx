@@ -126,7 +126,7 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
     }
 
     render() {
-        const { event, user } = this.props;
+        const { clock, event, user } = this.props;
         const { volunteer } = this.state;
 
         // |volunteer| won't be set if an invalid slug was passed on the URL, so display an error
@@ -145,6 +145,7 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
 
         return (
             <VolunteerSchedulePage onPictureUpdated={onPictureUpdated}
+                                   clock={clock}
                                    volunteer={volunteer} />
         );
     }

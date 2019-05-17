@@ -46,4 +46,11 @@ export class ProgramEvent {
     get sessions(): ProgramSession[] {
         return this.sessions_;
     }
+
+    /**
+     * Gets ths shifts that are associated with this event.
+     */
+    get shifts(): Shift[] {
+        return this.shifts_;
+    }
 }

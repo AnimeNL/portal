@@ -3,9 +3,14 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import moment from 'moment';
 
+import Clock from '../app/Clock';
+import { LabeledSessionList } from '../components/LabeledSessionList';
+import { TimedListItem, TimedListItemProps } from '../components/TimedListItem';
 import { Volunteer } from '../app/Volunteer';
 import VolunteerListItem from '../components/VolunteerListItem';
+import slug from '../app/util/Slug';
 
 import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
@@ -23,6 +28,11 @@ const styles = (theme: Theme) =>
  */
 interface Properties {
     /**
+     * Clock used to determine the active and upcoming shifts for this page.
+     */
+    clock: Clock;
+
+    /**
      * The volunteer for whom this page is being displayed.
      */
     volunteer: Volunteer;
@@ -35,11 +45,137 @@ interface Properties {
 }
 
 /**
- *
+ * TimedListItemProps, with a `key` field to ensure uniqueness in the list.
  */
-class VolunteerSchedulePage extends React.Component<Properties & WithStyles<typeof styles>> {
+type ShiftDisplayInfo = TimedListItemProps & { key: string };
+
+/**
+ * Information necessary to render a section containing shifts for a particular day.
+ */
+interface ShiftDayDisplayInfo {
+    /**
+     * Title identifying the day during which these shifts will take place.
+     */
+    label: string;
+
+    /**
+     * The number of shifts that have not yet finished.
+     */
+    pending: number;
+
+    /**
+     * Array with the shifts that will take place on this day. Must be sorted.
+     */
+    shifts: ShiftDisplayInfo[];
+
+    /**
+     * UNIX timestamp of the time at which this day starts.
+     */
+    timestamp: number;
+}
+
+/**
+ * State of the <VolunteerSchedulePage> component.
+ */
+interface State {
+    /**
+     * Array of the various days during which shifts will take place in this location.
+     */
+    days: ShiftDayDisplayInfo[];
+}
+
+/**
+ * The <VolunteerSchedulePage> component displays the schedule for a particular volunteer. Some
+ * users will also be able to update the photo associated with this volunteer here.
+ */
+class VolunteerSchedulePage extends React.Component<Properties & WithStyles<typeof styles>, State> {
+    state: State = {
+        days: [],
+    }
+
+    /**
+     * Called when the component mounts or updates, to compute the state. This will trigger React to
+     * request a re-render of the element and the displayed information.
+     */
+    static getDerivedStateFromProps(props: Properties) {
+        const { clock, volunteer } = props;
+
+        const currentTime = clock.getMoment();
+        const days: Map<number, ShiftDayDisplayInfo> = new Map();
+
+        for (const shift of volunteer.shifts) {
+            if (!shift.isEvent())
+                continue;
+
+            const event = shift.event;
+            const session = event.sessions[0];
+
+            // TODO: Should we display volunteer availability on this page?
+
+            // TODO: Determine whether this shift is in the past, current or future.
+            const activeIncrement = 1;
+            const state = 'pending';
+
+            const shiftDisplayInfo: ShiftDisplayInfo = {
+                beginTime: shift.beginTime,
+                endTime: shift.endTime,
+                description: session.description || undefined,
+                internal: event.internal,
+                state: state,
+                title: session.name,
+                to: '/schedule/events/' + event.id + '/' + slug(session.name),
+
+                // The key for this |event| will be the event ID together with the begin time of
+                // the shift on the schedule. This should hopefully be globally unique.
+                key: `${event.id}-${shift.beginTime.unix()}`,
+            };
+
+            // Gets an identifier for the current day consistent throughout the sessions. A UNIX
+            // timestamp is used rather than a Moment instance as Map can store multiple of those.
+            const dayIdentifier = moment(shift.beginTime).startOf('day').unix();
+            const day = days.get(dayIdentifier);
+
+            if (day) {
+                day.shifts.push(shiftDisplayInfo);
+                day.pending += activeIncrement;
+            } else {
+                days.set(dayIdentifier, {
+                    label: shift.beginTime.format('dddd'),
+                    pending: activeIncrement,
+                    shifts: [ shiftDisplayInfo ],
+                    timestamp: dayIdentifier,
+                });
+            }
+        }
+
+        // (1) Sort the days that are to be displayed on the location page.
+        const sortedDays = Array.from(days.values()).sort((lhs, rhs) => {
+            if (!lhs.pending && rhs.pending)
+                return -1;
+            if (!rhs.pending && lhs.pending)
+                return -1;
+
+            return lhs.timestamp > rhs.timestamp ? 1 : -1;
+        });
+
+        // (2) Sort the events within the days that will be displayed on the page.
+        for (const displayInfo of sortedDays) {
+            displayInfo.shifts.sort((lhs, rhs) => {
+                if (lhs.endTime < currentTime && rhs.endTime >= currentTime)
+                    return 1;
+                if (rhs.endTime < currentTime && lhs.endTime >= currentTime)
+                    return -1;
+
+                return lhs.beginTime > rhs.beginTime ? 1 : -1;
+            });
+        }
+
+        return { days: sortedDays };
+    }
+
     render() {
         const { classes, onPictureUpdated, volunteer } = this.props;
+        const { days } = this.state;
 
         return (
             <React.Fragment>
@@ -52,6 +188,14 @@ class VolunteerSchedulePage extends React.Component<Properties & WithStyles<type
                     </List>
                 </Paper>
 
+                { days.map(day =>
+                    <LabeledSessionList key={day.label} label={day.label}>
+
+                        { day.shifts.map(shift =>
+                            <TimedListItem {...shift} /> )}
+
+                    </LabeledSessionList>
+                ) }
 
             </React.Fragment>
         );

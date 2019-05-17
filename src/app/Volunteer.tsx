@@ -74,4 +74,11 @@ export class Volunteer {
     get telephone(): string | null {
         return this.info.telephone;
     }
+
+    /**
+     * Gets the shifts that this volunteer will be working on.
+     */
+    get shifts(): Shift[] {
+        return this.shifts_;
+    }
 }

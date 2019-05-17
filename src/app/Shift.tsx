@@ -70,7 +70,10 @@ export class Shift {
      * Gets the event at which this shift will take place, if any. Only applicable for shifts that
      * have their |type| set to Event.
      */
-    get event(): ProgramEvent | undefined {
+    get event(): ProgramEvent {
+        if (!this.event_)
+            throw new Error('Unable to access the event when there is none available.');
+
         return this.event_;
     }
 
@@ -86,6 +89,13 @@ export class Shift {
      */
     isUnavailable(): boolean {
         return this.type_ === Type.Unavailable;
+    }
+
+    /**
+     * Returns whether this shift has an associated event.
+     */
+    isEvent(): boolean {
+        return this.type_ === Type.Event;
     }
 
     /**
