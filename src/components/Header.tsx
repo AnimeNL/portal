@@ -7,7 +7,8 @@ import bind from 'bind-decorator';
 
 import Event from '../app/Event';
 import { SearchBox } from './SearchBox';
-import { kDrawerWidth } from '../config';
+import { ThemeProvider } from '../theme';
+import { kEnableDarkTheme, kDrawerWidth } from '../config';
 
 import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
@@ -54,9 +55,6 @@ const styles = (theme: Theme) =>
         },
         overflowButton: {
             marginRight: -12
-        },
-        overflowMenu: {
-            minWidth: 150,
         },
     });
 
@@ -127,6 +125,21 @@ class Header extends React.Component<Properties, State> {
     }
 
     /**
+     * Toggles whether dark theme should be enabled. The menu option allows users to switch between
+     * force dark theme (enabled) and default dark theme (undefined).
+     */
+    @bind
+    onToggleDarkTheme(): void {
+        const enabled = ThemeProvider.isDarkThemeEnabled();
+
+        ThemeProvider.setDarkThemeEnabled(enabled ? undefined
+                                                  : true);
+
+        // Reload the page for dark theme to take effect.
+        window.location.reload();
+    }
+
+    /**
      * Called when the overflow menu should be opened. The given |event| provides access to the icon
      * itself, which will be the anchor for the to-be-opened menu element.
      *
@@ -179,7 +192,6 @@ class Header extends React.Component<Properties, State> {
 
                         <Menu
                             id="overflow-menu"
-                            classes={{ paper: classes.overflowMenu }}
                             disableAutoFocusItem={true}
                             anchorEl={this.state.overflowMenuAnchor}
                             anchorOrigin={{vertical: 'top', horizontal: 'right'}}
@@ -188,11 +200,18 @@ class Header extends React.Component<Properties, State> {
                             onClose={this.closeOverflowMenu}>
 
                             <MenuItem onClick={onRefresh}>
-                                <Typography variant="inherit">Refresh</Typography>
+                                Refresh
                             </MenuItem>
 
+                            { kEnableDarkTheme &&
+                                <MenuItem onClick={this.onToggleDarkTheme}>
+                                    { ThemeProvider.isDarkThemeEnabled()
+                                          ? 'Use default theme'
+                                          : 'Use dark theme' }
+                                </MenuItem> }
+
                             <MenuItem onClick={onLogout}>
-                                <Typography variant="inherit">Sign out</Typography>
+                                Sign out
                             </MenuItem>
 
                         </Menu>

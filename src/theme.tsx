@@ -50,7 +50,7 @@ export interface ThemeDelegate {
     /**
      * Sets whether dark theme should be enabled.
      */
-    setDarkThemeEnabled: (enabled: boolean) => void;
+    setDarkThemeEnabled: (enabled: boolean | undefined) => void;
 }
 
 /**
@@ -91,7 +91,7 @@ export class ThemeProvider {
      * Toggles whether dark theme should be enabled for the portal. Unless this is changed at page
      * load time, the page should be refreshed for this change to take effect.
      */
-    static setDarkThemeEnabled(enabled: boolean) {
+    static setDarkThemeEnabled(enabled: boolean | undefined) {
         if (!ThemeProvider.delegate)
             throw new Error('Unable to update dark theme state: no delegate');
 

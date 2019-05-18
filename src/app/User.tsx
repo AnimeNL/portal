@@ -217,7 +217,7 @@ class User implements ThemeDelegate {
     /**
      * Sets whether dark theme should be enabled.
      */
-    setDarkThemeEnabled(enabled: boolean): void {
+    setDarkThemeEnabled(enabled: boolean | undefined): void {
         if (this.data) {
             this.data.darkThemeEnabled = enabled;
             this.storeToLocalStorage();
