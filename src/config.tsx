@@ -28,6 +28,12 @@ const directory = (isProduction || host) ? 'api' : 'api-dev';
 export const kDrawerWidth = 256;
 
 /**
+ * Whether the dark theme should be available by default, and be activated if the user's system is
+ * in dark mode.
+ */
+export const kEnableDarkTheme = false;
+
+/**
  * Path to the environment configuration file, relative to the server root.
  */
 export const EnvironmentConfigPath = `${host}/${directory}/environment`;

@@ -5,7 +5,7 @@
 import moment from 'moment';
 
 import { ThemeDelegate, ThemeProvider } from '../theme';
-import { UserLoginPath, mockableFetch } from '../config';
+import { UserLoginPath, kEnableDarkTheme, mockableFetch } from '../config';
 import { isBoolean, isNumber, isString } from './util/Validators';
 
 /**
@@ -208,7 +208,7 @@ class User implements ThemeDelegate {
         if (this.data && this.data.darkThemeEnabled !== undefined)
             return !!this.data.darkThemeEnabled;
 
-        if (window.matchMedia)
+        if (kEnableDarkTheme && window.matchMedia)
             return window.matchMedia('(prefers-color-scheme: dark)').matches;
 
         return false;
