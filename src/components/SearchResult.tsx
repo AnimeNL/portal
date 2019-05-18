@@ -33,7 +33,7 @@ const styles = (theme: Theme) =>
             textOverflow: 'ellipsis',
         },
         hightlight: {
-            color: theme.palette.primary.dark,
+            color: theme.palette.text.primary,
             fontWeight: 600,
         },
     });
