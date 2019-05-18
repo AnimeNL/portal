@@ -205,8 +205,11 @@ class User implements ThemeDelegate {
      * Returns whether dark theme is currently enabled.
      */
     isDarkThemeEnabled(): boolean {
-        if (this.data)
+        if (this.data && this.data.darkThemeEnabled !== undefined)
             return !!this.data.darkThemeEnabled;
+
+        if (window.matchMedia)
+            return window.matchMedia('(prefers-color-scheme: dark)').matches;
 
         return false;
     }
