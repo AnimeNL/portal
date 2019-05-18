@@ -72,7 +72,7 @@ class Clock {
         if (this.offset !== undefined)
             return moment.tz(input, this.timezone).add(this.offset);
 
-        return moment(input, this.timezone);
+        return moment.tz(input, this.timezone);
     }
 
     /**
