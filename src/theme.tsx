@@ -2,7 +2,41 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import blue from '@material-ui/core/colors/blue'
 import createMuiTheme, { Theme, ThemeOptions } from '@material-ui/core/styles/createMuiTheme';
+import grey from '@material-ui/core/colors/grey';
+import indigo from '@material-ui/core/colors/indigo';
+
+/**
+ * Properties that differ between our dark- and light theme configurations.
+ */
+interface ThemeProperties {
+    /**
+     * Whether this theme defines a light or dark theme.
+     */
+    type: "light" | "dark";
+
+    /**
+     * Background color of the application header.
+     */
+    headerBackgroundColor: React.CSSProperties['color'];
+}
+
+/**
+ * Augment the Theme and ThemeOptions objects to allow for additional properties.
+ */
+declare module '@material-ui/core/styles/createMuiTheme' {
+    interface Theme {
+        /**
+         * Background color of the application header.
+         */
+        headerBackgroundColor: React.CSSProperties['color'];
+    }
+
+    interface ThemeOptions {
+        headerBackgroundColor?: React.CSSProperties['color'];
+    }
+}
 
 /**
  * Interface that must be provided for
@@ -70,6 +104,8 @@ export class ThemeProvider {
      */
     static getTheme(): Theme {
         if (ThemeProvider.cachedTheme === undefined) {
+            const properties = ThemeProvider.getThemeProperties();
+
             ThemeProvider.cachedTheme = createMuiTheme({
                 mixins: {
                     toolbar: {
@@ -80,17 +116,40 @@ export class ThemeProvider {
                     },
                 },
                 palette: {
-                    type: ThemeProvider.isDarkThemeEnabled() ? 'dark' : 'light',
+                    type: properties.type,
                     primary: {
-                        main: '#1565c0'
+                        main: blue[800]
                     },
                     action: {
-                        selected: '#E8EAF6',
+                        selected: indigo[50],
                     },
                 },
+                headerBackgroundColor: properties.headerBackgroundColor,
             });
         }
 
         return ThemeProvider.cachedTheme;
+    }
+
+    /**
+     * Returns the theme-specific properties that visually distinguish the portal between light and
+     * dark theme. Each property must be defined twice.
+     */
+    private static getThemeProperties(): ThemeProperties {
+        if (ThemeProvider.isDarkThemeEnabled()) {
+            return {
+                type: 'dark',
+
+                // Application header styling.
+                headerBackgroundColor: grey[900],
+            };
+        } else {
+            return {
+                type: 'light',
+
+                // Application header styling.
+                headerBackgroundColor: blue[800],
+            };
+        }
     }
 }

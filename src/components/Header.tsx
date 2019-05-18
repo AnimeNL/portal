@@ -29,6 +29,8 @@ const styles = (theme: Theme) =>
             whiteSpace: 'nowrap',
         },
         appBar: {
+            backgroundColor: theme.headerBackgroundColor,
+
             marginLeft: kDrawerWidth,
             paddingRight: '0px !important',
             [theme.breakpoints.up('sm')]: {
