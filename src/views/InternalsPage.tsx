@@ -7,15 +7,20 @@ import bind from 'bind-decorator';
 import moment from 'moment';
 
 import Event from '../app/Event';
+import { ThemeProvider } from '../theme';
 
 import AccessTimeIcon from '@material-ui/icons/AccessTimeOutlined';
+import Checkbox from '@material-ui/core/Checkbox';
+import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
 import ListSubheader from '@material-ui/core/ListSubheader';
 import Paper from '@material-ui/core/Paper';
 import RestoreIcon from '@material-ui/icons/Restore';
+import Snackbar from '@material-ui/core/Snackbar';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -63,6 +68,16 @@ interface State {
      * Current time. Initialized to the |initialTime| property.
      */
     currentTime: moment.Moment;
+
+    /**
+     * Whether dark theme is enabled for the application.
+     */
+    darkThemeEnabled: boolean;
+
+    /**
+     * Whether the dark theme change feedback is currently visible.
+     */
+    darkThemeFeedbackVisible: boolean;
 }
 
 class InternalsPage extends React.Component<Properties & WithStyles<typeof styles>, State> {
@@ -83,7 +98,9 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
         this.timePickerRef = React.createRef();
 
         this.state = {
-            currentTime: props.initialTime
+            currentTime: props.initialTime,
+            darkThemeEnabled: ThemeProvider.isDarkThemeEnabled(),
+            darkThemeFeedbackVisible: false,
         };
     }
 
@@ -149,6 +166,32 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
     }
 
     /**
+     * Toggles whether dark theme should be enabled for the application. The page must be refreshed
+     * for the change to take effect, so a snackbar will be shown to that effect.
+     */
+    @bind
+    toggleDarkTheme(): void {
+        const enabled: boolean = !this.state.darkThemeEnabled;
+
+        ThemeProvider.setDarkThemeEnabled(enabled);
+
+        this.setState({
+            darkThemeEnabled: enabled,
+            darkThemeFeedbackVisible: true
+        })
+    }
+
+    /**
+     * Called when the dark theme feedback snackbar should be closed.
+     */
+    @bind
+    onDarkThemeFeedbackComplete(): void {
+        this.setState({
+            darkThemeFeedbackVisible: false,
+        })
+    }
+
+    /**
      * Called when the date has been changed. A time update will be propagated to the controller
      * based on the diff with the input time.
      */
@@ -163,7 +206,7 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
 
     render() {
         const { classes, event } = this.props;
-        const { currentTime } = this.state;
+        const { currentTime, darkThemeEnabled, darkThemeFeedbackVisible } = this.state;
 
         return (
             <>
@@ -190,6 +233,21 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
                             <ListItemText primary="Reset time time" />
                         </ListItem>
                     </List>
+
+                    <List subheader={<ListSubheader>Theme configuration</ListSubheader>}>
+                        <ListItem button onClick={this.toggleDarkTheme}>
+                            <ListItemIcon>
+                                <InvertColorsIcon />
+                            </ListItemIcon>
+                            <ListItemText primary="Enable dark theme" />
+                            <ListItemSecondaryAction>
+                                <Checkbox edge="end"
+                                          onChange={this.toggleDarkTheme}
+                                          checked={darkThemeEnabled} />
+                            </ListItemSecondaryAction>
+                        </ListItem>
+                    </List>
+
                 </Paper>
 
                 <Paper style={{ marginTop: '20px' }} square elevation={1}>
@@ -230,6 +288,13 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
                             ampm={false} />
                     </div>
                 </Paper>
+
+                <Snackbar anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                          open={darkThemeFeedbackVisible}
+                          message="Refresh for the change to take effect"
+                          autoHideDuration={3000}
+                          onClose={this.onDarkThemeFeedbackComplete} />
+
             </>
         );
     }

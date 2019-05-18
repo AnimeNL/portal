@@ -49,29 +49,6 @@ export const UserLoginPath = `${host}/${directory}/login`;
 export const UploadPath = `${host}/${directory}/upload`;
 
 /**
- * @see https://material-ui.com/customization/themes/
- */
-export const AppTheme = {
-    mixins: {
-        toolbar: {
-            minHeight: 56,
-            '@media (min-width:600px)': {
-                minHeight: 64,
-            },
-        },
-    },
-    palette: {
-        primary: {
-            main: '#1565c0'
-        },
-        action: {
-            selected: '#E8EAF6',
-        },
-    },
-
-};
-
-/**
  * Change the momentJS locale to create short time-until notations.
  * https://github.com/moment/moment/issues/2781
  */

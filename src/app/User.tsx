@@ -4,8 +4,9 @@
 
 import moment from 'moment';
 
+import { ThemeDelegate, ThemeProvider } from '../theme';
 import { UserLoginPath, mockableFetch } from '../config';
-import { isNumber, isString } from './util/Validators';
+import { isBoolean, isNumber, isString } from './util/Validators';
 
 /**
  * Key in the local storage under which the serialized login data will be stored.
@@ -24,13 +25,17 @@ interface LoginData {
     authToken: string;
     expirationTime: number;
     abilities: string[];
+
+    // Optional fields maintained for internal application state. Can be set by the server to set
+    // defaults, but not formally documented as an API.
+    darkThemeEnabled?: boolean;
 }
 
 /**
  * Represents the user logged in to the application, if any. Contains logic to authenticate the user
  * based on given login details, as well as logic for signing out a user.
  */
-class User {
+class User implements ThemeDelegate {
     data?: LoginData;
 
     /**
@@ -64,6 +69,8 @@ class User {
             // does not adhere to mocked time in the Clock.
             if (moment.unix(data.expirationTime) < moment())
                 return;
+
+            ThemeProvider.setDelegate(this);
 
             this.data = data;
 
@@ -195,6 +202,26 @@ class User {
     }
 
     /**
+     * Returns whether dark theme is currently enabled.
+     */
+    isDarkThemeEnabled(): boolean {
+        if (this.data)
+            return !!this.data.darkThemeEnabled;
+
+        return false;
+    }
+
+    /**
+     * Sets whether dark theme should be enabled.
+     */
+    setDarkThemeEnabled(enabled: boolean): void {
+        if (this.data) {
+            this.data.darkThemeEnabled = enabled;
+            this.storeToLocalStorage();
+        }
+    }
+
+    /**
      * Validates that the given |data| conforms to the definition of LoginData.
      *
      * @param data The data as fetched from the network.
@@ -225,6 +252,11 @@ class User {
                 console.error('Unable to validate EnvironmentData.abilities.');
                 return false;
             }
+        }
+
+        if ('darkThemeEnabled' in data && !isBoolean(data.darkThemeEnabled)) {
+            console.error('Unable to validate EnvironmentData.darkThemeEnabled.');
+            return false;
         }
 
         return true;
