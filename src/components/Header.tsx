@@ -10,14 +10,11 @@ import { SearchBox } from './SearchBox';
 import { kDrawerWidth } from '../config';
 
 import AppBar from '@material-ui/core/AppBar';
-import ExitToAppIcon from '@material-ui/icons/ExitToApp';
 import IconButton from '@material-ui/core/IconButton';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
 import MenuItem from '@material-ui/core/MenuItem';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import RefreshIcon from '@material-ui/icons/Refresh';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -55,6 +52,9 @@ const styles = (theme: Theme) =>
         },
         overflowButton: {
             marginRight: -12
+        },
+        overflowMenu: {
+            minWidth: 150,
         },
     });
 
@@ -177,6 +177,7 @@ class Header extends React.Component<Properties, State> {
 
                         <Menu
                             id="overflow-menu"
+                            classes={{ paper: classes.overflowMenu }}
                             disableAutoFocusItem={true}
                             anchorEl={this.state.overflowMenuAnchor}
                             anchorOrigin={{vertical: 'top', horizontal: 'right'}}
@@ -185,18 +186,10 @@ class Header extends React.Component<Properties, State> {
                             onClose={this.closeOverflowMenu}>
 
                             <MenuItem onClick={onRefresh}>
-                                <ListItemIcon>
-                                    <RefreshIcon />
-                                </ListItemIcon>
-
                                 <Typography variant="inherit">Refresh</Typography>
                             </MenuItem>
 
                             <MenuItem onClick={onLogout}>
-                                <ListItemIcon>
-                                    <ExitToAppIcon />
-                                </ListItemIcon>
-
                                 <Typography variant="inherit">Sign out</Typography>
                             </MenuItem>
 
