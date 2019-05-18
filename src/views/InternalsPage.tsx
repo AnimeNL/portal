@@ -10,7 +10,6 @@ import Event from '../app/Event';
 import { ThemeProvider } from '../theme';
 
 import AccessTimeIcon from '@material-ui/icons/AccessTimeOutlined';
-import Checkbox from '@material-ui/core/Checkbox';
 import InvertColorsIcon from '@material-ui/icons/InvertColors';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -21,6 +20,7 @@ import ListSubheader from '@material-ui/core/ListSubheader';
 import Paper from '@material-ui/core/Paper';
 import RestoreIcon from '@material-ui/icons/Restore';
 import Snackbar from '@material-ui/core/Snackbar';
+import Switch from '@material-ui/core/Switch';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
@@ -241,9 +241,8 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
                             </ListItemIcon>
                             <ListItemText primary="Enable dark theme" />
                             <ListItemSecondaryAction>
-                                <Checkbox edge="end"
-                                          onChange={this.toggleDarkTheme}
-                                          checked={darkThemeEnabled} />
+                                <Switch onChange={this.toggleDarkTheme}
+                                        checked={darkThemeEnabled} />
                             </ListItemSecondaryAction>
                         </ListItem>
                     </List>
