@@ -118,9 +118,35 @@ class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles
      * Called when the content editor should be opened.
      */
     @bind
-    onEditContent(): void {
+    onOpenDialog(): void {
         this.setState({
             contentEditorActive: true,
+        })
+    }
+
+    /**
+     * Called when the content editor should be closed without changes.
+     */
+    @bind
+    onCloseDialog(): void {
+        this.setState({
+            contentEditorActive: false,
+        })
+    }
+
+    /**
+     * Called when the content editor should be closed after the given |text| gets updated.
+     */
+    @bind
+    async onSaveDialog(text: string): Promise<void> {
+        await new Promise(resolve => {
+            setTimeout(resolve, 3000);
+        });
+
+        // TODO: Actually save the |text|.
+
+        this.setState({
+            contentEditorActive: false,
         })
     }
 
@@ -149,7 +175,7 @@ class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles
 
                 </ExpansionPanelSummary>
 
-                <ExpansionPanelDetails onClick={this.onEditContent}
+                <ExpansionPanelDetails onClick={this.onOpenDialog}
                                        className={mutable ? classes.detailsMutable
                                                           : classes.details}>
 
@@ -158,8 +184,11 @@ class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles
 
                 </ExpansionPanelDetails>
 
-                <UpdateTextDialog open={contentEditorActive}
-                                  text={text} />
+                <UpdateTextDialog onClose={this.onCloseDialog}
+                                  onSave={this.onSaveDialog}
+                                  open={contentEditorActive}
+                                  text={text}
+                                  title="Shift instructions" />
 
             </ExpansionPanel>
         );
