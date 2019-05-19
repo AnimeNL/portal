@@ -68,7 +68,7 @@ export const PageHeaderDefaults: PageHeaderProps = {
 /**
  * Common component for page headers shown across the application.
  */
-class PageHeader extends React.Component<PageHeaderProps & WithStyles<typeof styles>> {
+class PageHeader extends React.PureComponent<PageHeaderProps & WithStyles<typeof styles>> {
     render() {
         const { classes, icon, iconColor, subtitle, title } = this.props;
 

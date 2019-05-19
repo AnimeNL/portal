@@ -94,7 +94,7 @@ export interface TimedListItemProps {
 /**
  * The <TimedListItem> element represents an item that has a starting and ending time.
  */
-class TimedListItem extends React.Component<TimedListItemProps & WithStyles<typeof styles>> {
+class TimedListItem extends React.PureComponent<TimedListItemProps & WithStyles<typeof styles>> {
     /**
      * Returns an indicator that tells the user that the |endTime| is on a different day than the
      * |beginTime| when this is the case, or an empty fragment otherwise.

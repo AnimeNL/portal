@@ -96,6 +96,24 @@ class LocationSchedulePage extends React.Component<Properties, State> {
     componentDidUpdate() { this.refreshUpdateTimer(); }
 
     /**
+     * Determine whether this page should be updated based on the proposed changes. Use a naive
+     * algorithm that only updates when either the location changes, or the next-update time is in
+     * the past, indicating that an update should've occurred.
+     */
+    shouldComponentUpdate(nextProps: Properties, nextState: State): boolean {
+        const { location } = this.props;
+        const { nextUpdate } = this.state;
+
+        if (nextProps.location !== location)
+            return true;
+
+        if (nextState.nextUpdate !== nextUpdate)
+            return true;
+
+        return false;
+    }
+
+    /**
      * Refreshes the |updateTimer| by clearing the current one and setting a new one. This seems to
      * be necessary due to React's lifetime semantics.
      */

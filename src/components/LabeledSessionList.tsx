@@ -56,7 +56,7 @@ interface Properties {
 /**
  * Represents a labeled list of sessions. The label will be displayed separate from the sheet.
  */
-class LabeledSessionList extends React.Component<Properties & WithStyles<typeof styles>> {
+class LabeledSessionList extends React.PureComponent<Properties & WithStyles<typeof styles>> {
     render() {
         const { children, classes, dense, label } = this.props;
 
