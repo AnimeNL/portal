@@ -58,7 +58,6 @@ export class VolunteerListPage extends React.Component<Properties> {
                         value={activeGroupIndex}
                         onChange={(e, groupIndex) => onVolunteerGroupChange(groupIndex)}
                         indicatorColor="primary"
-                        textColor="primary"
                         variant="fullWidth">
 
                         {groups.map((group, index) => {
