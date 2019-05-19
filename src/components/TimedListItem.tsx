@@ -34,14 +34,14 @@ const styles = (theme: Theme) =>
         },
 
         past: {
-            backgroundColor: '#ECEFF1',
+            backgroundColor: theme.pastSessionBackgroundColor,
 
             paddingTop: 0,
             paddingBottom: 0,
             minHeight: 36,
         },
         active: {
-            backgroundColor: '#FFF8E1',
+            backgroundColor: theme.activeSessionBackgroundColor,
         },
         pending: {},
 

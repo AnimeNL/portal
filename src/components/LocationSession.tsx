@@ -15,6 +15,7 @@ import Typography from '@material-ui/core/Typography';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import createStyles from '@material-ui/core/styles/createStyles';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
@@ -59,7 +60,7 @@ const styles = (theme: Theme) =>
         },
 
         timing: {
-            color: 'rgba(0, 0, 0, .5)',
+            color: fade(theme.palette.text.primary, 0.4),
             fontSize: '11px',
         }
     });

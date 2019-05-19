@@ -2,7 +2,10 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import amber from '@material-ui/core/colors/amber';
 import blue from '@material-ui/core/colors/blue'
+import blueGrey from '@material-ui/core/colors/blueGrey';
+import brown from '@material-ui/core/colors/brown';
 import createMuiTheme, { Theme, ThemeOptions } from '@material-ui/core/styles/createMuiTheme';
 import grey from '@material-ui/core/colors/grey';
 import indigo from '@material-ui/core/colors/indigo';
@@ -17,6 +20,11 @@ interface ThemeProperties {
     type: "light" | "dark";
 
     /**
+     * Background color for event rows detailing active sessions.
+     */
+    activeSessionBackgroundColor: React.CSSProperties['color'];
+
+    /**
      * Background color of the application header.
      */
     headerBackgroundColor: React.CSSProperties['color'];
@@ -25,6 +33,11 @@ interface ThemeProperties {
      * Background color of active items in the application menu.
      */
     menuActiveBackgroundColor: React.CSSProperties['color'];
+
+    /**
+     * Background color for event rows detailing past sessions.
+     */
+    pastSessionBackgroundColor: React.CSSProperties['color'];
 }
 
 /**
@@ -32,6 +45,11 @@ interface ThemeProperties {
  */
 declare module '@material-ui/core/styles/createMuiTheme' {
     interface Theme {
+        /**
+         * Background color for event rows detailing active sessions.
+         */
+        activeSessionBackgroundColor: React.CSSProperties['color'];
+
         /**
          * Background color of the application header.
          */
@@ -41,11 +59,18 @@ declare module '@material-ui/core/styles/createMuiTheme' {
          * Background color of active items in the application menu.
          */
         menuActiveBackgroundColor: React.CSSProperties['color'];
+
+        /**
+         * Background color for event rows detailing past sessions.
+         */
+        pastSessionBackgroundColor: React.CSSProperties['color'];
     }
 
     interface ThemeOptions {
+        activeSessionBackgroundColor?: React.CSSProperties['color'];
         headerBackgroundColor?: React.CSSProperties['color'];
         menuActiveBackgroundColor?: React.CSSProperties['color'];
+        pastSessionBackgroundColor?: React.CSSProperties['color'];
     }
 }
 
@@ -135,8 +160,10 @@ export class ThemeProvider {
                         selected: indigo[50],
                     },
                 },
+                activeSessionBackgroundColor: properties.activeSessionBackgroundColor,
                 headerBackgroundColor: properties.headerBackgroundColor,
                 menuActiveBackgroundColor: properties.menuActiveBackgroundColor,
+                pastSessionBackgroundColor: properties.pastSessionBackgroundColor,
             });
         }
 
@@ -151,14 +178,18 @@ export class ThemeProvider {
         if (ThemeProvider.isDarkThemeEnabled()) {
             return {
                 type: 'dark',
+                activeSessionBackgroundColor: brown[900],
                 headerBackgroundColor: grey[900],
                 menuActiveBackgroundColor: grey[700],
+                pastSessionBackgroundColor: '#353535',  // grey[850]ish
             };
         } else {
             return {
                 type: 'light',
+                activeSessionBackgroundColor: amber[50],
                 headerBackgroundColor: blue[800],
                 menuActiveBackgroundColor: indigo[50],
+                pastSessionBackgroundColor: blueGrey[50],
             };
         }
     }
