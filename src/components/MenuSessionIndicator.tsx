@@ -31,6 +31,9 @@ interface Properties {
      */
     count: number;
 
+    /**
+     * Background colour of the indicator. Should match the theme colour of the floor.
+     */
     color: string | undefined;
 }
 
@@ -38,7 +41,7 @@ interface Properties {
  * The <MenuSessionIndicator> element can be used as the secondary action in a menu. When used and
  * when given a |count| of >0, a round bubble will be shown.
  */
-class MenuSessionIndicator extends React.Component<Properties & WithStyles<typeof styles>> {
+class MenuSessionIndicator extends React.PureComponent<Properties & WithStyles<typeof styles>> {
     render() {
         const { classes, color, count } = this.props;
 

@@ -62,6 +62,15 @@ interface Properties {
  * the router, and will highlight the item when it's the active page.
  */
 class MenuListItem extends React.Component<Properties & WithStyles<typeof styles>> {
+    /**
+     * Called when the menu list item changes. Effectively matches the PureComponent<> behaviour
+     * but ignores a number of properties altogether.
+     */
+    shouldComponentUpdate(nextProps: Properties): boolean {
+        return nextProps.to != this.props.to ||
+               nextProps.exact != this.props.exact;
+    }
+
     render() {
         const { children, classes, exact, onClick, to } = this.props;
 
