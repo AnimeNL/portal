@@ -101,6 +101,10 @@ class EventScheduleController extends React.Component<Properties, State> {
             }
 
             programEvent.setNotes(data.notes);
+
+            // Trigger a state update to make sure we re-render the latest changes.
+            this.setState({ event: this.state.event });
+
             return true;
 
         } catch (e) {
