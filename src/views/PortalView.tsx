@@ -13,6 +13,7 @@ import Event from '../app/Event';
 import { Header, HeaderEvents } from '../components/Header';
 import Menu from '../components/Menu';
 import ResponsiveDrawer from '../components/ResponsiveDrawer';
+import { ScrollBehaviour } from '../components/ScrollBehaviour';
 import withRoot from '../withRoot';
 
 import { MuiPickersUtilsProvider } from 'material-ui-pickers';
@@ -74,6 +75,7 @@ class PortalView extends React.Component<Properties & HeaderEvents> {
 
         return (
             <BrowserRouter>
+                <ScrollBehaviour />
                 <MuiPickersUtilsProvider utils={MomentUtils} moment={moment}>
                     <div className={classes.root}>
 
