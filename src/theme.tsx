@@ -20,6 +20,11 @@ interface ThemeProperties {
      * Background color of the application header.
      */
     headerBackgroundColor: React.CSSProperties['color'];
+
+    /**
+     * Background color of active items in the application menu.
+     */
+    menuActiveBackgroundColor: React.CSSProperties['color'];
 }
 
 /**
@@ -31,10 +36,16 @@ declare module '@material-ui/core/styles/createMuiTheme' {
          * Background color of the application header.
          */
         headerBackgroundColor: React.CSSProperties['color'];
+
+        /**
+         * Background color of active items in the application menu.
+         */
+        menuActiveBackgroundColor: React.CSSProperties['color'];
     }
 
     interface ThemeOptions {
         headerBackgroundColor?: React.CSSProperties['color'];
+        menuActiveBackgroundColor?: React.CSSProperties['color'];
     }
 }
 
@@ -125,6 +136,7 @@ export class ThemeProvider {
                     },
                 },
                 headerBackgroundColor: properties.headerBackgroundColor,
+                menuActiveBackgroundColor: properties.menuActiveBackgroundColor,
             });
         }
 
@@ -139,16 +151,14 @@ export class ThemeProvider {
         if (ThemeProvider.isDarkThemeEnabled()) {
             return {
                 type: 'dark',
-
-                // Application header styling.
                 headerBackgroundColor: grey[900],
+                menuActiveBackgroundColor: grey[700],
             };
         } else {
             return {
                 type: 'light',
-
-                // Application header styling.
                 headerBackgroundColor: blue[800],
+                menuActiveBackgroundColor: indigo[50],
             };
         }
     }

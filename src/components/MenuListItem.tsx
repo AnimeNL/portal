@@ -25,7 +25,7 @@ const styles = (theme: Theme) =>
             WebkitTapHighlightColor: 'transparent',
         },
         activeLink: {
-            backgroundColor: theme.palette.action.selected
+            backgroundColor: theme.menuActiveBackgroundColor,
         },
         listItem: {
             backgroundColor: 'transparent !important',
