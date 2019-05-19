@@ -43,6 +43,9 @@ const styles = (theme: Theme) =>
             border: '1px dashed ' + theme.palette.divider,
 
             WebkitTapHighlightColor: 'transparent',
+            WebkitUserSelect: 'none',
+            userSelect: 'none',
+
             transition: theme.transitions.create(['background-color']),
 
             '&:hover': {
