@@ -175,7 +175,7 @@ class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles
                                        expandIcon={<ExpandMoreIcon />}>
 
                     <Typography variant="body1"
-                                className={mutable ? classes.titleMutable : undefined}>
+                                className={isEmptyMutable ? classes.titleMutable : undefined}>
 
                         {title}
                         { isEmptyMutable && <SpeakerNotesIcon className={classes.titleMutableIcon} /> }
