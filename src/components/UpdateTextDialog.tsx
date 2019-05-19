@@ -91,7 +91,13 @@ class UpdateTextDialog extends React.Component<Properties & WithStyles<typeof st
     componentWillMount() {
         this.setState({
             currentText: this.props.text || '',
-        })
+        });
+    }
+
+    componentWillReceiveProps(props: Properties) {
+        this.setState({
+            currentText: props.text || '',
+        });
     }
 
     /**
