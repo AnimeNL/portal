@@ -32,7 +32,7 @@ const styles = (theme: Theme) =>
             fontSize: '16px',
         },
         iconPending: {
-            color: 'rgba(0, 0, 0, .2)',
+            color: fade(theme.palette.text.primary, 0.2),
             fontSize: '16px',
         },
 
