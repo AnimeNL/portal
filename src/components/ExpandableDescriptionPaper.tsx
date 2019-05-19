@@ -124,6 +124,9 @@ class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles
      */
     @bind
     onOpenDialog(): void {
+        if (!this.props.mutable)
+          return;
+
         this.setState({
             contentEditorActive: true,
         })
