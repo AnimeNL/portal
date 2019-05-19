@@ -11,7 +11,7 @@ import { IShift } from './api/IShift';
 import { IVolunteerInfo } from './api/IVolunteerInfo';
 import { IVolunteerGroup } from './api/IVolunteerGroup';
 import { EventPath, mockableFetch } from '../config';
-import { isBoolean, isNumber, isNumberOrNull, isString, isStringOrNull } from './util/Validators';
+import { isBoolean, isNumber, isNumberOrNull, isString, isStringOrNull, validationError } from './util/Validators';
 
 /**
  * Enumeration detailing the possible outcomes of loading the event data.
@@ -152,13 +152,15 @@ class EventLoader {
      * @return Whether the given |event| conforms to the IEvent interface.
      */
     private validateEvent(event: any): event is IEvent {
+        const kInterface = 'IEvent';
+
         if (!event.hasOwnProperty('success') || !isBoolean(event.success)) {
-            console.error('Unable to validate IEvent.success.');
+            validationError(kInterface, 'success');
             return false;
         }
 
         if (!event.hasOwnProperty('events') || !Array.isArray(event.events)) {
-            console.error('Unable to validate IEvent.events');
+            validationError(kInterface, 'events');
             return false;
         }
 
@@ -168,7 +170,7 @@ class EventLoader {
         }
 
         if (!event.hasOwnProperty('floors') || !Array.isArray(event.floors)) {
-            console.error('Unable to validate IEvent.floors');
+            validationError(kInterface, 'floors');
             return false;
         }
 
@@ -179,20 +181,20 @@ class EventLoader {
 
         if (event.hasOwnProperty('internalNotes')) {
             if (typeof event.internalNotes !== 'object') {
-                console.error('Unable to validate IEvent.internalNotes');
+                validationError(kInterface, 'internalNotes');
                 return false;
             }
 
             for (const key of Object.keys(event.internalNotes)) {
                 if (!isString(key) || !isString(event.internalNotes[key])) {
-                    console.error('Unable to validate IEvent.internalNotes');
+                    validationError(kInterface, 'internalNotes');
                     return false;
                 }
             }
         }
 
         if (!event.hasOwnProperty('locations') || !Array.isArray(event.locations)) {
-            console.error('Unable to validate IEvent.locations');
+            validationError(kInterface, 'locations');
             return false;
         }
 
@@ -202,7 +204,7 @@ class EventLoader {
         }
 
         if (!event.hasOwnProperty('shifts') || !Array.isArray(event.shifts)) {
-            console.error('Unable to validate IEvent.shifts');
+            validationError(kInterface, 'shifts');
             return false;
         }
 
@@ -212,7 +214,7 @@ class EventLoader {
         }
 
         if (!event.hasOwnProperty('volunteerGroups') || !Array.isArray(event.volunteerGroups)) {
-            console.error('Unable to validate IEvent.volunteerGroups.');
+            validationError(kInterface, 'volunteerGroups');
             return false;
         }
 
@@ -222,7 +224,7 @@ class EventLoader {
         }
 
         if (!event.hasOwnProperty('volunteers') || !Array.isArray(event.volunteers)) {
-            console.error('Unable to validate IEvent.volunteers.');
+            validationError(kInterface, 'volunteers');
             return false;
         }
 
@@ -241,23 +243,25 @@ class EventLoader {
      * @return Whether the given |floor| conforms to the IFloor interface.
      */
     private validateFloor(floor: any): floor is IFloor {
+        const kInterface = 'IFloor';
+
         if (!floor.hasOwnProperty('id') || !isNumber(floor.id)) {
-            console.error('Unable to validate IFloor.id.');
+            validationError(kInterface, 'id');
             return false;
         }
 
         if (!floor.hasOwnProperty('label') || !isString(floor.label)) {
-            console.error('Unable to validate IFloor.label.');
+            validationError(kInterface, 'label');
             return false;
         }
 
         if (!floor.hasOwnProperty('iconColor') || !isStringOrNull(floor.iconColor)) {
-            console.error('Unable to validate IFloor.iconColor.');
+            validationError(kInterface, 'iconColor');
             return false;
         }
 
         if (!floor.hasOwnProperty('icon') || !isStringOrNull(floor.icon)) {
-            console.error('Unable to validate IFloor.icon.');
+            validationError(kInterface, 'icon');
             return false;
         }
 
@@ -271,18 +275,20 @@ class EventLoader {
      * @return Whether the given |location| conforms to the ILocation interface.
      */
     private validateLocation(location: any): location is ILocation {
+        const kInterface = 'ILocation';
+
         if (!location.hasOwnProperty('id') || !isNumber(location.id)) {
-            console.error('Unable to validate ILocation.id.');
+            validationError(kInterface, 'id');
             return false;
         }
 
         if (!location.hasOwnProperty('floorId') || !isNumber(location.floorId)) {
-            console.error('Unable to validate ILocation.floorId.');
+            validationError(kInterface, 'floorId');
             return false;
         }
 
         if (!location.hasOwnProperty('label') || !isString(location.label)) {
-            console.error('Unable to validate ILocation.label.');
+            validationError(kInterface, 'label');
             return false;
         }
 
@@ -296,23 +302,25 @@ class EventLoader {
      * @return Whether the given |programEvent| conforms to the IProgramEvent interface.
      */
     private validateProgramEvent(programEvent: any): programEvent is IProgramEvent {
+        const kInterface = 'IProgramEvent';
+
         if (!programEvent.hasOwnProperty('id') || !isNumber(programEvent.id)) {
-            console.error('Unable to validate IProgramEvent.id.');
+            validationError(kInterface, 'id');
             return false;
         }
 
         if (!programEvent.hasOwnProperty('internal') || !isBoolean(programEvent.internal)) {
-            console.error('Unable to validate IProgramEvent.internal.');
+            validationError(kInterface, 'internal');
             return false;
         }
 
         if (!programEvent.hasOwnProperty('notes') || !isStringOrNull(programEvent.notes)) {
-            console.error('Unable to validate IProgramEvent.notes.');
+            validationError(kInterface, 'notes');
             return false;
         }
 
         if (!programEvent.hasOwnProperty('sessions') || !Array.isArray(programEvent.sessions)) {
-            console.error('Unable to validate IProgramEvent.icon.');
+            validationError(kInterface, 'icon');
             return false;
         }
 
@@ -331,29 +339,31 @@ class EventLoader {
      * @return Whether the given |programSession| conforms to the IProgramSession interface.
      */
     private validateProgramSession(programSession: any): programSession is IProgramSession {
+        const kInterface = 'IProgramSession';
+
         if (!programSession.hasOwnProperty('name') || !isString(programSession.name)) {
-            console.error('Unable to validate IProgramSession.name.');
+            validationError(kInterface, 'name');
             return false;
         }
 
         if (!programSession.hasOwnProperty('description') ||
             !isStringOrNull(programSession.description)) {
-            console.error('Unable to validate IProgramSession.description.');
+            validationError(kInterface, 'description');
             return false;
         }
 
         if (!programSession.hasOwnProperty('locationId') || !isNumber(programSession.locationId)) {
-            console.error('Unable to validate IProgramSession.locationId.');
+            validationError(kInterface, 'locationId');
             return false;
         }
 
         if (!programSession.hasOwnProperty('beginTime') || !isNumber(programSession.beginTime)) {
-            console.error('Unable to validate IProgramSession.beginTime.');
+            validationError(kInterface, 'beginTime');
             return false;
         }
 
         if (!programSession.hasOwnProperty('endTime') || !isNumber(programSession.endTime)) {
-            console.error('Unable to validate IProgramSession.endTime.');
+            validationError(kInterface, 'endTime');
             return false;
         }
 
@@ -367,29 +377,31 @@ class EventLoader {
      * @return Whether the given |shift| conforms to the IShift interface.
      */
     private validateShift(shift: any): shift is IShift {
+        const kInterface = 'IShift';
+
         if (!shift.hasOwnProperty('userToken') || !isString(shift.userToken)) {
-            console.error('Unable to validate IShift.userToken.');
+            validationError(kInterface, 'userToken');
             return false;
         }
 
         if (!shift.hasOwnProperty('type') || !isString(shift.type) ||
             !['available', 'unavailable', 'event'].includes(shift.type)) {
-            console.error('Unable to validate IShift.type.');
+            validationError(kInterface, 'type');
             return false;
         }
 
         if (!shift.hasOwnProperty('eventId') || !isNumberOrNull(shift.eventId)) {
-            console.error('Unable to validate IShift.eventId.');
+            validationError(kInterface, 'eventId');
             return false;
         }
 
         if (!shift.hasOwnProperty('beginTime') || !isNumber(shift.beginTime)) {
-            console.error('Unable to validate IShift.beginTime.');
+            validationError(kInterface, 'beginTime');
             return false;
         }
 
         if (!shift.hasOwnProperty('endTime') || !isNumber(shift.endTime)) {
-            console.error('Unable to validate IShift.endTime.');
+            validationError(kInterface, 'endTime');
             return false;
         }
 
@@ -403,18 +415,20 @@ class EventLoader {
      * @return Whether the given |volunteerGroup| conforms to the IVolunteerGroup interface.
      */
     private validateVolunteerGroup(volunteerGroup: any): volunteerGroup is IVolunteerGroup {
+        const kInterface = 'IVolunteerGroup';
+
         if (!volunteerGroup.hasOwnProperty('groupToken') || !isString(volunteerGroup.groupToken)) {
-            console.error('Unable to validate IVolunteerGroup.groupToken.');
+            validationError(kInterface, 'groupToken');
             return false;
         }
 
         if (!volunteerGroup.hasOwnProperty('primary') || !isBoolean(volunteerGroup.primary)) {
-            console.error('Unable to validate IVolunteerGroup.primary.');
+            validationError(kInterface, 'primary');
             return false;
         }
 
         if (!volunteerGroup.hasOwnProperty('label') || !isString(volunteerGroup.label)) {
-            console.error('Unable to validate IVolunteerGroup.label.');
+            validationError(kInterface, 'label');
             return false;
         }
 
@@ -428,40 +442,42 @@ class EventLoader {
      * @return Whether the given |volunteerInfo| conforms to the IVolunteerInfo interface.
      */
     private validateVolunteerInfo(volunteerInfo: any): volunteerInfo is IVolunteerInfo {
+        const kInterface = 'IVolunteerInfo';
+
         if (!volunteerInfo.hasOwnProperty('userToken') || !isString(volunteerInfo.userToken)) {
-            console.error('Unable to validate IVolunteerInfo.userToken.');
+            validationError(kInterface, 'userToken');
             return false;
         }
 
         if (!volunteerInfo.hasOwnProperty('groupToken') || !isString(volunteerInfo.groupToken)) {
-            console.error('Unable to validate IVolunteerInfo.groupToken.');
+            validationError(kInterface, 'groupToken');
             return false;
         }
 
         if (!volunteerInfo.hasOwnProperty('name') || !isString(volunteerInfo.name)) {
-            console.error('Unable to validate IVolunteerInfo.name.');
+            validationError(kInterface, 'name');
             return false;
         }
 
         if (!volunteerInfo.hasOwnProperty('avatar') || !isStringOrNull(volunteerInfo.avatar)) {
-            console.error('Unable to validate IVolunteerInfo.avatar.');
+            validationError(kInterface, 'avatar');
             return false;
         }
 
         if (!volunteerInfo.hasOwnProperty('title') || !isString(volunteerInfo.title)) {
-            console.error('Unable to validate IVolunteerInfo.title.');
+            validationError(kInterface, 'title');
             return false;
         }
 
         if (!volunteerInfo.hasOwnProperty('accessCode') ||
             !isStringOrNull(volunteerInfo.accessCode)) {
-            console.error('Unable to validate IVolunteerInfo.accessCode.');
+            validationError(kInterface, 'accessCode');
             return false;
         }
 
         if (!volunteerInfo.hasOwnProperty('telephone') ||
             !isStringOrNull(volunteerInfo.telephone)) {
-            console.error('Unable to validate IVolunteerInfo.telephone.');
+            validationError(kInterface, 'telephone');
             return false;
         }
 

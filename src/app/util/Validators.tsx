@@ -51,3 +51,10 @@ export function isString(input: any): input is string {
 export function isStringOrNull(input: any): input is string | null {
     return input === null || typeof input === 'string';
 }
+
+/**
+ * Logs a validation error for the given |interfaceName| and |property| to the console.
+ */
+export function validationError(interfaceName: string, property: string): void {
+    console.error(`Unable to validate ${interfaceName}.${property}.`);
+}

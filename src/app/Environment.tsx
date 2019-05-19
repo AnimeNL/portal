@@ -3,7 +3,7 @@
 // be found in the LICENSE file.
 
 import { EnvironmentConfigPath, mockableFetch } from '../config';
-import { isNumber, isString } from './util/Validators';
+import { isNumber, isString, validationError } from './util/Validators';
 
 /**
  * Settings for the environment the portal will be operating under. Generally fetched from the
@@ -100,23 +100,25 @@ class Environment {
      * @param configuration The configuration as fetched from the network.
      */
     private validateConfiguration(configuration: any): configuration is EnvironmentData {
+        const kInterface = 'EnvironmentData';
+
         if (!isString(configuration.timezone)) {
-            console.error('Unable to validate EnvironmentData.timezone.');
+            validationError(kInterface, 'timezone');
             return false;
         }
 
         if (!isString(configuration.portalTitle)) {
-            console.error('Unable to validate EnvironmentData.portalTitle.');
+            validationError(kInterface, 'portalTitle');
             return false;
         }
 
         if (!isString(configuration.seniorTitle)) {
-            console.error('Unable to validate EnvironmentData.seniorTitle.');
+            validationError(kInterface, 'seniorTitle');
             return false;
         }
 
         if (!isNumber(configuration.year)) {
-            console.error('Unable to validate EnvironmentData.year.');
+            validationError(kInterface, 'year');
             return false;
         }
 

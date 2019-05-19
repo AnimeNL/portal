@@ -7,7 +7,7 @@ import moment from 'moment';
 import { Ability } from '../abilities';
 import { ThemeDelegate, ThemeProvider } from '../theme';
 import { UserLoginPath, kEnableDarkTheme, mockableFetch } from '../config';
-import { isBoolean, isNumber, isString } from './util/Validators';
+import { isBoolean, isNumber, isString, validationError } from './util/Validators';
 
 /**
  * Key in the local storage under which the serialized login data will be stored.
@@ -231,35 +231,37 @@ class User implements ThemeDelegate {
      * @param data The data as fetched from the network.
      */
     private validateConfiguration(data: any): data is LoginData {
+        const kInterface = 'LoginData';
+
         if (!isString(data.userToken)) {
-            console.error('Unable to validate EnvironmentData.userToken.');
+            validationError(kInterface, 'userToken');
             return false;
         }
 
         if (!isString(data.authToken)) {
-            console.error('Unable to validate EnvironmentData.authToken.');
+            validationError(kInterface, 'authToken');
             return false;
         }
 
         if (!isNumber(data.expirationTime)) {
-            console.error('Unable to validate EnvironmentData.expirationTime.');
+            validationError(kInterface, 'expirationTime');
             return false;
         }
 
         if (!Array.isArray(data.abilities)) {
-            console.error('Unable to validate EnvironmentData.abilities.');
+            validationError(kInterface, 'abilities');
             return false;
         }
 
         for (const ability of data.abilities) {
             if (!isString(ability)) {
-                console.error('Unable to validate EnvironmentData.abilities.');
+                validationError(kInterface, 'abilities');
                 return false;
             }
         }
 
         if ('darkThemeEnabled' in data && !isBoolean(data.darkThemeEnabled)) {
-            console.error('Unable to validate EnvironmentData.darkThemeEnabled.');
+            validationError(kInterface, 'darkThemeEnabled');
             return false;
         }
 
