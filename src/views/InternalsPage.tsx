@@ -10,7 +10,7 @@ import Event from '../app/Event';
 import { ThemeProvider } from '../theme';
 
 import AccessTimeIcon from '@material-ui/icons/AccessTimeOutlined';
-import InvertColorsIcon from '@material-ui/icons/InvertColors';
+import BrightnessIcon from '@material-ui/icons/Brightness4';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -237,7 +237,7 @@ class InternalsPage extends React.Component<Properties & WithStyles<typeof style
                     <List subheader={<ListSubheader>Theme configuration</ListSubheader>}>
                         <ListItem button onClick={this.toggleDarkTheme}>
                             <ListItemIcon>
-                                <InvertColorsIcon />
+                                <BrightnessIcon />
                             </ListItemIcon>
                             <ListItemText primary="Enable dark theme" />
                             <ListItemSecondaryAction>
