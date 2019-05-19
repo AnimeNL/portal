@@ -95,7 +95,7 @@ class EventScheduleController extends React.Component<Properties, State> {
                 return false;
             }
 
-            if (!data.success || !data.notes) {
+            if (!data.success) {
                 console.error('The upload response failed for some reason.', data);
                 return false;
             }
