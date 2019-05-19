@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
+import bind from 'bind-decorator';
 
 import { Ability } from '../../abilities';
 import ApplicationProperties from '../ApplicationProperties';
@@ -57,6 +58,19 @@ class EventScheduleController extends React.Component<Properties, State> {
         return { event: programEvent };
     }
 
+    /**
+     * Update the description for the current event to |description|. Will return a promise that
+     * settles when the result of the operation is known. Asynchronous.
+     */
+    @bind
+    async updateDescription(description: string | null): Promise<boolean> {
+        await new Promise(resolve => {
+            setTimeout(resolve, 1000);
+        });
+
+        return false;
+    }
+
     render() {
         const { clock, user } = this.props;
         const { event } = this.state;
@@ -67,7 +81,8 @@ class EventScheduleController extends React.Component<Properties, State> {
             return <NotFound />;
 
         return <EventSchedulePage clock={clock} event={event}
-                                  mutable={user.hasAbility(Ability.ManageEventInfo)} />
+                                  mutable={user.hasAbility(Ability.ManageEventInfo)}
+                                  onDescriptionChange={this.updateDescription} />
     }
 }
 

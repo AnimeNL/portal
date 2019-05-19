@@ -10,6 +10,7 @@ import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Divider from '@material-ui/core/Divider';
 import Input from '@material-ui/core/Input';
@@ -43,9 +44,9 @@ interface Properties {
 
     /**
      * Event handler that will be invoked when the dialog has to close, and the given |text| should
-     * be saved as the updated text.
+     * be saved as the updated text. Returns whether the operation was successful.
      */
-    onSave: (text: string) => Promise<void>;
+    onSave: (text: string) => Promise<boolean>;
 
     /**
      * Whether the dialog should be opened.
@@ -76,6 +77,11 @@ interface State {
      * Whether the inserted text is currently being saved.
      */
     textSaving: boolean;
+
+    /**
+     * Whether saving the text has failed, which will pop up yet another dialog.
+     */
+    textSavingFailed: boolean;
 }
 
 /**
@@ -86,6 +92,7 @@ class UpdateTextDialog extends React.Component<Properties & WithStyles<typeof st
     state: State = {
         currentText: '',
         textSaving: false,
+        textSavingFailed: false,
     };
 
     componentWillMount() {
@@ -119,7 +126,10 @@ class UpdateTextDialog extends React.Component<Properties & WithStyles<typeof st
         this.setState({ textSaving: true });
 
         // Wait for the save operation to propagate through the application.
-        await this.props.onSave(this.state.currentText);
+        const result = await this.props.onSave(this.state.currentText);
+
+        if (!result)
+            this.setState({ textSavingFailed: true });
 
         this.setState({ textSaving: false });
     }
@@ -142,56 +152,91 @@ class UpdateTextDialog extends React.Component<Properties & WithStyles<typeof st
         this.props.onClose();
     }
 
+    /**
+     * Called when the "the text could not be saved" dialog should be closed.
+     */
+    @bind
+    closeFailureDialog() {
+        this.setState({
+            textSavingFailed: false,
+        });
+    }
+
     render() {
         const { classes, onClose, open, title } = this.props;
-        const { currentText, textSaving } = this.state;
+        const { currentText, textSaving, textSavingFailed } = this.state;
 
         return (
-            <Dialog fullWidth={true}
-                    maxWidth={false}
-                    onClose={this.maybeClose}
-                    open={!!open}>
+            <>
+                <Dialog fullWidth={true}
+                        maxWidth={false}
+                        onClose={this.maybeClose}
+                        open={!!open}>
 
-                <DialogTitle>
-                    {title}
-                </DialogTitle>
+                    <DialogTitle>
+                        {title}
+                    </DialogTitle>
 
-                <DialogContent>
-                    <Divider />
+                    <DialogContent>
+                        <Divider />
 
-                        <Input onChange={this.updateCurrentText}
-                               autoFocus={true}
-                               fullWidth={true}
-                               multiline={true}
-                               value={currentText} />
+                            <Input onChange={this.updateCurrentText}
+                                   autoFocus={true}
+                                   fullWidth={true}
+                                   multiline={true}
+                                   value={currentText} />
 
-                    <Divider />
-                </DialogContent>
+                        <Divider />
+                    </DialogContent>
 
-                <DialogActions>
+                    <DialogActions>
 
-                    <Button disabled={textSaving} onClick={onClose}>
-                        Cancel
-                    </Button>
-
-                    <div className={classes.saveButtonWrapper}>
-
-                        <Button disabled={textSaving}
-                                color="primary"
-                                onClick={this.saveText}>
-
-                            Save
-
+                        <Button disabled={textSaving} onClick={onClose}>
+                            Cancel
                         </Button>
 
-                        { textSaving &&
-                            <CircularProgress size={24} className={classes.saveButtonAnim} /> }
+                        <div className={classes.saveButtonWrapper}>
 
-                    </div>
+                            <Button disabled={textSaving}
+                                    color="primary"
+                                    onClick={this.saveText}>
 
-                </DialogActions>
+                                Save
 
-            </Dialog>
+                            </Button>
+
+                            { textSaving &&
+                                <CircularProgress size={24} className={classes.saveButtonAnim} /> }
+
+                        </div>
+
+                    </DialogActions>
+
+                </Dialog>
+
+                <Dialog open={textSavingFailed}
+                        onClose={this.closeFailureDialog}>
+
+                    <DialogTitle>
+                        Unable to save the description
+                    </DialogTitle>
+
+                    <DialogContent>
+                        <DialogContentText>
+                            Something went wrong and the update could not be saved. Please try
+                            again later.
+                        </DialogContentText>
+                    </DialogContent>
+
+                    <DialogActions>
+                        <Button onClick={this.closeFailureDialog}>
+                            Close
+                        </Button>
+                    </DialogActions>
+
+                </Dialog>
+
+            </>
         );
     }
 }

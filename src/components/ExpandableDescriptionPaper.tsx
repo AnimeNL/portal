@@ -92,6 +92,11 @@ interface Properties {
      * The text that should be displayed in the panel, if any.
      */
     text?: string;
+
+    /**
+     * Event that should be called when the description changes.
+     */
+    onDescriptionChange?: (description: string | null) => Promise<boolean>;
 }
 
 /**
@@ -138,16 +143,20 @@ class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles
      * Called when the content editor should be closed after the given |text| gets updated.
      */
     @bind
-    async onSaveDialog(text: string): Promise<void> {
-        await new Promise(resolve => {
-            setTimeout(resolve, 3000);
-        });
+    async onSaveDialog(text: string): Promise<boolean> {
+        const { onDescriptionChange } = this.props;
 
-        // TODO: Actually save the |text|.
+        const result = onDescriptionChange ? await onDescriptionChange(text)
+                                           : false;
+
+        if (!result)
+            return false;
 
         this.setState({
             contentEditorActive: false,
-        })
+        });
+
+        return true;
     }
 
     render() {

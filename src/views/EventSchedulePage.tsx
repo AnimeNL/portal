@@ -30,6 +30,11 @@ interface Properties {
      * Whether the user is able to change the description of this event.
      */
     mutable?: boolean;
+
+    /**
+     * Event that should be called when the description for the current event changes.
+     */
+    onDescriptionChange: (description: string | null) => Promise<boolean>;
 }
 
 /**
@@ -113,7 +118,7 @@ class EventSchedulePage extends React.Component<Properties, State> {
     }
 
     render() {
-        const { mutable } = this.props;
+        const { mutable, onDescriptionChange } = this.props;
         const { description, header, notes, sessions } = this.state;
 
         return (
@@ -126,6 +131,7 @@ class EventSchedulePage extends React.Component<Properties, State> {
 
                 { (notes || mutable) &&
                     <ExpandableDescriptionPaper mutable={mutable}
+                                                onDescriptionChange={onDescriptionChange}
                                                 title="Shift instructions"
                                                 text={notes} /> }
 
