@@ -5,6 +5,8 @@
 import React from 'react';
 import bind from 'bind-decorator';
 
+import { UpdateTextDialog } from './UpdateTextDialog';
+
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
@@ -77,11 +79,6 @@ const styles = (theme: Theme) =>
  */
 interface Properties {
     /**
-     * Contents of the collapsed paper that will only be visible once opened.
-     */
-    children?: React.ReactNode | React.ReactNodeArray;
-
-    /**
      * Whether the contents of this input box are mutable by the user.
      */
     mutable?: boolean;
@@ -90,6 +87,11 @@ interface Properties {
      * Title of the collapsed paper, always displayed.
      */
     title: string;
+
+    /**
+     * The text that should be displayed in the panel, if any.
+     */
+    text?: string;
 }
 
 /**
@@ -123,9 +125,10 @@ class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles
     }
 
     render() {
-        const { children, classes, mutable, title } = this.props;
+        const { classes, mutable, text, title } = this.props;
+        const { contentEditorActive } = this.state;
 
-        const isEmpty = !children;
+        const isEmptyMutable = mutable && !text;
 
         return (
             <ExpansionPanel>
@@ -140,7 +143,7 @@ class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles
                                 className={mutable ? classes.titleMutable : undefined}>
 
                         {title}
-                        { isEmpty && <SpeakerNotesIcon className={classes.titleMutableIcon} /> }
+                        { isEmptyMutable && <SpeakerNotesIcon className={classes.titleMutableIcon} /> }
 
                     </Typography>
 
@@ -150,10 +153,13 @@ class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles
                                        className={mutable ? classes.detailsMutable
                                                           : classes.details}>
 
-                    { isEmpty && <i>Click to add content to this box.</i> }
-                    { !isEmpty && children}
+                    {text}
+                    { isEmptyMutable && <i>Click to add content to this box.</i> }
 
                 </ExpansionPanelDetails>
+
+                <UpdateTextDialog open={contentEditorActive}
+                                  text={text} />
 
             </ExpansionPanel>
         );

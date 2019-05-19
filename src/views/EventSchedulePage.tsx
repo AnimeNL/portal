@@ -107,7 +107,6 @@ class EventSchedulePage extends React.Component<Properties, State> {
             });
         });
 
-        // TODO: Be able to list an admin-provided description for this session.
         // TODO: List volunteer shifts on this page.
 
         return { description, notes, header, sessions };
@@ -123,14 +122,12 @@ class EventSchedulePage extends React.Component<Properties, State> {
                 <PageHeader {...header} />
 
                 { description &&
-                    <ExpandableDescriptionPaper title="Event description">
-                        {description}
-                    </ExpandableDescriptionPaper> }
+                    <ExpandableDescriptionPaper title="Event description" text={description} /> }
 
                 { (notes || mutable) &&
-                    <ExpandableDescriptionPaper mutable={mutable} title="Shift instructions">
-                        {notes}
-                    </ExpandableDescriptionPaper> }
+                    <ExpandableDescriptionPaper mutable={mutable}
+                                                title="Shift instructions"
+                                                text={notes} /> }
 
                 <LabeledSessionList dense label="Sessions">
                     { sessions.map(session => <SessionListItem {...session} /> ) }
