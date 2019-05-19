@@ -34,6 +34,11 @@ export const kDrawerWidth = 256;
 export const kEnableDarkTheme = false;
 
 /**
+ * Whether the title displayed in the app header should reflect the page that the user's on.
+ */
+export const kEnableHeaderTitle = false;
+
+/**
  * Path to the environment configuration file, relative to the server root.
  */
 export const EnvironmentConfigPath = `${host}/${directory}/environment`;

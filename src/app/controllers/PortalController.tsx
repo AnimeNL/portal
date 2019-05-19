@@ -65,8 +65,8 @@ class PortalController extends React.Component<ApplicationProperties> {
         return (
             <PortalView clock={clock}
                         enableDebug={enableDebug}
+                        environment={environment}
                         event={event}
-                        portalTitle={environment.portalTitle}
                         onLogout={this.onLogout}
                         onRefresh={this.onRefresh}>
 

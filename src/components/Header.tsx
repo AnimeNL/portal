@@ -5,10 +5,12 @@
 import React from 'react';
 import bind from 'bind-decorator';
 
+import Environment from '../app/Environment';
 import Event from '../app/Event';
 import { SearchBox } from './SearchBox';
 import { ThemeProvider } from '../theme';
-import { kEnableDarkTheme, kDrawerWidth } from '../config';
+import { TitleManager, TitleObserver } from '../title';
+import { kEnableDarkTheme, kEnableHeaderTitle, kDrawerWidth } from '../config';
 
 import AppBar from '@material-ui/core/AppBar';
 import IconButton from '@material-ui/core/IconButton';
@@ -86,6 +88,11 @@ interface Properties extends HeaderEvents, WithStyles<typeof styles> {
      * The event for which the portal is being rendered. Used for and by the search box.
      */
     event: Event;
+
+    /**
+     * The environment for the volunteer portal. Used to determine the page's title.
+     */
+    environment: Environment;
 }
 
 /**
@@ -95,23 +102,78 @@ interface State {
     /**
      * The HTMLElement to which the overflow menu should be anchored, if any.
      */
-    overflowMenuAnchor: HTMLElement | null,
+    overflowMenuAnchor: HTMLElement | null;
 
     /**
      * Whether the overflow menu should be opened.
      */
-    overflowMenuOpened: boolean,
+    overflowMenuOpened: boolean;
+
+    /**
+     * The title that should be displayed on the page.
+     */
+    title: string;
 }
 
 /**
  * The application-level header. It serves three main purposes: toggling the main menu, displaying
  * the current page's title and providing access to the overflow menu.
  */
-class Header extends React.Component<Properties, State> {
+class Header extends React.Component<Properties, State> implements TitleObserver {
     state: State = {
         overflowMenuAnchor: null,
         overflowMenuOpened: false,
+        title: 'Volunteer Portal',
     };
+
+    /**
+     * Called when the component is about to mount. Populate the initial page header.
+     */
+    componentWillMount() {
+        const { environment } = this.props;
+
+        if (kEnableHeaderTitle)
+            TitleManager.addObserver(this);
+
+        this.setState({
+            title: environment.portalTitle,
+        });
+    }
+
+    /**
+     * Called when the page's title is being updated. Will update the internal state so that the
+     * change can be reflected in the page header.
+     */
+    onTitleUpdate(title: string | null): void {
+        const { environment } = this.props;
+
+        this.setState({
+            title: title ? title
+                         : environment.portalTitle
+        });
+    }
+
+    /**
+     * Determines whether the header component has to be updated. We only do this when the overflow
+     * menu or the title changes.
+     */
+    shouldComponentUpdate(nextProps: Properties, nextState: State): boolean {
+        if (nextState.overflowMenuOpened != this.state.overflowMenuOpened)
+            return true;
+
+        if (kEnableHeaderTitle && nextState.title != this.state.title)
+            return true;
+
+        return false;
+    }
+
+    /**
+     * Called when the component is about to be removed. Remove ourselves from observing the title.
+     */
+    componentWillUnmount() {
+        if (kEnableHeaderTitle)
+            TitleManager.removeObserver(this);
+    }
 
     /**
      * Called when the overflow menu should be closed. This will be triggered when the user clicks
@@ -154,7 +216,8 @@ class Header extends React.Component<Properties, State> {
     }
 
     render() {
-        const { children, classes, event, onMenuClick, onLogout, onRefresh } = this.props;
+        const { classes, event, onMenuClick, onLogout, onRefresh } = this.props;
+        const { title } = this.state;
 
         return (
             <AppBar position="fixed" className={classes.appBar}>
@@ -170,8 +233,8 @@ class Header extends React.Component<Properties, State> {
 
                     </IconButton>
 
-                    <Typography variant="h6" color="inherit" className={classes.grow}>
-                        {children}
+                    <Typography variant="h6" color="inherit" noWrap className={classes.grow}>
+                        {title}
                     </Typography>
 
                     <div className={classes.buttons}>

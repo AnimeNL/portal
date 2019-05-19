@@ -9,6 +9,7 @@ import bind from 'bind-decorator';
 import moment from 'moment';
 
 import Clock from '../app/Clock';
+import Environment from '../app/Environment';
 import Event from '../app/Event';
 import { Header, HeaderEvents } from '../components/Header';
 import Menu from '../components/Menu';
@@ -47,14 +48,14 @@ interface Properties extends WithStyles<typeof styles> {
     enableDebug: boolean;
 
     /**
-     * The event for which the menu is being displayed.
+     * The event for which the portal is being displayed.
      */
     event: Event;
 
     /**
-     * Title to use for identifying the volunteer portal instance.
+     * The environment for this the portal is being displayed.
      */
-    portalTitle: string;
+    environment: Environment;
 
     /**
      * The <PortalView> element accepts children. TypeScript requires us to be explicit.
@@ -72,11 +73,6 @@ interface State {
      * large screens, but can be toggled by small-screen users.
      */
     drawerOpen: boolean,
-
-    /**
-     * Title that should be displayed in the header bar.
-     */
-    title?: string;
 }
 
 /**
@@ -88,16 +84,6 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
     state: State = {
         drawerOpen: false,
     };
-
-    /**
-     * Called just before the <PortalView> is mount. The |title| state will be set to the portal
-     * title made available as a property on this component.
-     */
-    componentWillMount() {
-        this.setState({
-            title: this.props.portalTitle
-        });
-    }
 
     /**
      * Opens the drawer. No-op for large-screen users, but will create a full-page overlay with a
@@ -122,7 +108,8 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
     }
 
     render() {
-        const { children, classes, clock, enableDebug, event, onLogout, onRefresh } = this.props;
+        const { children, classes, clock, enableDebug, environment, event } = this.props;
+        const { onLogout, onRefresh } = this.props;
 
         return (
             <BrowserRouter>
@@ -130,13 +117,10 @@ class PortalView extends React.Component<Properties & HeaderEvents, State> {
                     <div className={classes.root}>
 
                         <Header event={event}
+                                environment={environment}
                                 onMenuClick={this.openDrawer}
                                 onLogout={onLogout}
-                                onRefresh={onRefresh}>
-
-                            {this.state.title}
-
-                        </Header>
+                                onRefresh={onRefresh} />
 
                         <ResponsiveDrawer onClose={this.closeDrawer}
                                           open={this.state.drawerOpen}>
