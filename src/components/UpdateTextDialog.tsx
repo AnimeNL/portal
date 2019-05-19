@@ -218,7 +218,7 @@ class UpdateTextDialog extends React.Component<Properties & WithStyles<typeof st
                         onClose={this.closeFailureDialog}>
 
                     <DialogTitle>
-                        Unable to save the description
+                        Could not save your update
                     </DialogTitle>
 
                     <DialogContent>
