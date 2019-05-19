@@ -216,7 +216,7 @@ class AvatarDialogButton extends React.Component<Properties & WithStyles<typeof 
                         <div className={classes.uploadSheet}
                              style={{ backgroundImage: selectedAvatar }}>
 
-                            <input accept="foobar;image/*"
+                            <input accept="image/*"
                                    className={classes.invisibleInput}
                                    onChange={e => this.handlePhotoSelected(e.target.files)}
                                    id="icon-button-photo"
