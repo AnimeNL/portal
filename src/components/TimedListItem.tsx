@@ -8,6 +8,7 @@ import moment from 'moment';
 import ConditionalLink from './ConditionalLink';
 import ConditionalListItem from './ConditionalListItem';
 
+import HistoryIcon from '@material-ui/icons/History';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -49,6 +50,13 @@ const styles = (theme: Theme) =>
             marginRight: theme.spacing(1),
             textAlign: 'right',
         },
+
+        titleIcon: {
+            fontSize: 'inherit',
+            position: 'relative',
+            left: theme.spacing(0.5),
+            top: 2,
+        }
     });
 
 /**
@@ -118,11 +126,13 @@ class TimedListItem extends React.PureComponent<TimedListItemProps & WithStyles<
 
         let times: JSX.Element | undefined;
         let title: string = this.props.title;
+        let titleIcon: JSX.Element | undefined;
         let description: string | undefined;
 
         switch (state) {
             case 'past':
                 times = <>{beginTime.format('HH:mm')}</>;
+                titleIcon = <HistoryIcon className={classes.titleIcon} />;
                 break;
 
             case 'active':
@@ -147,10 +157,12 @@ class TimedListItem extends React.PureComponent<TimedListItemProps & WithStyles<
                     </div>
 
                     <ListItemText className={classes.noWrap}
-                                  primary={title}
                                   primaryTypographyProps={{ noWrap: true }}
                                   secondary={description}
-                                  secondaryTypographyProps={{ noWrap: true }} />
+                                  secondaryTypographyProps={{ noWrap: true }}>
+                        {title}
+                        {titleIcon}
+                    </ListItemText>
 
                 </ConditionalListItem>
             </ConditionalLink>
