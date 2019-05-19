@@ -48,6 +48,11 @@ interface State {
     description?: string;
 
     /**
+     * Notes of the event, meant for usage by volunteers, if there is one available.
+     */
+    notes?: string;
+
+    /**
      * Details required to display the page header.
      */
     header: PageHeaderProps;
@@ -89,7 +94,10 @@ class EventSchedulePage extends React.Component<Properties, State> {
         // (2) If a description is available for this session, set it to the state.
         const description = firstSession.description || undefined;
 
-        // (2) Compile the list of sessions that are part of this event.
+        // (3) If notes are available, set them to the state as well.
+        const notes = event.notes;
+
+        // (4) Compile the list of sessions that are part of this event.
         const sessions: SessionDisplayInfo[] = [];
         event.sessions.forEach((session, index) => {
             sessions.push({
@@ -102,11 +110,12 @@ class EventSchedulePage extends React.Component<Properties, State> {
         // TODO: Be able to list an admin-provided description for this session.
         // TODO: List volunteer shifts on this page.
 
-        return { description, header, sessions };
+        return { description, notes, header, sessions };
     }
 
     render() {
-        const { description, header, sessions } = this.state;
+        const { mutable } = this.props;
+        const { description, header, notes, sessions } = this.state;
 
         return (
             <React.Fragment>
@@ -116,6 +125,11 @@ class EventSchedulePage extends React.Component<Properties, State> {
                 { description &&
                     <ExpandableDescriptionPaper title="Event description">
                         {description}
+                    </ExpandableDescriptionPaper> }
+
+                { notes || mutable &&
+                    <ExpandableDescriptionPaper mutable={mutable} title="Shift instructions">
+                        {notes}
                     </ExpandableDescriptionPaper> }
 
                 <LabeledSessionList dense label="Sessions">

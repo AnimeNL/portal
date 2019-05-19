@@ -98,6 +98,7 @@ requests. May be cached offline.
 | :---             | :---               | :--- |
 | `id`             | `number`           | Id (number) of the event. Must be unique. |
 | `internal`       | `boolean`          | Whether this event is internal to the conference and not publicly announced. |
+| `notes`          | `string?`          | _Shift description_ notes associated with this event. May be empty. |
 | `sessions`       | `ProgramSession[]` | Array detailing the sessions that are part of this event. |
 
 ##### `ProgramSession` interface

@@ -3,22 +3,51 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
 
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
+import SpeakerNotesIcon from '@material-ui/icons/SpeakerNotesOffOutlined';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
+import { fade } from '@material-ui/core/styles/colorManipulator';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
         expanded: {},
 
+        titleMutable: {
+            color: fade(theme.palette.text.primary, 0.3),
+        },
+        titleMutableIcon: {
+            position: 'relative',
+            top: 3,
+            fontSize: 'inherit',
+            marginLeft: theme.spacing(1),
+        },
+
         details: {
             padding: `0 ${theme.spacing(3)}px ${theme.spacing(2)}px`,
+        },
+        detailsMutable: {
+            marginTop: 0 - theme.spacing(1),
+
+            margin: '-4px 12px 12px 12px',
+            padding: theme.spacing(1.5),
+            cursor: 'pointer',
+
+            border: '1px dashed ' + theme.palette.divider,
+
+            WebkitTapHighlightColor: 'transparent',
+            transition: theme.transitions.create(['background-color']),
+
+            '&:hover': {
+                backgroundColor: fade(theme.palette.background.default, 0.25),
+            },
         },
 
         summaryContent: {
@@ -43,11 +72,16 @@ const styles = (theme: Theme) =>
 /**
  * Properties accepted by the <ExpandableDescriptionPaper> component.
  */
-interface ExpandableDescriptionPaperProps {
+interface Properties {
     /**
      * Contents of the collapsed paper that will only be visible once opened.
      */
     children?: React.ReactNode | React.ReactNodeArray;
+
+    /**
+     * Whether the contents of this input box are mutable by the user.
+     */
+    mutable?: boolean;
 
     /**
      * Title of the collapsed paper, always displayed.
@@ -56,13 +90,39 @@ interface ExpandableDescriptionPaperProps {
 }
 
 /**
+ * State for the <ExpandableDescriptionPaper> component.
+ */
+interface State {
+    /**
+     * Whether the content editor for the instructions is currently active.
+     */
+    contentEditorActive: boolean;
+}
+
+/**
  * The <ExpandableDescriptionPaper> component is able to display a titled sheet of paper with
  * contents that are hidden by default, which will only be presented after being activated by the
  * user. People with the "edit-content" flag can add more information here if so desired.
  */
-class ExpandableDescriptionPaper extends React.Component<ExpandableDescriptionPaperProps & WithStyles<typeof styles>> {
+class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles<typeof styles>, State> {
+    state: State = {
+        contentEditorActive: false,
+    }
+
+    /**
+     * Called when the content editor should be opened.
+     */
+    @bind
+    onEditContent(): void {
+        this.setState({
+            contentEditorActive: true,
+        })
+    }
+
     render() {
-        const { children, classes, title } = this.props;
+        const { children, classes, mutable, title } = this.props;
+
+        const isEmpty = !children;
 
         return (
             <ExpansionPanel>
@@ -73,14 +133,23 @@ class ExpandableDescriptionPaper extends React.Component<ExpandableDescriptionPa
                                                   root: classes.summaryRoot }}
                                        expandIcon={<ExpandMoreIcon />}>
 
-                    <Typography variant="body1">
+                    <Typography variant="body1"
+                                className={mutable ? classes.titleMutable : undefined}>
+
                         {title}
+                        { isEmpty && <SpeakerNotesIcon className={classes.titleMutableIcon} /> }
+
                     </Typography>
 
                 </ExpansionPanelSummary>
 
-                <ExpansionPanelDetails className={classes.details}>
-                    {children}
+                <ExpansionPanelDetails onClick={this.onEditContent}
+                                       className={mutable ? classes.detailsMutable
+                                                          : classes.details}>
+
+                    { isEmpty && <i>Click to add content to this box.</i> }
+                    { !isEmpty && children}
+
                 </ExpansionPanelDetails>
 
             </ExpansionPanel>

@@ -41,6 +41,13 @@ export class ProgramEvent {
     }
 
     /**
+     * Gets the description notes to display with this program event, if any.
+     */
+    get notes(): string | undefined {
+        return this.info.notes || undefined;
+    }
+
+    /**
      * Array detailing the sessions that are part of this event.
      */
     get sessions(): ProgramSession[] {

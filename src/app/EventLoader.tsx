@@ -306,6 +306,11 @@ class EventLoader {
             return false;
         }
 
+        if (!programEvent.hasOwnProperty('notes') || !isStringOrNull(programEvent.notes)) {
+            console.error('Unable to validate IProgramEvent.notes.');
+            return false;
+        }
+
         if (!programEvent.hasOwnProperty('sessions') || !Array.isArray(programEvent.sessions)) {
             console.error('Unable to validate IProgramEvent.icon.');
             return false;
