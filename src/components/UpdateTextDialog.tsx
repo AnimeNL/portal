@@ -88,12 +88,10 @@ class UpdateTextDialog extends React.Component<Properties & WithStyles<typeof st
         textSaving: false,
     };
 
-    /**
-     * Called when the component mounts or updates, to compute the state. This will trigger React to
-     * request a re-render of the component and the displayed information.
-     */
-    static getDerivedStateFromProps(props: Properties) {
-        return { currentText: props.text };
+    componentWillMount() {
+        this.setState({
+            currentText: this.props.text || '',
+        })
     }
 
     /**
@@ -101,7 +99,7 @@ class UpdateTextDialog extends React.Component<Properties & WithStyles<typeof st
      * the latest value can be displayed, and returned once it's being saved.
      */
     @bind
-    updateCurrentText(event: React.ChangeEvent<HTMLInputElement>) {
+    updateCurrentText(event: React.ChangeEvent<HTMLTextAreaElement>) {
         this.setState({
             currentText: event.target.value,
         });
@@ -120,6 +118,24 @@ class UpdateTextDialog extends React.Component<Properties & WithStyles<typeof st
         this.setState({ textSaving: false });
     }
 
+    /**
+     * Called when the dialog _might_ have to close. The user clicked either outside of the dialog
+     * or pressed the <Esc> key. Only allow the close if the content wasn't modified.
+     */
+    @bind
+    maybeClose() {
+        // Special-case where both are empty, since those are represented differently.
+        if (this.state.currentText === '' && !this.props.text) {
+            this.props.onClose();
+            return;
+        }
+
+        if (this.state.currentText !== this.props.text)
+            return;  // their values changed
+
+        this.props.onClose();
+    }
+
     render() {
         const { classes, onClose, open, title } = this.props;
         const { currentText, textSaving } = this.state;
@@ -127,6 +143,7 @@ class UpdateTextDialog extends React.Component<Properties & WithStyles<typeof st
         return (
             <Dialog fullWidth={true}
                     maxWidth={false}
+                    onClose={this.maybeClose}
                     open={!!open}>
 
                 <DialogTitle>
