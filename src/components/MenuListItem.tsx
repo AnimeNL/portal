@@ -67,8 +67,8 @@ class MenuListItem extends React.Component<Properties & WithStyles<typeof styles
      * but ignores a number of properties altogether.
      */
     shouldComponentUpdate(nextProps: Properties): boolean {
-        return nextProps.to != this.props.to ||
-               nextProps.exact != this.props.exact;
+        return nextProps.to !== this.props.to ||
+               nextProps.exact !== this.props.exact;
     }
 
     render() {

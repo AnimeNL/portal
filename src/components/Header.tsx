@@ -7,6 +7,7 @@ import bind from 'bind-decorator';
 
 import Environment from '../app/Environment';
 import Event from '../app/Event';
+import { MenuNotifier } from '../menu';
 import { SearchBox } from './SearchBox';
 import { ThemeProvider } from '../theme';
 import { TitleManager, TitleObserver } from '../title';
@@ -79,11 +80,6 @@ export interface HeaderEvents {
  * Properties accepted by the <Header> element.
  */
 interface Properties extends HeaderEvents, WithStyles<typeof styles> {
-    /**
-     * Event to be called when the menu button in the header has been clicked on.
-     */
-    onMenuClick: () => void;
-
     /**
      * The event for which the portal is being rendered. Used for and by the search box.
      */
@@ -158,10 +154,10 @@ class Header extends React.Component<Properties, State> implements TitleObserver
      * menu or the title changes.
      */
     shouldComponentUpdate(nextProps: Properties, nextState: State): boolean {
-        if (nextState.overflowMenuOpened != this.state.overflowMenuOpened)
+        if (nextState.overflowMenuOpened !== this.state.overflowMenuOpened)
             return true;
 
-        if (kEnableHeaderTitle && nextState.title != this.state.title)
+        if (kEnableHeaderTitle && nextState.title !== this.state.title)
             return true;
 
         return false;
@@ -173,6 +169,14 @@ class Header extends React.Component<Properties, State> implements TitleObserver
     componentWillUnmount() {
         if (kEnableHeaderTitle)
             TitleManager.removeObserver(this);
+    }
+
+    /**
+     * Requests the page's main menu to open. Only applicable on small screens.
+     */
+    @bind
+    openMenu(): void {
+        MenuNotifier.openMenu();
     }
 
     /**
@@ -216,7 +220,7 @@ class Header extends React.Component<Properties, State> implements TitleObserver
     }
 
     render() {
-        const { classes, event, onMenuClick, onLogout, onRefresh } = this.props;
+        const { classes, event, onLogout, onRefresh } = this.props;
         const { title } = this.state;
 
         return (
@@ -227,7 +231,7 @@ class Header extends React.Component<Properties, State> implements TitleObserver
                         aria-label="Menu"
                         className={classes.menuButton}
                         color="inherit"
-                        onClick={onMenuClick}>
+                        onClick={this.openMenu}>
 
                         <MenuIcon />
 

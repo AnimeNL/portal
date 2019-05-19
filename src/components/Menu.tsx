@@ -9,6 +9,7 @@ import moment from 'moment';
 import Clock from '../app/Clock';
 import Event from '../app/Event';
 import MenuListItem from './MenuListItem';
+import { MenuNotifier } from '../menu';
 import MenuSessionIndicator from './MenuSessionIndicator';
 import { UpdateTimeTracker } from './UpdateTimeTracker';
 import slug from '../app/util/Slug';
@@ -41,11 +42,6 @@ interface Properties {
      * The event for which the menu is being displayed.
      */
     event: Event;
-
-    /**
-     * Event listener that will be called when something in the menu has been clicked upon.
-     */
-    onClick: () => void;
 }
 
 /**
@@ -164,6 +160,14 @@ class Menu extends React.Component<Properties, State> {
         this.setState({ floors });
     }
 
+    /**
+     * Called when the global page menu should be closed. Only applicable to small screens.
+     */
+    @bind
+    closeMenu() {
+        MenuNotifier.closeMenu();
+    }
+
     render() {
         const { enableDebug, event } = this.props;
         const { floors, volunteersLabel } = this.state;
@@ -179,7 +183,7 @@ class Menu extends React.Component<Properties, State> {
 
                     <List>
 
-                        <MenuListItem to="/internals" onClick={this.props.onClick}>
+                        <MenuListItem to="/internals" onClick={this.closeMenu}>
                             <ListItemIcon>
                                 <SettingsIcon />
                             </ListItemIcon>
@@ -205,7 +209,7 @@ class Menu extends React.Component<Properties, State> {
             <div>
                 <List>
 
-                    <MenuListItem to="/" exact onClick={this.props.onClick}>
+                    <MenuListItem to="/" exact onClick={this.closeMenu}>
                         <ListItemIcon>
                             <InboxIcon />
                         </ListItemIcon>
@@ -213,7 +217,7 @@ class Menu extends React.Component<Properties, State> {
                     </MenuListItem>
 
                     { volunteerScheduleLink &&
-                        <MenuListItem to={volunteerScheduleLink} exact onClick={this.props.onClick}>
+                        <MenuListItem to={volunteerScheduleLink} exact onClick={this.closeMenu}>
                             <ListItemIcon>
                                 <ScheduleIcon />
                             </ListItemIcon>
@@ -227,7 +231,7 @@ class Menu extends React.Component<Properties, State> {
 
                 <List>
 
-                    <MenuListItem to="/volunteers" exact onClick={this.props.onClick}>
+                    <MenuListItem to="/volunteers" exact onClick={this.closeMenu}>
                         <ListItemIcon>
                             <PeopleIcon />
                         </ListItemIcon>
@@ -245,7 +249,7 @@ class Menu extends React.Component<Properties, State> {
                             <MenuListItem
                                 key={floor.id}
                                 to={floor.link}
-                                onClick={this.props.onClick}>
+                                onClick={this.closeMenu}>
 
                                 <ListItemIcon>
                                     <SvgIcon htmlColor={floor.iconColor}>
