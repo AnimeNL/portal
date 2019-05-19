@@ -57,7 +57,7 @@ interface Properties {
  * Element that's responsible for displaying the status of an individual volunteer. The |type|
  * property can be used to influence which subset of information should be presented.
  */
-class VolunteerListItem extends React.Component<Properties & WithStyles<typeof styles>> {
+class VolunteerListItem extends React.PureComponent<Properties & WithStyles<typeof styles>> {
     /**
      * Opens the dialer on the device (if any) to make a phone call to this volunteer. Should only
      * be called when the volunteer has a known telephone number.
