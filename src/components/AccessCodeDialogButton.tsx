@@ -92,8 +92,13 @@ class AccessCodeDialogButton extends React.Component<Properties, State> {
 
     render() {
         const { children, volunteer } = this.props;
-        if (!volunteer.accessCode)
-            return <></>;
+        if (!volunteer.accessCode) {
+            return (
+                <ListItemSecondaryAction>
+                    {children}
+                </ListItemSecondaryAction>
+            );
+        }
 
         // TODO: Maybe support copying the access code with traditional DOM-based methods as well?
         const supportsCopyToClipboard = navigator.clipboard && navigator.clipboard.writeText;
