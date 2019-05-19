@@ -6,6 +6,7 @@ import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import bind from 'bind-decorator';
 
+import { Ability } from '../../abilities';
 import ApplicationProperties from '../ApplicationProperties';
 import NotFound from '../../views/NotFound';
 import { UploadPath, mockableFetch } from '../../config';
@@ -136,8 +137,8 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
 
         // Picture upload is enabled for users who can manipulate all avatars, as well as for users
         // looking at their own profile if this feature has been enabled.
-        const enablePictureUpload = user.hasAbility('update-avatar-all') ||
-                                   (user.hasAbility('update-avatar-self') &&
+        const enablePictureUpload = user.hasAbility(Ability.UpdateAvatarAll) ||
+                                   (user.hasAbility(Ability.UpdateAvatarSelf) &&
                                         volunteer === event.getCurrentVolunteer());
 
         const onPictureUpdated = enablePictureUpload ? this.onPictureUpdated

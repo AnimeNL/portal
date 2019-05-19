@@ -4,6 +4,7 @@
 
 import moment from 'moment';
 
+import { Ability } from '../abilities';
 import { ThemeDelegate, ThemeProvider } from '../theme';
 import { UserLoginPath, kEnableDarkTheme, mockableFetch } from '../config';
 import { isBoolean, isNumber, isString } from './util/Validators';
@@ -128,7 +129,7 @@ class User implements ThemeDelegate {
     /**
      * Returns whether the user has the given |ability| activated for their account.
      */
-    hasAbility(ability: string): boolean {
+    hasAbility(ability: Ability): boolean {
         if (!this.data) throw new Error('The user is not identified.');
         return this.data.abilities.includes(ability);
     }

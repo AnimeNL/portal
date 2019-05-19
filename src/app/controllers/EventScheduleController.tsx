@@ -5,6 +5,7 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 
+import { Ability } from '../../abilities';
 import ApplicationProperties from '../ApplicationProperties';
 import { EventSchedulePage } from '../../views/EventSchedulePage';
 import { ProgramEvent } from '../ProgramEvent';
@@ -56,7 +57,7 @@ class EventScheduleController extends React.Component<Properties, State> {
     }
 
     render() {
-        const { clock } = this.props;
+        const { clock, user } = this.props;
         const { event } = this.state;
 
         // |event| won't be set if an invalid identifier was passed on the URL, so display an
@@ -64,8 +65,8 @@ class EventScheduleController extends React.Component<Properties, State> {
         if (!event)
             return <NotFound />;
 
-        return <EventSchedulePage clock={clock}
-                                  event={event} />
+        return <EventSchedulePage clock={clock} event={event}
+                                  mutable={user.hasAbility(Ability.ManageEventInfo)} />
     }
 }
 

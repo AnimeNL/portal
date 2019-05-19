@@ -6,6 +6,7 @@ import React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import bind from 'bind-decorator';
 
+import { Ability } from '../../abilities';
 import ApplicationProperties from '../ApplicationProperties';
 import EventScheduleController from './EventScheduleController';
 import FloorScheduleController from './FloorScheduleController';
@@ -59,7 +60,7 @@ class PortalController extends React.Component<ApplicationProperties> {
             return <Route path={props.path} render={renderComponent} />;
         };
 
-        const enableDebug = user.hasAbility('debug');
+        const enableDebug = user.hasAbility(Ability.Debug);
 
         return (
             <PortalView clock={clock}

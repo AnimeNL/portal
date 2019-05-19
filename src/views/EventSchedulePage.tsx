@@ -25,6 +25,11 @@ interface Properties {
      * The event for which this page is being rendered.
      */
     event: ProgramEvent;
+
+    /**
+     * Whether the user is able to change the description of this event.
+     */
+    mutable?: boolean;
 }
 
 /**
