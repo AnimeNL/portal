@@ -14,14 +14,6 @@ import slug from '../app/util/Slug';
 
 import List from '@material-ui/core/List';
 import Paper from '@material-ui/core/Paper';
-import { Theme } from '@material-ui/core/styles/createMuiTheme';
-import createStyles from '@material-ui/core/styles/createStyles';
-import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-
-const styles = (theme: Theme) =>
-    createStyles({
-        // TODO: Define the styles for this element.
-    });
 
 /**
  * Properties accepted by the <VolunteerSchedulePage> element.
@@ -88,7 +80,7 @@ interface State {
  * The <VolunteerSchedulePage> component displays the schedule for a particular volunteer. Some
  * users will also be able to update the photo associated with this volunteer here.
  */
-class VolunteerSchedulePage extends React.Component<Properties & WithStyles<typeof styles>, State> {
+class VolunteerSchedulePage extends React.Component<Properties, State> {
     state: State = {
         days: [],
     }
@@ -174,7 +166,7 @@ class VolunteerSchedulePage extends React.Component<Properties & WithStyles<type
     }
 
     render() {
-        const { classes, onPictureUpdated, volunteer } = this.props;
+        const { onPictureUpdated, volunteer } = this.props;
         const { days } = this.state;
 
         return (
@@ -202,5 +194,4 @@ class VolunteerSchedulePage extends React.Component<Properties & WithStyles<type
     }
 }
 
-const StyledVolunteerSchedulePage = withStyles(styles)(VolunteerSchedulePage);
-export { StyledVolunteerSchedulePage as VolunteerSchedulePage };
+export { VolunteerSchedulePage };
