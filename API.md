@@ -165,6 +165,13 @@ happen dilligently on the server side. Must accept `POST` requests.
 | `targetUserToken`  | `string` | The token that identifies the target volunteer. |
 | `targetUserAvatar` | `string` | Base64-encoded image data of the avatar that is to be updated. |
 
+##### Type: `update-event`
+
+| Property    | Type      | Description |
+| :---        | :---      | :--- |
+| `eventId`   | `number`  | Id (number) of the event. |
+| `notes`     | `string?` | Updated notes for the event, if any. |
+
 #### 🡄 Success response
 
 | Property  | Type      | Description |

@@ -9,9 +9,10 @@ import bind from 'bind-decorator';
 import { Ability } from '../../abilities';
 import ApplicationProperties from '../ApplicationProperties';
 import { EventSchedulePage } from '../../views/EventSchedulePage';
-import { ProgramEvent } from '../ProgramEvent';
 import NotFound from '../../views/NotFound';
+import { ProgramEvent } from '../ProgramEvent';
 import { TitleManager } from '../../title';
+import { UploadPath, mockableFetch } from '../../config';
 
 /**
  * Properties available to the controller through the router.
@@ -59,16 +60,53 @@ class EventScheduleController extends React.Component<Properties, State> {
     }
 
     /**
-     * Update the description for the current event to |description|. Will return a promise that
-     * settles when the result of the operation is known. Asynchronous.
+     * Update the notes for the current event to |notes|. Will return a promise that settles when
+     * the result of the operation is known. Asynchronous.
      */
     @bind
-    async updateDescription(description: string | null): Promise<boolean> {
-        await new Promise(resolve => {
-            setTimeout(resolve, 1000);
-        });
+    async updateDescription(notes: string): Promise<boolean> {
+        const { user } = this.props;
 
-        return false;
+        const programEvent = this.state.event;
+        if (!programEvent || !user.hasAbility(Ability.ManageEventInfo))
+            return false;
+
+        try {
+            const requestBody = new FormData();
+            requestBody.append('authToken', user.authToken);
+            requestBody.append('type', 'update-event');
+
+            requestBody.append('eventId', programEvent.id.toString());
+            requestBody.append('notes', notes);
+
+            const response = await mockableFetch(UploadPath, {
+                method: 'POST',
+                body: requestBody
+            });
+
+            if (!response.ok) {
+                console.error('Unable to fulfil the upload request.')
+                return false;
+            }
+
+            const data = JSON.parse(await response.text());
+            if (!data) {
+                console.error('Unable to parse the upload response.');
+                return false;
+            }
+
+            if (!data.success || !data.notes) {
+                console.error('The upload response failed for some reason.', data);
+                return false;
+            }
+
+            programEvent.setNotes(data.notes);
+            return true;
+
+        } catch (e) {
+            console.error('Unable to handle the upload request.', e);
+            return false;
+        }
     }
 
     render() {

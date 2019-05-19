@@ -27,6 +27,13 @@ export class ProgramEvent {
     }
 
     /**
+     * Updates the notes associated with this event.
+     */
+    setNotes(notes: string | null) {
+        this.info.notes = notes;
+    }
+
+    /**
      * Id (number) of the event. Must be unique.
      */
     get id(): number {

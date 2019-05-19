@@ -34,7 +34,7 @@ interface Properties {
     /**
      * Event that should be called when the description for the current event changes.
      */
-    onDescriptionChange: (description: string | null) => Promise<boolean>;
+    onDescriptionChange: (description: string) => Promise<boolean>;
 }
 
 /**
