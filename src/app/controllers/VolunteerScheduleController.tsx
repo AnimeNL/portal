@@ -9,6 +9,7 @@ import bind from 'bind-decorator';
 import { Ability } from '../../abilities';
 import ApplicationProperties from '../ApplicationProperties';
 import NotFound from '../../views/NotFound';
+import { TitleManager } from '../../title';
 import { UploadPath, mockableFetch } from '../../config';
 import { Volunteer } from '../Volunteer';
 import { VolunteerSchedulePage } from '../../views/VolunteerSchedulePage';
@@ -59,19 +60,19 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
      * @param slug The slug of the volunteer's name as made available through the URL.
      */
     private updateVolunteerFromSlug(slug: string): void {
-        const { event, setTitle } = this.props;
+        const { event } = this.props;
 
         for (const volunteer of event.getVolunteers()) {
             if (createSlug(volunteer.name) !== slug)
                 continue;
 
-            setTitle(volunteer.name);
+            TitleManager.setTitle(volunteer.name);
 
             this.setState({ volunteer });
             return;
         }
 
-        setTitle(null);
+        TitleManager.setTitle(null);
 
         this.setState({ volunteer: undefined });
     }

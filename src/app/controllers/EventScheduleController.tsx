@@ -10,6 +10,7 @@ import ApplicationProperties from '../ApplicationProperties';
 import { EventSchedulePage } from '../../views/EventSchedulePage';
 import { ProgramEvent } from '../ProgramEvent';
 import NotFound from '../../views/NotFound';
+import { TitleManager } from '../../title';
 
 /**
  * Properties available to the controller through the router.
@@ -45,13 +46,13 @@ class EventScheduleController extends React.Component<Properties, State> {
      * displayed, if any.
      */
     static getDerivedStateFromProps(props: Properties) {
-        const { event, setTitle } = props;
+        const { event } = props;
         const eventId = parseInt(props.match.params.event);
 
         const programEvent = event.getEvent(eventId);
 
-        setTitle(programEvent ? programEvent.sessions[0].name
-                              : null);
+        TitleManager.setTitle(programEvent ? programEvent.sessions[0].name
+                                           : null);
 
         return { event: programEvent };
     }

@@ -4,13 +4,13 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
-import bind from 'bind-decorator';
 
 import Clock from './Clock';
 import Environment from './Environment';
 import Event from './Event';
 import LoginController from './controllers/LoginController';
 import PortalController from './controllers/PortalController';
+import { TitleManager, TitleObserver } from '../title';
 import User from './User';
 
 import ErrorView from '../views/ErrorView';
@@ -22,7 +22,7 @@ const kEventError = 'Unable to load the event information.';
  * Main runtime of the volunteer portal. Constructed on pageload. Initialisation may happen
  * asynchronously as part of the initialize() method.
  */
-class Application {
+class Application implements TitleObserver {
     /**
      * Container in which the application should be rendered.
      */
@@ -89,17 +89,20 @@ class Application {
             return;
         }
 
+        // Listen to title updates, to update the document's title.
+        TitleManager.addObserver(this);
+
         this.displayPortalView();
     }
 
     /**
-     * Updates the page title based on the content that's being displayed. The name of the portal
-     * that's being displayed will automatically be appended.
+     * Will be called by the TitleManager when the page title updates.
      */
-    @bind
-    private setTitle(title: string | null): void {
-        document.title = title ? title + ' | ' + this.environment.portalTitle
-                               : this.environment.portalTitle;
+    onTitleUpdate(title: string | null): void {
+        const { portalTitle } = this.environment;
+
+        document.title = title ? title + ' | ' + portalTitle
+                               : portalTitle;
     }
 
     /**
@@ -109,8 +112,7 @@ class Application {
         ReactDOM.render(<PortalController clock={this.clock}
                                           environment={this.environment}
                                           event={this.event}
-                                          user={this.user}
-                                          setTitle={this.setTitle} />, this.container);
+                                          user={this.user} />, this.container);
     }
 
     /**

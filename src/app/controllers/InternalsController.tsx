@@ -8,6 +8,7 @@ import moment from 'moment';
 
 import ApplicationProperties from '../ApplicationProperties';
 import InternalsPage from '../../views/InternalsPage';
+import { TitleManager } from '../../title';
 
 /**
  * The InternalsController is responsible for enabling users with debugging capabilities to change
@@ -16,9 +17,7 @@ import InternalsPage from '../../views/InternalsPage';
  */
 class InternalsController extends React.Component<ApplicationProperties> {
     componentWillMount() {
-        const { setTitle } = this.props;
-
-        setTitle('Internals');
+        TitleManager.setTitle('Internals');
     }
 
     /**

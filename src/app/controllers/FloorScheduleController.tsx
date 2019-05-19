@@ -9,6 +9,7 @@ import ApplicationProperties from '../ApplicationProperties';
 import { Floor } from '../Floor';
 import { FloorSchedulePage } from '../../views/FloorSchedulePage';
 import NotFound from '../../views/NotFound';
+import { TitleManager } from '../../title';
 
 /**
  * Properties available to the controller through the router.
@@ -45,13 +46,13 @@ class FloorScheduleController extends React.Component<Properties, State> {
      * displays and returns the derived state.
      */
     static getDerivedStateFromProps(props: Properties) {
-        const { event, setTitle } = props;
+        const { event } = props;
         const floorId = parseInt(props.match.params.floor);
 
         const floor = event.getFloor(floorId);
 
-        setTitle(floor ? floor.label
-                       : null);
+        TitleManager.setTitle(floor ? floor.label
+                                    : null);
 
         return { floor };
     }

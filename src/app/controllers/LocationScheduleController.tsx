@@ -9,6 +9,7 @@ import ApplicationProperties from '../ApplicationProperties';
 import { Location } from '../Location';
 import { LocationSchedulePage } from '../../views/LocationSchedulePage';
 import NotFound from '../../views/NotFound';
+import { TitleManager } from '../../title';
 
 /**
  * Properties available to the controller through the router.
@@ -44,13 +45,13 @@ class LocationScheduleController extends React.Component<Properties, State> {
      * displayed, if any.
      */
     static getDerivedStateFromProps(props: Properties) {
-        const { event, setTitle } = props;
+        const { event } = props;
         const locationId = parseInt(props.match.params.location);
 
         const location = event.getLocation(locationId);
 
-        setTitle(location ? location.label
-                          : null);
+        TitleManager.setTitle(location ? location.label
+                                       : null);
 
         return { location };
     }
