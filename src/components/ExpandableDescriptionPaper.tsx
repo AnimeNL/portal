@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import ReactMarkdown  from 'react-markdown';
 import bind from 'bind-decorator';
 
 import { UpdateTextDialog } from './UpdateTextDialog';
@@ -33,11 +34,13 @@ const styles = (theme: Theme) =>
         },
 
         details: {
+            display: 'block',
             padding: `0 ${theme.spacing(3)}px ${theme.spacing(2)}px`,
         },
         detailsMutable: {
             marginTop: 0 - theme.spacing(1),
 
+            display: 'block',
             margin: '-4px 12px 12px 12px',
             padding: theme.spacing(1.5),
             cursor: 'pointer',
@@ -53,6 +56,13 @@ const styles = (theme: Theme) =>
             '&:hover': {
                 backgroundColor: fade(theme.palette.background.default, 0.25),
             },
+        },
+
+        markdown: {
+            '& a': { color: theme.palette.text.secondary },
+            '& p': { marginTop: 0 },
+            '& strong': { fontWeight: 600 },
+            '&> :last-child': { marginBottom: 0 },
         },
 
         summaryContent: {
@@ -78,6 +88,11 @@ const styles = (theme: Theme) =>
  * Properties accepted by the <ExpandableDescriptionPaper> component.
  */
 interface Properties {
+    /**
+     * Whether the text has to be rendered as markdown.
+     */
+    markdown?: boolean;
+
     /**
      * Whether the contents of this input box are mutable by the user.
      */
@@ -163,7 +178,7 @@ class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles
     }
 
     render() {
-        const { classes, mutable, text, title } = this.props;
+        const { classes, markdown, mutable, text, title } = this.props;
         const { contentEditorActive } = this.state;
 
         const isEmptyMutable = mutable && !text;
@@ -191,7 +206,11 @@ class ExpandableDescriptionPaper extends React.Component<Properties & WithStyles
                                        className={mutable ? classes.detailsMutable
                                                           : classes.details}>
 
-                    {text}
+                    { markdown ? <ReactMarkdown className={classes.markdown}
+                                                disallowedTypes={[ 'table', 'inlineCode', 'html', 'virtualHtml' ]}
+                                                source={text} />
+                               : text }
+
                     { isEmptyMutable && <i>Click to add content to this box.</i> }
 
                 </ExpansionPanelDetails>

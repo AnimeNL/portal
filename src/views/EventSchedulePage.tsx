@@ -130,7 +130,7 @@ class EventSchedulePage extends React.Component<Properties, State> {
                     <ExpandableDescriptionPaper title="Event description" text={description} /> }
 
                 { (notes || mutable) &&
-                    <ExpandableDescriptionPaper mutable={mutable}
+                    <ExpandableDescriptionPaper markdown mutable={mutable}
                                                 onDescriptionChange={onDescriptionChange}
                                                 title="Shift instructions"
                                                 text={notes} /> }
