@@ -28,14 +28,52 @@ module.exports = {
                 runtimeCaching: [
                     // Caching rules for API calls made by the application.
                     {
-                        urlPattern: new RegExp('^/api/'),
-                        handler: 'StaleWhileRevalidate',
+                        urlPattern: new RegExp('/api/(environment|event)'),
+                        handler: 'NetworkFirst',
+                        options: {
+                            networkTimeoutSeconds: 2,
+                        },
+                    },
+                    {
+                        urlPattern: new RegExp('/api/login'),
+                        handler: 'NetworkOnly',
                     },
 
-                    // Caching rules for volunteer avatars. This rule is specific to AnimeCon.
+                    // Caching rules for third party dependencies.
                     {
-                        urlPattern: new RegExp('^/avatars/'),
+                        urlPattern: new RegExp('https://fonts.(?:googleapis|gstatic).com/(.*)'),
                         handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'google-fonts',
+                            cacheableResponse: {
+                                statuses: [0, 200],
+                            },
+                            expiration: {
+                                maxEntries: 30,
+                            },
+                        },
+                    },
+
+                    // Caching rules specific to AnimeCon.
+                    {
+                        urlPattern: new RegExp('/avatars/'),
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'volunteer-portal-avatars',
+                            expiration: {
+                                maxEntries: 300,
+                            },
+                        },
+                    },
+                    {
+                        urlPattern: new RegExp('/static/images/'),
+                        handler: 'CacheFirst',
+                        options: {
+                            cacheName: 'volunteer-portal-images',
+                            expiration: {
+                                maxAgeSeconds: 3 * 24 * 60 * 60,  // three days
+                            },
+                        },
                     },
                 ],
 

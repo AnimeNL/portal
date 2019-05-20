@@ -10,6 +10,7 @@ import Environment from './Environment';
 import Event from './Event';
 import LoginController from './controllers/LoginController';
 import PortalController from './controllers/PortalController';
+import { ServiceWorkerManager } from './ServiceWorkerManager';
 import { TitleManager, TitleObserver } from '../title';
 import User from './User';
 
@@ -52,12 +53,21 @@ class Application implements TitleObserver {
      */
     event: Event;
 
+    /**
+     * The Service Worker maanger is responsible for providing the offline functionality of the
+     * portal, as well as access to powerful PWA features such as Web Push Notifications.
+     */
+    serviceWorkerManager: ServiceWorkerManager;
+
     constructor(container : Element) {
         this.container = container;
         this.clock = new Clock();
         this.environment = new Environment();
         this.user = new User();
         this.event = new Event();
+
+        this.serviceWorkerManager = new ServiceWorkerManager();
+        this.serviceWorkerManager.register();
     }
 
     async initialize(): Promise<void> {
