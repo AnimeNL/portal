@@ -68,7 +68,8 @@ class MenuListItem extends React.Component<Properties & WithStyles<typeof styles
      */
     shouldComponentUpdate(nextProps: Properties): boolean {
         return nextProps.to !== this.props.to ||
-               nextProps.exact !== this.props.exact;
+               nextProps.exact !== this.props.exact ||
+               nextProps.children !== this.props.children;
     }
 
     render() {
