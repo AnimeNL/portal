@@ -43,7 +43,7 @@ the input data and return user status when successful. Must accept `POST` reques
 | `abilities`      | `string[]` | Abilities that are available for this user. |
 
 The following `abilities` will be recognized: `debug`, `manage-event-info`, `update-avatar-self`,
-`update-avatar-all`.
+`update-avatar-all`, `view-confidential-logbook-entries`.
 
 #### 🡄 Failure response
 
@@ -74,6 +74,7 @@ requests. May be cached offline.
 | `shifts`          | `Shift[]`          | Array with information about the shifts that will take place this event. |
 | `volunteerGroups` | `VolunteerGroup[]` | Array with information about the different groups of volunteers. |
 | `volunteers`      | `VolunteerInfo[]`  | Array with information for all the event's volunteers. |
+| `logbook`         | `LogbookEntry[]`   | Array with logbook entries recorded by volunteers at the event. |
 
 ##### `Floor` interface
 
@@ -91,6 +92,16 @@ requests. May be cached offline.
 | `id`             | `number`  | Id (number) of the location. Must be unique. |
 | `floorId`        | `number`  | Id (number) of the floor where this location is. Usually begins with zero. |
 | `label`          | `string`  | Label describing the name of the location. |
+
+##### `LogbookEntry` interface
+
+| Property         | Type      | Description |
+| :---             | :---      | :--- |
+| `entryID`        | `number`  | Id (number) of the logbook entry. Must be unique. |
+| `entryTime`      | `number`  | Time, in seconds since the UNIX epoch, at which the entry was recorded. |
+| `message`        | `strings` | The message for a logbook entry. |
+| `confidential`   | `boolean` | Whether an entry is marked as confidential. (Note that the server should filter out entries the user doesn't have access to.) |
+| `photo`          | `string?` | URL to the photo that has been attached to the entry, or `null` if none was added. |
 
 ##### `ProgramEvent` interface
 
@@ -131,15 +142,16 @@ requests. May be cached offline.
 
 ##### `VolunteerInfo` interface
 
-| Property         | Type      | Description |
-| :---             | :---      | :--- |
-| `userToken`      | `string`  | The token that identifies this volunteer. Should be pseudo-anonymous. |
-| `groupToken`     | `string`  | The token that identifies the group this volunteer is part of. |
-| `name`           | `string`  | The full name of this volunteer. |
-| `avatar`         | `string?` | URL to the avatar that's to be displayed for this volunteer. |
-| `title`          | `string`  | Title to be displayed for this volunteer. |
-| `accessCode`     | `string?` | Access code of this volunteer. Should be restricted to admins. |
-| `telephone`      | `string?` | Telephone number of this volunteer. Should be restricted. |
+| Property          | Type      | Description |
+| :---              | :---      | :--- |
+| `userToken`       | `string`  | The token that identifies this volunteer. Should be pseudo-anonymous. |
+| `groupToken`      | `string`  | The token that identifies the group this volunteer is part of. |
+| `name`            | `string`  | The full name of this volunteer. |
+| `avatar`          | `string?` | URL to the avatar that's to be displayed for this volunteer. |
+| `title`           | `string`  | Title to be displayed for this volunteer. |
+| `accessCode`      | `string?` | Access code of this volunteer. Should be restricted to admins. |
+| `telephone`       | `string?` | Telephone number of this volunteer. Should be restricted. |
+| `lastLogbookRead` | `number?` | Time, in seconds since the UNIX epoch, of the last logbook entry the user has read. |
 
 #### 🡄 Failure response
 
@@ -171,6 +183,20 @@ happen dilligently on the server side. Must accept `POST` requests.
 | :---        | :---      | :--- |
 | `eventId`   | `number`  | Id (number) of the event. |
 | `notes`     | `string?` | Updated notes for the event, if any. |
+
+##### Type: `logbook-entry`
+
+| Property       | Type      | Description |
+| :---           | :---      | :--- |
+| `message`      | `string`  | The message to record in the logbook. |
+| `confidential` | `boolean` | Whether this item is marked as confidential. |
+| `photo`        | `string?` | Base64-encoded image data of the photo to be uploaded, or `null` if no photo is added. |
+
+##### Type: `logbook-read`
+
+| Property    | Type      | Description |
+| :---        | :---      | :--- |
+| `entryTime` | `number`  | Time, in seconds since the UNIX epoch, of the last logbook item the user has read. |
 
 #### 🡄 Success response
 
