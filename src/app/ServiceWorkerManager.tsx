@@ -32,10 +32,14 @@ export class ServiceWorkerManager {
     constructor() {
         this.available_ = 'ServiceWorker' in navigator;
 
-        this.registrationPromise_ = navigator.serviceWorker.ready;
-        this.registrationPromise_.then(registration => {
-            console.info('This page is controlled by a service worker.', registration);
-        });
+        if (this.available_) {
+            this.registrationPromise_ = navigator.serviceWorker.ready;
+            this.registrationPromise_.then(registration => {
+                console.info('This page is controlled by a service worker.', registration);
+            });
+        } else {
+            this.registrationPromise_ = new Promise(resolve => {});
+        }
     }
 
     /**
@@ -43,6 +47,9 @@ export class ServiceWorkerManager {
      * at page load time regardless of whether the user is identified.
      */
     async register(): Promise<void> {
+        if (!this.available_)
+            return;
+
         try {
             const registration = await navigator.serviceWorker.register(kScriptUrl, {
                 scope: kScriptScope,
@@ -71,6 +78,9 @@ export class ServiceWorkerManager {
      * "redundant" state, ergo the page must be reloaded for this to take effect.
      */
     async unregister(): Promise<void> {
+        if (!this.available_)
+            return;
+
         const registration = await this.registrationPromise_;
         if (registration)
             registration.unregister();
