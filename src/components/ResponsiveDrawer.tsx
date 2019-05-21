@@ -92,6 +92,7 @@ class ResponsiveDrawer extends React.Component<WithStyles<typeof styles>, State>
                     <Drawer
                         anchor="left"
                         classes={{ paper: classes.drawerPaper }}
+                        ModalProps={{ keepMounted: true }}
                         onClose={this.onMenuClose}
                         variant="temporary"
                         open={open}>
