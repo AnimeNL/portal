@@ -5,6 +5,7 @@
 import React from 'react';
 import bind from 'bind-decorator';
 
+import { AboutDialog } from './AboutDialog';
 import Environment from '../app/Environment';
 import Event from '../app/Event';
 import { MenuNotifier } from '../menu';
@@ -14,6 +15,7 @@ import { TitleManager, TitleObserver } from '../title';
 import { kEnableDarkTheme, kEnableHeaderTitle, kDrawerWidth } from '../config';
 
 import AppBar from '@material-ui/core/AppBar';
+import Divider from '@material-ui/core/Divider';
 import IconButton from '@material-ui/core/IconButton';
 import Menu from '@material-ui/core/Menu';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -96,6 +98,11 @@ interface Properties extends HeaderEvents, WithStyles<typeof styles> {
  */
 interface State {
     /**
+     * Whether the about dialog has been opened.
+     */
+    aboutDialogOpened: boolean;
+
+    /**
      * The HTMLElement to which the overflow menu should be anchored, if any.
      */
     overflowMenuAnchor: HTMLElement | null;
@@ -117,6 +124,7 @@ interface State {
  */
 class Header extends React.Component<Properties, State> implements TitleObserver {
     state: State = {
+        aboutDialogOpened: false,
         overflowMenuAnchor: null,
         overflowMenuOpened: false,
         title: 'Volunteer Portal',
@@ -154,8 +162,10 @@ class Header extends React.Component<Properties, State> implements TitleObserver
      * menu or the title changes.
      */
     shouldComponentUpdate(nextProps: Properties, nextState: State): boolean {
-        if (nextState.overflowMenuOpened !== this.state.overflowMenuOpened)
+        if (nextState.aboutDialogOpened !== this.state.aboutDialogOpened ||
+            nextState.overflowMenuOpened !== this.state.overflowMenuOpened) {
             return true;
+        }
 
         if (kEnableHeaderTitle && nextState.title !== this.state.title)
             return true;
@@ -169,6 +179,27 @@ class Header extends React.Component<Properties, State> implements TitleObserver
     componentWillUnmount() {
         if (kEnableHeaderTitle)
             TitleManager.removeObserver(this);
+    }
+
+    /**
+     * To be called when the about dialog should be opened.
+     */
+    @bind
+    openAboutDialog(): void {
+        this.setState({
+            aboutDialogOpened: true,
+            overflowMenuOpened: false,
+        });
+    }
+
+    /**
+     * To be called when the about dialog has to be closed.
+     */
+    @bind
+    closeAboutDialog(): void {
+        this.setState({
+            aboutDialogOpened: false,
+        });
     }
 
     /**
@@ -221,7 +252,7 @@ class Header extends React.Component<Properties, State> implements TitleObserver
 
     render() {
         const { classes, event, onLogout, onRefresh } = this.props;
-        const { title } = this.state;
+        const { aboutDialogOpened, title } = this.state;
 
         return (
             <AppBar position="fixed" className={classes.appBar}>
@@ -266,16 +297,22 @@ class Header extends React.Component<Properties, State> implements TitleObserver
                             open={this.state.overflowMenuOpened}
                             onClose={this.closeOverflowMenu}>
 
-                            <MenuItem onClick={onRefresh}>
-                                Refresh
+                            <MenuItem onClick={this.openAboutDialog}>
+                                About the Portal
                             </MenuItem>
 
                             { kEnableDarkTheme &&
                                 <MenuItem onClick={this.onToggleDarkTheme}>
                                     { ThemeProvider.isDarkThemeEnabled()
-                                          ? 'Use default theme'
+                                          ? 'Use light theme'
                                           : 'Use dark theme' }
                                 </MenuItem> }
+
+                            <Divider />
+
+                            <MenuItem onClick={onRefresh}>
+                                Refresh
+                            </MenuItem>
 
                             <MenuItem onClick={onLogout}>
                                 Sign out
@@ -283,6 +320,9 @@ class Header extends React.Component<Properties, State> implements TitleObserver
 
                         </Menu>
                     </div>
+
+                    <AboutDialog onClose={this.closeAboutDialog}
+                                 open={aboutDialogOpened} />
 
                 </Toolbar>
             </AppBar>
