@@ -6,6 +6,7 @@ import Clock from './Clock';
 import Environment from './Environment';
 import Event from './Event';
 import User from './User';
+import { ServiceWorkerManager } from './ServiceWorkerManager';
 
 /**
  * The ApplicationProperties are made available to each controller that's part of the portal for
@@ -16,4 +17,5 @@ export default interface ApplicationProperties {
     environment: Environment;
     event: Event;
     user: User;
+    serviceWorker: ServiceWorkerManager;
 }

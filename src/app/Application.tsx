@@ -122,7 +122,8 @@ class Application implements TitleObserver {
         ReactDOM.render(<PortalController clock={this.clock}
                                           environment={this.environment}
                                           event={this.event}
-                                          user={this.user} />, this.container);
+                                          user={this.user}
+                                          serviceWorker={this.serviceWorkerManager} />, this.container);
     }
 
     /**

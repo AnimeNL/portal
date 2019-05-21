@@ -60,6 +60,16 @@ export const UserLoginPath = `${host}/${directory}/login`;
 export const UploadPath = `${host}/${directory}/upload`;
 
 /**
+ * Names of the offline caches as they're defined in config-override.js.
+ */
+export const kCacheNames = [
+    'google-fonts',
+    'volunteer-portal-avatars',
+    'volunteer-portal-cache',
+    'volunteer-portal-images',
+];
+
+/**
  * Change the momentJS locale to create short time-until notations.
  * https://github.com/moment/moment/issues/2781
  */

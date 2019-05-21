@@ -15,6 +15,7 @@ import LocationScheduleController from './LocationScheduleController';
 import OverviewController from './OverviewController';
 import VolunteerListController from './VolunteerListController';
 import VolunteerScheduleController from './VolunteerScheduleController';
+import { kCacheNames } from '../../config';
 
 import PortalView from '../../views/PortalView';
 
@@ -27,8 +28,11 @@ class PortalController extends React.Component<ApplicationProperties> {
      */
     @bind
     async onLogout(): Promise<void> {
-        // TODO: Unregister the Service Worker & all cached content here.
-        // TODO: Should we care about application root path here?
+        if (window.caches)
+            await Promise.all(kCacheNames.map(cacheName => caches.delete(cacheName)));
+
+        // Remove the Service Worker registration from controlling this page.
+        this.props.serviceWorker.unregister();
 
         // Remove all locally stored login state for the user.
         this.props.user.logout();
@@ -42,8 +46,10 @@ class PortalController extends React.Component<ApplicationProperties> {
      */
     @bind
     async onRefresh(): Promise<void> {
-        // TODO: Clear Service Worker caches before refreshing the page.
-        // TODO: Should we care about application root path here?
+        if (window.caches)
+            await Promise.all(kCacheNames.map(cacheName => caches.delete(cacheName)));
+
+        // TODO: Should we unregister the Service Worker?
 
         window.location.reload();
     }
