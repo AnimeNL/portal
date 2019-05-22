@@ -16,6 +16,7 @@ import Card from '@material-ui/core/Card';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import Divider from '@material-ui/core/Divider';
 import EventIcon from '@material-ui/icons/Event';
 import FaceIcon from '@material-ui/icons/Face';
 import List from '@material-ui/core/List';
@@ -196,7 +197,7 @@ class OverviewPage extends React.Component<Properties, State> {
                 if (shift.isAvailable())
                     continue;  // they're just wandering about
 
-                const isActive = shift.beginTime >= currentTime;
+                const isActive = shift.beginTime <= currentTime;
 
                 // The volunteer might have been marked as explicitly being unavailable during this
                 // time, which we can reflect on the overview page too. Otherwise we ignore this.
@@ -216,8 +217,8 @@ class OverviewPage extends React.Component<Properties, State> {
 
                     // Format the timestamp depending on whether the session is currently active or
                     // not. If so, display when it ends, otherwise when it starts.
-                    timestamp: isActive ? 'until ' + session.endTime.format('HH:mm')
-                                        : session.beginTime.from(currentTime)
+                    timestamp: isActive ? 'until ' + shift.endTime.format('HH:mm')
+                                        : shift.beginTime.from(currentTime)
                 };
 
                 if (isActive) {
@@ -324,14 +325,13 @@ class OverviewPage extends React.Component<Properties, State> {
                     </Card> }
 
                 { upcomingShift &&
-                    <Card className={classes.card}
-                          onClick={this.navigateToUpcomingShift}>
-                        <CardActionArea>
+                    <Card className={classes.card}>
+                        <CardActionArea onClick={this.navigateToUpcomingShift}>
                             <CardContent>
                                 <Typography className={classes.subtitle}
                                             color="textSecondary" gutterBottom>
                                     <EventIcon className={classes.inlineIcon} />
-                                    Your current shift • {upcomingShift.timestamp}
+                                    Your next shift • {upcomingShift.timestamp}
                                 </Typography>
                                 <Typography variant="h5" component="h2" noWrap>
                                     {upcomingShift.name}
@@ -341,6 +341,7 @@ class OverviewPage extends React.Component<Properties, State> {
                                         {upcomingShift.description}
                                     </Typography> }
                             </CardContent>
+                            <Divider />
                         </CardActionArea>
                         <CardActions>
                             <Button className={classes.button}
