@@ -3,42 +3,76 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
 
+import ApplicationProperties from '../app/ApplicationProperties';
+import slug from '../app/util/Slug';
+
+import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
 import BrightnessMediumIcon from '@material-ui/icons/BrightnessMedium';
+import Button from '@material-ui/core/Button';
 import Card from '@material-ui/core/Card';
+import CardActionArea from '@material-ui/core/CardActionArea';
+import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
+import EventIcon from '@material-ui/icons/Event';
 import FaceIcon from '@material-ui/icons/Face';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import LiveTvIcon from '@material-ui/icons/LiveTv';
+import NotificationsOffIcon from '@material-ui/icons/NotificationsOff'
 import PhoneIcon from '@material-ui/icons/Phone';
 import SearchIcon from '@material-ui/icons/Search';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
+        denseContent: { padding: `0 ${theme.spacing(1)}px !important` },
+        denseList: { padding: `0 ${theme.spacing(2)}px` },
+
         card: {
             margin: theme.spacing(2),
+
+            // TODO: Make this work correctly on desktop.
+            maxWidth: 'calc(100vw - ' + (4 * theme.spacing(1)) + 'px)',
         },
 
-        tipContent: {
-            padding: `0 ${theme.spacing(1)}px !important`,
+        unavailableCard: { backgroundColor: theme.pastSessionBackgroundColor },
+        activeSessionCard: { backgroundColor: theme.activeSessionBackgroundColor },
+
+        inlineIcon: {
+            fontSize: 'inherit',
+            marginRight: theme.spacing(.5),
+            position: 'relative',
+            top: 2,
         },
-        tipList: {
-            padding: `0 ${theme.spacing(2)}px`,
-        }
+
+        subtitle: {
+            fontSize: 14,
+        },
+
+        buttonIcon: { marginRight: theme.spacing(2) },
+        button: {
+            color: theme.palette.text.secondary,
+            justifyContent: 'left',
+            margin: `${theme.spacing(-.5)}px 0`,
+            textTransform: 'none',
+            fontWeight: 'normal',
+        },
+
     });
 
 /**
- * Properties accepted by the <OverviewPage> element.
+ * Text to display on a card when the volunteer has been marked as unavailable.
  */
-interface Properties {
-    // TODO: Define the properties for this element.
-}
+const kUnavailableTitle = 'Unavailable';
+const kUnavailableDescription =
+    'You\'re marked as unavailable, the seniors won\'t bother you. Enjoy!';
 
 /**
  * Interface defining a tip that can be displayed on the overview page.
@@ -86,12 +120,155 @@ const kTips: Tip[] = [
     }
 ];
 
-class OverviewPage extends React.Component<Properties & WithStyles<typeof styles>> {
+/**
+ * Details about a shift as they have to be rendered on the overview page.
+ */
+interface ShiftDetails {
+    /**
+     * Name of the shift, that defines the task.
+     */
+    name: string;
+
+    /**
+     * Description of the shift and what the volunteer is meant to be doing.
+     */
+    description?: string;
+
+    /**
+     * Timestamp, relative to the current time, at which the shift will be taking place.
+     */
+    timestamp: string;
+
+    /**
+     * Location of the page where the user has to be send to after clicking on this.
+     */
+    to: string;
+}
+
+/**
+ * State of the overview page, detailing the information that's currently being presented to the
+ * user. The displayed tip is random, and not part of the page's state.
+ */
+interface State {
+    /**
+     * The shift that the volunteer is currently engaged in.
+     */
+    activeShift?: ShiftDetails;
+
+    /**
+     * The shift that the volunteer will engage in next.
+     */
+    upcomingShift?: ShiftDetails;
+
+    /**
+     * Whether the volunteer has currently been marked as unavailable.
+     */
+    unavailable?: boolean;
+}
+
+class OverviewPage extends React.Component<ApplicationProperties & WithStyles<typeof styles>, State> {
+    state: State = {};
+
+    /**
+     * Called when the component mounts or updates, to compute the state. This will trigger React to
+     * request a re-render of the element and the displayed information.
+     */
+    static getDerivedStateFromProps(props: ApplicationProperties) {
+        const currentTime = props.clock.getMoment();
+        const volunteer = props.event.getCurrentVolunteer();
+
+        let initialState: State = {
+            activeShift: undefined,
+            upcomingShift: undefined,
+            unavailable: undefined,
+        };
+
+        // Not everyone that's able to log in to the portal is a volunteer, and might thus not have
+        // a schedule available to them.
+        if (volunteer) {
+            for (const shift of volunteer.shifts) {
+                if (shift.endTime < currentTime)
+                    continue;  // the shift has passed
+
+                if (shift.isAvailable())
+                    continue;  // they're just wandering about
+
+                const isActive = shift.beginTime >= currentTime;
+
+                // The volunteer might have been marked as explicitly being unavailable during this
+                // time, which we can reflect on the overview page too. Otherwise we ignore this.
+                if (shift.isUnavailable()) {
+                    if (isActive)
+                        initialState.unavailable = true;
+                    continue;
+                }
+
+                const event = shift.event;
+                const session = event.sessions[0];
+
+                const details: ShiftDetails = {
+                    name: session.name,
+                    description: session.description || undefined,
+                    to: '/schedule/events/' + event.id + '/' + slug(session.name),
+
+                    // Format the timestamp depending on whether the session is currently active or
+                    // not. If so, display when it ends, otherwise when it starts.
+                    timestamp: isActive ? 'until ' + session.endTime.format('HH:mm')
+                                        : session.beginTime.from(currentTime)
+                };
+
+                if (isActive) {
+                    initialState.activeShift = details;
+                    continue;
+                }
+
+                initialState.upcomingShift = details;
+                break;
+            }
+        }
+
+        return initialState;
+    }
+
+    /**
+     * Navigates to the shift that the volunteer is currently serving on.
+     */
+    @bind
+    navigateToActiveShift() {
+        const { activeShift } = this.state;
+
+        if (activeShift)
+            document.location.href = activeShift.to;
+    }
+
+    /**
+     * Navigates to the shift that the volunteer will be working on next.
+     */
+    @bind
+    navigateToUpcomingShift() {
+        const { upcomingShift } = this.state;
+
+        if (upcomingShift)
+            document.location.href = upcomingShift.to;
+    }
+
+    /**
+     * Navigates to the full schedule of the current volunteer.
+     */
+    @bind
+    navigateToSchedule() {
+        const volunteer = this.props.event.getCurrentVolunteer();
+        if (!volunteer)
+            return;
+
+        document.location.href = '/volunteers/' + slug(volunteer.name);
+    }
+
     render() {
         const { classes } = this.props;
+        const { activeShift, unavailable, upcomingShift } = this.state;
 
         // TODO: Personalize the introduction card with whatever we've got available.
-        // TODO: Display a card with volunteer's next session.
 
         // Choose a random tip to display on the overview page.
         const tip = kTips[Math.floor(Math.random() * kTips.length)];
@@ -104,9 +281,74 @@ class OverviewPage extends React.Component<Properties & WithStyles<typeof styles
                     </CardContent>
                 </Card>
 
+                { unavailable &&
+                    <Card className={classes.card} classes={{ root: classes.unavailableCard }}>
+                        <CardContent className={classes.denseContent}>
+                            <List className={classes.denseList}>
+                                <ListItem>
+                                    <ListItemIcon>
+                                        <NotificationsOffIcon />
+                                    </ListItemIcon>
+                                    <ListItemText primary={kUnavailableTitle}
+                                                  secondary={kUnavailableDescription} />
+                                </ListItem>
+                            </List>
+                        </CardContent>
+                    </Card> }
+
+                { activeShift &&
+                    <Card className={classes.card}
+                          classes={{ root: classes.activeSessionCard }}
+                          onClick={this.navigateToActiveShift}>
+                        <CardActionArea>
+                            <CardContent>
+                                <Typography className={classes.subtitle}
+                                            color="textSecondary" gutterBottom>
+                                    <EventIcon className={classes.inlineIcon} />
+                                    Your current shift • {activeShift.timestamp}
+                                </Typography>
+                                <Typography variant="h5" component="h2" noWrap>
+                                    {activeShift.name}
+                                </Typography>
+                                { activeShift.description &&
+                                    <Typography variant="body2" component="p" noWrap>
+                                        {activeShift.description}
+                                    </Typography> }
+                            </CardContent>
+                        </CardActionArea>
+                    </Card> }
+
+                { upcomingShift &&
+                    <Card className={classes.card}
+                          onClick={this.navigateToUpcomingShift}>
+                        <CardActionArea>
+                            <CardContent>
+                                <Typography className={classes.subtitle}
+                                            color="textSecondary" gutterBottom>
+                                    <EventIcon className={classes.inlineIcon} />
+                                    Your current shift • {upcomingShift.timestamp}
+                                </Typography>
+                                <Typography variant="h5" component="h2" noWrap>
+                                    {upcomingShift.name}
+                                </Typography>
+                                { upcomingShift.description &&
+                                    <Typography variant="body2" component="p" noWrap>
+                                        {upcomingShift.description}
+                                    </Typography> }
+                            </CardContent>
+                        </CardActionArea>
+                        <CardActions>
+                            <Button className={classes.button}
+                                    onClick={this.navigateToSchedule}
+                                    fullWidth>
+                                <ArrowForwardIcon className={classes.buttonIcon} /> Show full schedule
+                            </Button>
+                        </CardActions>
+                    </Card> }
+
                 <Card className={classes.card}>
-                    <CardContent className={classes.tipContent}>
-                        <List className={classes.tipList}>
+                    <CardContent className={classes.denseContent}>
+                        <List className={classes.denseList}>
                             <ListItem>
                                 <ListItemIcon>
                                     {tip.icon}
