@@ -7,6 +7,7 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import ApplicationProperties from '../app/ApplicationProperties';
+import { kDisplayUnavailable } from '../config';
 import slug from '../app/util/Slug';
 
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
@@ -44,6 +45,10 @@ const styles = (theme: Theme) =>
             maxWidth: 'calc(100vw - ' + (4 * theme.spacing(1)) + 'px)',
         },
 
+        introContent: {
+            paddingBottom: `${theme.spacing(2)}px !important`,
+        },
+
         unavailableCard: { backgroundColor: theme.pastSessionBackgroundColor },
         activeSessionCard: { backgroundColor: theme.activeSessionBackgroundColor },
 
@@ -68,6 +73,11 @@ const styles = (theme: Theme) =>
         },
 
     });
+
+/**
+ * Common introduction message that will be displayed for all users.
+ */
+const kCommonIntro = `You can find the full festival program in this portal.`;
 
 /**
  * Text to display on a card when the volunteer has been marked as unavailable.
@@ -153,6 +163,11 @@ interface ShiftDetails {
  */
 interface State {
     /**
+     * The introduction message that should be displayed in the very first card.
+     */
+    intro: string;
+
+    /**
      * The shift that the volunteer is currently engaged in.
      */
     activeShift?: ShiftDetails;
@@ -171,7 +186,9 @@ interface State {
 type Properties = ApplicationProperties & RouteComponentProps & WithStyles<typeof styles>;
 
 class OverviewPage extends React.Component<Properties, State> {
-    state: State = {};
+    state: State = {
+        intro: '',
+    };
 
     /**
      * Called when the component mounts or updates, to compute the state. This will trigger React to
@@ -181,8 +198,11 @@ class OverviewPage extends React.Component<Properties, State> {
         const currentTime = props.clock.getMoment();
         const volunteer = props.event.getCurrentVolunteer();
 
+        const { environment } = props;
+
         let initialState: State = {
             activeShift: undefined,
+            intro: '',
             upcomingShift: undefined,
             unavailable: undefined,
         };
@@ -229,6 +249,16 @@ class OverviewPage extends React.Component<Properties, State> {
                 initialState.upcomingShift = details;
                 break;
             }
+
+            const shiftCount = volunteer.shifts.filter(shift => shift.isEvent()).length;
+
+            // Compile the portal's introduction. This is different depending on whether the user
+            // is a volunteer as well, as we'd be able to personalize the message.
+            initialState.intro = `Welcome on the ${environment.portalTitle}, ${volunteer.name}! ` +
+                                 `You've been scheduled for ${shiftCount} shifts this weekend. ` +
+                                 kCommonIntro;
+        } else {
+            initialState.intro = `Welcome on the ${environment.portalTitle}! ` + kCommonIntro;
         }
 
         return initialState;
@@ -272,9 +302,7 @@ class OverviewPage extends React.Component<Properties, State> {
 
     render() {
         const { classes } = this.props;
-        const { activeShift, unavailable, upcomingShift } = this.state;
-
-        // TODO: Personalize the introduction card with whatever we've got available.
+        const { activeShift, intro, unavailable, upcomingShift } = this.state;
 
         // Choose a random tip to display on the overview page.
         const tip = kTips[Math.floor(Math.random() * kTips.length)];
@@ -282,12 +310,14 @@ class OverviewPage extends React.Component<Properties, State> {
         return (
             <React.Fragment>
                 <Card className={classes.card}>
-                    <CardContent>
-                        {/* Introduction goes here */}
+                    <CardContent className={classes.introContent}>
+                        <Typography variant="body2" component="p">
+                            {intro}
+                        </Typography>
                     </CardContent>
                 </Card>
 
-                { unavailable &&
+                { (unavailable && kDisplayUnavailable) &&
                     <Card className={classes.card} classes={{ root: classes.unavailableCard }}>
                         <CardContent className={classes.denseContent}>
                             <List className={classes.denseList}>

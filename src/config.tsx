@@ -28,6 +28,11 @@ const directory = (isProduction || host) ? 'api' : 'api-dev';
 export const kDrawerWidth = 256;
 
 /**
+ * Whether the "you're unavailable" card should be displayed on the overview page.
+ */
+export const kDisplayUnavailable = false;
+
+/**
  * Whether the dark theme should be available by default, and be activated if the user's system is
  * in dark mode.
  */
