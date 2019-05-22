@@ -29,10 +29,7 @@ module.exports = {
                     // Caching rules for API calls made by the application.
                     {
                         urlPattern: new RegExp('/api/(environment|event)'),
-                        handler: 'NetworkFirst',
-                        options: {
-                            networkTimeoutSeconds: 2,
-                        },
+                        handler: 'StaleWhileRevalidate',
                     },
                     {
                         urlPattern: new RegExp('/api/login'),
