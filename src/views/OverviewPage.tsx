@@ -2,6 +2,7 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import React from 'react';
 import bind from 'bind-decorator';
 
@@ -166,14 +167,16 @@ interface State {
     unavailable?: boolean;
 }
 
-class OverviewPage extends React.Component<ApplicationProperties & WithStyles<typeof styles>, State> {
+type Properties = ApplicationProperties & RouteComponentProps & WithStyles<typeof styles>;
+
+class OverviewPage extends React.Component<Properties, State> {
     state: State = {};
 
     /**
      * Called when the component mounts or updates, to compute the state. This will trigger React to
      * request a re-render of the element and the displayed information.
      */
-    static getDerivedStateFromProps(props: ApplicationProperties) {
+    static getDerivedStateFromProps(props: Properties) {
         const currentTime = props.clock.getMoment();
         const volunteer = props.event.getCurrentVolunteer();
 
@@ -236,9 +239,10 @@ class OverviewPage extends React.Component<ApplicationProperties & WithStyles<ty
     @bind
     navigateToActiveShift() {
         const { activeShift } = this.state;
+        const { history } = this.props;
 
         if (activeShift)
-            document.location.href = activeShift.to;
+            history.push(activeShift.to);
     }
 
     /**
@@ -247,9 +251,10 @@ class OverviewPage extends React.Component<ApplicationProperties & WithStyles<ty
     @bind
     navigateToUpcomingShift() {
         const { upcomingShift } = this.state;
+        const { history } = this.props;
 
         if (upcomingShift)
-            document.location.href = upcomingShift.to;
+            history.push(upcomingShift.to);
     }
 
     /**
@@ -261,7 +266,7 @@ class OverviewPage extends React.Component<ApplicationProperties & WithStyles<ty
         if (!volunteer)
             return;
 
-        document.location.href = '/volunteers/' + slug(volunteer.name);
+        this.props.history.push('/volunteers/' + slug(volunteer.name));
     }
 
     render() {
@@ -364,4 +369,4 @@ class OverviewPage extends React.Component<ApplicationProperties & WithStyles<ty
     }
 }
 
-export default withStyles(styles)(OverviewPage);
+export default withRouter(withStyles(styles)(OverviewPage));
