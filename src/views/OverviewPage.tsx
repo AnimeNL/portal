@@ -12,6 +12,7 @@ import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import LiveTvIcon from '@material-ui/icons/LiveTv';
 import PhoneIcon from '@material-ui/icons/Phone';
 import SearchIcon from '@material-ui/icons/Search';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -76,6 +77,12 @@ const kTips: Tip[] = [
         description: 'Did you know that most shifts come with instructions? Check them out on ' +
                      'the event pages, or ask a senior.',
         icon: <FaceIcon />
+    },
+    {
+        title: 'Not sure what\'s happening?',
+        description: 'Did you know that events that are currently happening are highlighted, and ' +
+                     'past events will be moved down?',
+        icon: <LiveTvIcon />
     }
 ];
 
