@@ -7,7 +7,6 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import ApplicationProperties from '../app/ApplicationProperties';
-import { kDisplayUnavailable } from '../config';
 import slug from '../app/util/Slug';
 
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
@@ -25,7 +24,6 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import LiveTvIcon from '@material-ui/icons/LiveTv';
-import NotificationsOffIcon from '@material-ui/icons/NotificationsOff'
 import PhoneIcon from '@material-ui/icons/Phone';
 import SearchIcon from '@material-ui/icons/Search';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -78,13 +76,6 @@ const styles = (theme: Theme) =>
  * Common introduction message that will be displayed for all users.
  */
 const kCommonIntro = `You can find the full festival program in this portal.`;
-
-/**
- * Text to display on a card when the volunteer has been marked as unavailable.
- */
-const kUnavailableTitle = 'Unavailable';
-const kUnavailableDescription =
-    'You\'re marked as unavailable, the seniors won\'t bother you. Enjoy!';
 
 /**
  * Interface defining a tip that can be displayed on the overview page.
@@ -178,9 +169,10 @@ interface State {
     upcomingShift?: ShiftDetails;
 
     /**
-     * Whether the volunteer has currently been marked as unavailable.
+     * Time at which the volunteer becomes available again, if they've currently been marked as
+     * unavailable. Will be displayed in a separate box.
      */
-    unavailable?: boolean;
+    unavailableUntil?: string;
 }
 
 type Properties = ApplicationProperties & RouteComponentProps & WithStyles<typeof styles>;
@@ -201,10 +193,10 @@ class OverviewPage extends React.Component<Properties, State> {
         const { environment } = props;
 
         let initialState: State = {
-            activeShift: undefined,
             intro: '',
+            activeShift: undefined,
             upcomingShift: undefined,
-            unavailable: undefined,
+            unavailableUntil: undefined,
         };
 
         // Not everyone that's able to log in to the portal is a volunteer, and might thus not have
@@ -223,7 +215,7 @@ class OverviewPage extends React.Component<Properties, State> {
                 // time, which we can reflect on the overview page too. Otherwise we ignore this.
                 if (shift.isUnavailable()) {
                     if (isActive)
-                        initialState.unavailable = true;
+                        initialState.unavailableUntil = shift.endTime.format('HH:mm');
                     continue;
                 }
 
@@ -302,7 +294,7 @@ class OverviewPage extends React.Component<Properties, State> {
 
     render() {
         const { classes } = this.props;
-        const { activeShift, intro, unavailable, upcomingShift } = this.state;
+        const { activeShift, intro, unavailableUntil, upcomingShift } = this.state;
 
         // Choose a random tip to display on the overview page.
         const tip = kTips[Math.floor(Math.random() * kTips.length)];
@@ -317,18 +309,16 @@ class OverviewPage extends React.Component<Properties, State> {
                     </CardContent>
                 </Card>
 
-                { (unavailable && kDisplayUnavailable) &&
+                { unavailableUntil &&
                     <Card className={classes.card} classes={{ root: classes.unavailableCard }}>
-                        <CardContent className={classes.denseContent}>
-                            <List className={classes.denseList}>
-                                <ListItem>
-                                    <ListItemIcon>
-                                        <NotificationsOffIcon />
-                                    </ListItemIcon>
-                                    <ListItemText primary={kUnavailableTitle}
-                                                  secondary={kUnavailableDescription} />
-                                </ListItem>
-                            </List>
+                        <CardContent className={classes.introContent}>
+                            <Typography variant="subtitle1">
+                                You're on a scheduled break
+                            </Typography>
+                            <Typography variant="body2" color="textSecondary">
+                                You're currently on scheduled time off, which means that the seniors
+                                won't bother you until {unavailableUntil}. Enjoy!
+                            </Typography>
                         </CardContent>
                     </Card> }
 
