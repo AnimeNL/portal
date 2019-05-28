@@ -5,6 +5,7 @@
 import moment from 'moment';
 
 import { Ability } from '../abilities';
+import { ILogin } from './api/ILogin';
 import { ThemeDelegate, ThemeProvider } from '../theme';
 import { UserLoginPath, kEnableDarkTheme, mockableFetch } from '../config';
 import { isBoolean, isNumber, isString, validationError } from './util/Validators';
@@ -21,12 +22,7 @@ const kLoginDataKey = 'login-data';
  *
  * @see https://github.com/AnimeNL/portal/blob/master/API.md#apilogin
  */
-interface LoginData {
-    userToken: string;
-    authToken: string;
-    expirationTime: number;
-    abilities: string[];
-
+interface LoginData extends ILogin {
     // Optional fields maintained for internal application state. Can be set by the server to set
     // defaults, but not formally documented as an API.
     darkThemeEnabled?: boolean;

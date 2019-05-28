@@ -3,27 +3,15 @@
 // be found in the LICENSE file.
 
 import { EnvironmentConfigPath, mockableFetch } from '../config';
+import { IEnvironment } from './api/IEnvironment';
 import { isNumber, isString, validationError } from './util/Validators';
-
-/**
- * Settings for the environment the portal will be operating under. Generally fetched from the
- * Environment API from the network:
- *
- * @see https://github.com/AnimeNL/portal/blob/master/API.md#apienvironment
- */
-interface EnvironmentData {
-    timezone: string;
-    portalTitle: string;
-    seniorTitle: string;
-    year: number;
-}
 
 /**
  * Represents the environment under which the volunteer portal is operating. Exposes various
  * configuration options unique to groups of volunteers.
  */
 class Environment {
-    data?: EnvironmentData;
+    data?: IEnvironment;
 
     /**
      * Initialization. Will fetch the environment configuration file from the server on pageload.
@@ -95,12 +83,12 @@ class Environment {
     }
 
     /**
-     * Validates that the given |configuration| conforms to the definition of EnvironmentData.
+     * Validates that the given |configuration| conforms to the definition of IEnvironment.
      *
      * @param configuration The configuration as fetched from the network.
      */
-    private validateConfiguration(configuration: any): configuration is EnvironmentData {
-        const kInterface = 'EnvironmentData';
+    private validateConfiguration(configuration: any): configuration is IEnvironment {
+        const kInterface = 'IEnvironment';
 
         if (!isString(configuration.timezone)) {
             validationError(kInterface, 'timezone');
