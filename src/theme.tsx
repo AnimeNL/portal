@@ -7,7 +7,6 @@ import { kDrawerWidth } from './config';
 import amber from '@material-ui/core/colors/amber';
 import blue from '@material-ui/core/colors/blue'
 import blueGrey from '@material-ui/core/colors/blueGrey';
-import brown from '@material-ui/core/colors/brown';
 import createBreakpoints from '@material-ui/core/styles/createBreakpoints';
 import createMuiTheme, { Theme, ThemeOptions } from '@material-ui/core/styles/createMuiTheme';
 import createSpacing from '@material-ui/core/styles/createSpacing';

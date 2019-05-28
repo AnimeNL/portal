@@ -17,7 +17,6 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardActions from '@material-ui/core/CardActions';
 import CardContent from '@material-ui/core/CardContent';
 import Divider from '@material-ui/core/Divider';
-import EventIcon from '@material-ui/icons/Event';
 import FaceIcon from '@material-ui/icons/Face';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -27,6 +26,7 @@ import LiveTvIcon from '@material-ui/icons/LiveTv';
 import PhoneIcon from '@material-ui/icons/Phone';
 import SearchIcon from '@material-ui/icons/Search';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import TodayIcon from '@material-ui/icons/Today';
 import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
@@ -288,7 +288,7 @@ class OverviewPage extends React.Component<Properties, State> {
     }
 
     render() {
-        const { classes } = this.props;
+        const { classes, environment } = this.props;
         const { activeShift, intro, unavailableUntil, upcomingShift } = this.state;
 
         // Choose a random tip to display on the overview page.
@@ -297,7 +297,10 @@ class OverviewPage extends React.Component<Properties, State> {
         return (
             <React.Fragment>
                 <Card className={classes.card}>
-                    <CardContent className={classes.introContent}>
+                    <CardContent>
+                        <Typography variant="h5" component="h2" noWrap>
+                            {environment.eventName}
+                        </Typography>
                         <Typography variant="body2" component="p">
                             {intro}
                         </Typography>
@@ -325,7 +328,7 @@ class OverviewPage extends React.Component<Properties, State> {
                             <CardContent>
                                 <Typography className={classes.subtitle}
                                             color="textSecondary" gutterBottom>
-                                    <EventIcon className={classes.inlineIcon} />
+                                    <TodayIcon className={classes.inlineIcon} />
                                     Your current shift • {activeShift.timestamp}
                                 </Typography>
                                 <Typography variant="h5" component="h2" noWrap>
@@ -345,7 +348,7 @@ class OverviewPage extends React.Component<Properties, State> {
                             <CardContent>
                                 <Typography className={classes.subtitle}
                                             color="textSecondary" gutterBottom>
-                                    <EventIcon className={classes.inlineIcon} />
+                                    <TodayIcon className={classes.inlineIcon} />
                                     Your next shift • {upcomingShift.timestamp}
                                 </Typography>
                                 <Typography variant="h5" component="h2" noWrap>
