@@ -2,11 +2,15 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import { kDrawerWidth } from './config';
+
 import amber from '@material-ui/core/colors/amber';
 import blue from '@material-ui/core/colors/blue'
 import blueGrey from '@material-ui/core/colors/blueGrey';
 import brown from '@material-ui/core/colors/brown';
+import createBreakpoints from '@material-ui/core/styles/createBreakpoints';
 import createMuiTheme, { Theme, ThemeOptions } from '@material-ui/core/styles/createMuiTheme';
+import createSpacing from '@material-ui/core/styles/createSpacing';
 import grey from '@material-ui/core/colors/grey';
 import indigo from '@material-ui/core/colors/indigo';
 
@@ -64,13 +68,25 @@ declare module '@material-ui/core/styles/createMuiTheme' {
          * Background color for event rows detailing past sessions.
          */
         pastSessionBackgroundColor: React.CSSProperties['color'];
+
+        /**
+         * Mixin that can be used to represent the sizing properties of a full-width card.
+         */
+        fullWidthCardMixin: React.CSSProperties;
+
+        /**
+         * Mixin that can be used to represent the sizing properties of a full-width paper.
+         */
+        fullWidthPaperMixin: React.CSSProperties;
     }
 
     interface ThemeOptions {
-        activeSessionBackgroundColor?: React.CSSProperties['color'];
-        headerBackgroundColor?: React.CSSProperties['color'];
-        menuActiveBackgroundColor?: React.CSSProperties['color'];
-        pastSessionBackgroundColor?: React.CSSProperties['color'];
+        activeSessionBackgroundColor: React.CSSProperties['color'];
+        headerBackgroundColor: React.CSSProperties['color'];
+        menuActiveBackgroundColor: React.CSSProperties['color'];
+        pastSessionBackgroundColor: React.CSSProperties['color'];
+        fullWidthCardMixin: React.CSSProperties;
+        fullWidthPaperMixin: React.CSSProperties;
     }
 }
 
@@ -140,13 +156,17 @@ export class ThemeProvider {
      */
     static getTheme(): Theme {
         if (ThemeProvider.cachedTheme === undefined) {
+            const defaultBreakpoints = createBreakpoints({});
+            const defaultSpacing = createSpacing(/* spacingInput= */ 8);
             const properties = ThemeProvider.getThemeProperties();
+
+            const kScrollbarWidth = 17;  // px
 
             ThemeProvider.cachedTheme = createMuiTheme({
                 mixins: {
                     toolbar: {
                         minHeight: 56,
-                        '@media (min-width:600px)': {
+                        [defaultBreakpoints.up('sm')]: {
                             minHeight: 64,
                         },
                     },
@@ -160,6 +180,26 @@ export class ThemeProvider {
                         selected: indigo[50],
                     },
                 },
+
+                fullWidthCardMixin: {
+                    margin: defaultSpacing(2),
+
+                    [defaultBreakpoints.up('sm')]: {
+                        maxWidth: `calc(100vw - ${kScrollbarWidth}px - ${kDrawerWidth}px - ${defaultSpacing(4)}px)`,
+                    },
+                    [defaultBreakpoints.down('xs')]: {
+                        maxWidth: `calc(100vw - ${defaultSpacing(4)}px)`,
+                    },
+                },
+                fullWidthPaperMixin: {
+                    [defaultBreakpoints.up('sm')]: {
+                        maxWidth: `calc(100vw - ${kScrollbarWidth}px - ${kDrawerWidth}px)`,
+                    },
+                    [defaultBreakpoints.down('xs')]: {
+                        maxWidth: `100vw`,
+                    }
+                },
+
                 activeSessionBackgroundColor: properties.activeSessionBackgroundColor,
                 headerBackgroundColor: properties.headerBackgroundColor,
                 menuActiveBackgroundColor: properties.menuActiveBackgroundColor,

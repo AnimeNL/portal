@@ -36,12 +36,7 @@ const styles = (theme: Theme) =>
         denseContent: { padding: `0 ${theme.spacing(1)}px !important` },
         denseList: { padding: `0 ${theme.spacing(2)}px` },
 
-        card: {
-            margin: theme.spacing(2),
-
-            // TODO: Make this work correctly on desktop.
-            maxWidth: 'calc(100vw - ' + (4 * theme.spacing(1)) + 'px)',
-        },
+        card: { ...theme.fullWidthCardMixin },
 
         introContent: {
             paddingBottom: `${theme.spacing(2)}px !important`,

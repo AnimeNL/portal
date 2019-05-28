@@ -17,13 +17,8 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
-        location: {
-            margin: theme.spacing(2),
-        },
+        location: { ...theme.fullWidthCardMixin },
         locationName: {
-            // TODO: Make this work correctly on desktop.
-            maxWidth: 'calc(100vw - ' + (4 * theme.spacing(1)) + 'px)',
-
             padding: theme.spacing(1),
             fontWeight: 500,
         },

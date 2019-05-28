@@ -4,8 +4,6 @@
 
 import React from 'react';
 
-import { kDrawerWidth } from '../config';
-
 import Avatar from '@material-ui/core/Avatar';
 import List from '@material-ui/core/List';
 import ListItem from '@material-ui/core/ListItem';
@@ -19,13 +17,7 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
-        maximumWidthHeader: {
-            maxWidth: '100vw',
-            [theme.breakpoints.up('sm')]: {
-                // Take away an extra 17px to compensate for the scrollbar that's always visible.
-                maxWidth: 'calc(100vw - 17px - ' + kDrawerWidth + 'px)',
-            },
-        },
+        maximumWidthHeader: { ...theme.fullWidthPaperMixin },
         noWrap: {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
