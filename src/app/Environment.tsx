@@ -51,11 +51,11 @@ class Environment {
     }
 
     /**
-     * Timezone in which the event will be taking place.
+     * Name of the event that this portal exists for.
      */
-    get timezone(): string {
+    get eventName(): string {
         if (!this.data) throw new Error('The environment is not available.');
-        return this.data.timezone;
+        return this.data.eventName;
     }
 
     /**
@@ -75,6 +75,14 @@ class Environment {
     }
 
     /**
+     * Timezone in which the event will be taking place.
+     */
+    get timezone(): string {
+        if (!this.data) throw new Error('The environment is not available.');
+        return this.data.timezone;
+    }
+
+    /**
      * Year in which the event will take place.
      */
     get year(): number {
@@ -90,8 +98,8 @@ class Environment {
     private validateConfiguration(configuration: any): configuration is IEnvironment {
         const kInterface = 'IEnvironment';
 
-        if (!isString(configuration.timezone)) {
-            validationError(kInterface, 'timezone');
+        if (!isString(configuration.eventName)) {
+            validationError(kInterface, 'eventName');
             return false;
         }
 
@@ -102,6 +110,11 @@ class Environment {
 
         if (!isString(configuration.seniorTitle)) {
             validationError(kInterface, 'seniorTitle');
+            return false;
+        }
+
+        if (!isString(configuration.timezone)) {
+            validationError(kInterface, 'timezone');
             return false;
         }
 

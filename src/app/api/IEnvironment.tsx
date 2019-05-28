@@ -6,8 +6,9 @@
  * @see https://github.com/AnimeNL/portal/blob/master/API.md#apienvironment
  */
 export interface IEnvironment {
-    timezone: string;
+    eventName: string;
     portalTitle: string;
     seniorTitle: string;
+    timezone: string;
     year: number;
 }

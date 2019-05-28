@@ -11,9 +11,10 @@ particular event or group of volunteers. Must accept `GET` requests.
 
 | Property         | Type     | Description |
 | :---             | :---     | :--- |
-| `timezone`       | `string` | Timezone indicator as supported by the [moment](https://momentjs.com/timezone/docs/) library. |
+| `eventName`      | `string` | Name of the event that this portal exists for. |
 | `portalTitle`    | `string` | Title to use for identifying the volunteer portal instance. |
 | `seniorTitle`    | `string` | Title to use for senior volunteers, who can provide assistance. |
+| `timezone`       | `string` | Timezone indicator as supported by the [moment](https://momentjs.com/timezone/docs/) library. |
 | `year`           | `number` | Year in which the event will take place. |
 
 #### 🡄 Failure response
