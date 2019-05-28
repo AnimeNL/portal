@@ -218,7 +218,7 @@ export class ThemeProvider {
         if (ThemeProvider.isDarkThemeEnabled()) {
             return {
                 type: 'dark',
-                activeSessionBackgroundColor: brown[900],
+                activeSessionBackgroundColor: "#686556", // amber[50]ish, but dark
                 headerBackgroundColor: grey[900],
                 menuActiveBackgroundColor: grey[700],
                 pastSessionBackgroundColor: '#353535',  // grey[850]ish
