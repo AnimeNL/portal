@@ -165,6 +165,11 @@ export class ThemeProvider {
 
             const kScrollbarWidth = 17;  // px
 
+            // Update the page's theme color to match the selected header color.
+            const element = document.querySelector('meta[name="theme-color"]');
+            if (element && properties.headerBackgroundColor)
+                element.setAttribute('content', properties.headerBackgroundColor);
+
             ThemeProvider.cachedTheme = createMuiTheme({
                 mixins: {
                     toolbar: {

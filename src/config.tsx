@@ -31,7 +31,7 @@ export const kDrawerWidth = 256;
  * Whether the dark theme should be available by default, and be activated if the user's system is
  * in dark mode.
  */
-export const kEnableDarkTheme = false;
+export const kEnableDarkTheme = true;
 
 /**
  * Whether the title displayed in the app header should reflect the page that the user's on.
