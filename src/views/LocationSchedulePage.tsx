@@ -222,7 +222,7 @@ class LocationSchedulePage extends React.Component<Properties, State> {
         // (1) Sort the days that are to be displayed on the location page.
         const sortedDays = Array.from(days.values()).sort((lhs, rhs) => {
             if (!lhs.pending && rhs.pending)
-                return -1;
+                return 1;
             if (!rhs.pending && lhs.pending)
                 return -1;
 
