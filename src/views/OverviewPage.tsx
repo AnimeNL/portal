@@ -42,8 +42,8 @@ const styles = (theme: Theme) =>
             paddingBottom: `${theme.spacing(2)}px !important`,
         },
 
-        unavailableCard: { backgroundColor: theme.pastSessionBackgroundColor },
-        activeSessionCard: { backgroundColor: theme.activeSessionBackgroundColor },
+        unavailableCard: { ...theme.pastSessionStyle },
+        activeSessionCard: { ...theme.activeSessionStyle },
 
         inlineIcon: {
             fontSize: 'inherit',

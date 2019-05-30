@@ -304,8 +304,8 @@ class Header extends React.Component<Properties, State> implements TitleObserver
                             { kEnableDarkTheme &&
                                 <MenuItem onClick={this.onToggleDarkTheme}>
                                     { ThemeProvider.isDarkThemeEnabled()
-                                          ? 'Use light theme'
-                                          : 'Use dark theme' }
+                                          ? 'Light theme'
+                                          : 'Dark theme' }
                                 </MenuItem> }
 
                             <Divider />

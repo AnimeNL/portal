@@ -10,8 +10,12 @@ import blueGrey from '@material-ui/core/colors/blueGrey';
 import createBreakpoints from '@material-ui/core/styles/createBreakpoints';
 import createMuiTheme, { Theme, ThemeOptions } from '@material-ui/core/styles/createMuiTheme';
 import createSpacing from '@material-ui/core/styles/createSpacing';
+import { darken, lighten } from '@material-ui/core/styles/colorManipulator';
 import grey from '@material-ui/core/colors/grey';
 import indigo from '@material-ui/core/colors/indigo';
+
+const kHoverStyle: string = '&:hover';
+const kFocusStyle: string = '&:focus';
 
 /**
  * Properties that differ between our dark- and light theme configurations.
@@ -23,9 +27,9 @@ interface ThemeProperties {
     type: "light" | "dark";
 
     /**
-     * Background color for event rows detailing active sessions.
+     * Styling for list items detailing sessions that are currently active.
      */
-    activeSessionBackgroundColor: React.CSSProperties['color'];
+    activeSessionStyle: React.CSSProperties;
 
     /**
      * Background color of the application header.
@@ -38,9 +42,9 @@ interface ThemeProperties {
     menuActiveBackgroundColor: React.CSSProperties['color'];
 
     /**
-     * Background color for event rows detailing past sessions.
+     * Styling for list items detailing sessions that have already happened.
      */
-    pastSessionBackgroundColor: React.CSSProperties['color'];
+    pastSessionStyle: React.CSSProperties;
 }
 
 /**
@@ -49,9 +53,9 @@ interface ThemeProperties {
 declare module '@material-ui/core/styles/createMuiTheme' {
     interface Theme {
         /**
-         * Background color for event rows detailing active sessions.
+         * Styling for list items detailing sessions that are currently active.
          */
-        activeSessionBackgroundColor: React.CSSProperties['color'];
+        activeSessionStyle: React.CSSProperties;
 
         /**
          * Background color of the application header.
@@ -64,9 +68,9 @@ declare module '@material-ui/core/styles/createMuiTheme' {
         menuActiveBackgroundColor: React.CSSProperties['color'];
 
         /**
-         * Background color for event rows detailing past sessions.
+         * Styling for list items detailing sessions that have already happened.
          */
-        pastSessionBackgroundColor: React.CSSProperties['color'];
+        pastSessionStyle: React.CSSProperties;
 
         /**
          * Mixin that can be used to represent the sizing properties of a full-width card.
@@ -80,10 +84,10 @@ declare module '@material-ui/core/styles/createMuiTheme' {
     }
 
     interface ThemeOptions {
-        activeSessionBackgroundColor: React.CSSProperties['color'];
+        activeSessionStyle: React.CSSProperties;
         headerBackgroundColor: React.CSSProperties['color'];
         menuActiveBackgroundColor: React.CSSProperties['color'];
-        pastSessionBackgroundColor: React.CSSProperties['color'];
+        pastSessionStyle: React.CSSProperties;
         fullWidthCardMixin: React.CSSProperties;
         fullWidthPaperMixin: React.CSSProperties;
     }
@@ -199,10 +203,10 @@ export class ThemeProvider {
                     }
                 },
 
-                activeSessionBackgroundColor: properties.activeSessionBackgroundColor,
+                activeSessionStyle: { ...properties.activeSessionStyle },
                 headerBackgroundColor: properties.headerBackgroundColor,
                 menuActiveBackgroundColor: properties.menuActiveBackgroundColor,
-                pastSessionBackgroundColor: properties.pastSessionBackgroundColor,
+                pastSessionStyle: properties.pastSessionStyle,
             });
         }
 
@@ -215,20 +219,30 @@ export class ThemeProvider {
      */
     private static getThemeProperties(): ThemeProperties {
         if (ThemeProvider.isDarkThemeEnabled()) {
+            const kActiveSessionColor = '#3c5f7d';
+
             return {
                 type: 'dark',
-                activeSessionBackgroundColor: "#686556", // amber[50]ish, but dark
-                headerBackgroundColor: grey[900],
+                activeSessionStyle: {
+                    backgroundColor: kActiveSessionColor,
+                    borderBottomColor: darken(kActiveSessionColor, .2),
+                    [kHoverStyle]: { backgroundColor: lighten(kActiveSessionColor, .04) },
+                    [kFocusStyle]: { backgroundColor: lighten(kActiveSessionColor, .04) },
+                },
+                headerBackgroundColor: '#121212',  // Material Design baseline dark
                 menuActiveBackgroundColor: grey[700],
-                pastSessionBackgroundColor: '#353535',  // grey[850]ish
+                pastSessionStyle: {
+                    backgroundColor: '#353535',  // grey[850]ish
+                    color: grey[500],
+                },
             };
         } else {
             return {
                 type: 'light',
-                activeSessionBackgroundColor: amber[50],
+                activeSessionStyle: { backgroundColor: amber[50], },
                 headerBackgroundColor: blue[800],
                 menuActiveBackgroundColor: indigo[50],
-                pastSessionBackgroundColor: blueGrey[50],
+                pastSessionStyle: { backgroundColor: blueGrey[50], },
             };
         }
     }

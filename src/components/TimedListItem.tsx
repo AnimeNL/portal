@@ -35,15 +35,13 @@ const styles = (theme: Theme) =>
         },
 
         past: {
-            backgroundColor: theme.pastSessionBackgroundColor,
+            ...theme.pastSessionStyle,
 
             paddingTop: 0,
             paddingBottom: 0,
             minHeight: 36,
         },
-        active: {
-            backgroundColor: theme.activeSessionBackgroundColor,
-        },
+        active: { ...theme.activeSessionStyle },
         pending: {},
 
         timesItem: {
