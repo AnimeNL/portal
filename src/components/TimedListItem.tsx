@@ -11,6 +11,8 @@ import ConditionalListItem from './ConditionalListItem';
 import HistoryIcon from '@material-ui/icons/History';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import VisibilityOff from '@material-ui/icons/VisibilityOff';
+import blueGrey from '@material-ui/core/colors/blueGrey';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
@@ -120,12 +122,18 @@ class TimedListItem extends React.PureComponent<TimedListItemProps & WithStyles<
 
 
     render() {
-        const { beginTime, classes, endTime, state, to } = this.props;
+        const { beginTime, classes, endTime, internal, state, to } = this.props;
 
         let times: JSX.Element | undefined;
         let title: string = this.props.title;
         let titleIcon: JSX.Element | undefined;
+        let hiddenIcon: JSX.Element | undefined;
         let description: string | undefined;
+
+
+        if (internal) {
+            hiddenIcon = <VisibilityOff className={classes.titleIcon} />;
+        }
 
         switch (state) {
             case 'past':
@@ -155,10 +163,12 @@ class TimedListItem extends React.PureComponent<TimedListItemProps & WithStyles<
                     </div>
 
                     <ListItemText className={classes.noWrap}
+                                  style={{ color: internal ? blueGrey[400] : undefined }}
                                   primaryTypographyProps={{ noWrap: true }}
                                   secondary={description}
                                   secondaryTypographyProps={{ noWrap: true }}>
                         {title}
+                        {hiddenIcon}
                         {titleIcon}
                     </ListItemText>
 
