@@ -41,6 +41,11 @@ class Event {
     private locations: Map<number, Location> = new Map();
 
     /**
+     * Version of the event that has been loaded, if any.
+     */
+    public version?: string;
+
+    /**
      * Mapping from a group's token to an object detailing it.
      */
     private volunteerGroups: Map<string, VolunteerGroup> = new Map();
@@ -102,6 +107,8 @@ class Event {
 
                 this.events.set(info.id, event);
             }
+
+            this.version = eventData.version;
 
             for (const info of eventData.volunteerGroups)
                 this.volunteerGroups.set(info.groupToken, new VolunteerGroup(info));

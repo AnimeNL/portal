@@ -73,6 +73,7 @@ requests. May be cached offline.
 | `internalNotes?`  | `object`           | Object of string => string pairs with notes that should be displayed on the Internals page. |
 | `locations`       | `Location[]`       | Array with information about the locations available for the event. |
 | `shifts`          | `Shift[]`          | Array with information about the shifts that will take place this event. |
+| `version`         | `string`           | Version code associated with this version of the event data. |
 | `volunteerGroups` | `VolunteerGroup[]` | Array with information about the different groups of volunteers. |
 | `volunteers`      | `VolunteerInfo[]`  | Array with information for all the event's volunteers. |
 | `logbook`         | `LogbookEntry[]`   | Array with logbook entries recorded by volunteers at the event. |

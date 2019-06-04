@@ -213,6 +213,11 @@ class EventLoader {
                 return false;
         }
 
+        if (!event.hasOwnProperty('version') || !isString(event.version)) {
+            validationError(kInterface, 'version');
+            return false;
+        }
+
         if (!event.hasOwnProperty('volunteerGroups') || !Array.isArray(event.volunteerGroups)) {
             validationError(kInterface, 'volunteerGroups');
             return false;

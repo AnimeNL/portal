@@ -19,6 +19,7 @@ export interface IEvent {
     internalNotes?: { [key: string]: string };
     locations: ILocation[];
     shifts: IShift[];
+    version: string;
     volunteerGroups: IVolunteerGroup[];
     volunteers: IVolunteerInfo[];
 }
