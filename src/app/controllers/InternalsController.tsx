@@ -8,7 +8,7 @@ import moment from 'moment';
 
 import ApplicationProperties from '../ApplicationProperties';
 import InternalsPage from '../../views/InternalsPage';
-import { TitleManager } from '../../title';
+import { TitleManager } from '../../state/TitleManager';
 
 /**
  * The InternalsController is responsible for enabling users with debugging capabilities to change

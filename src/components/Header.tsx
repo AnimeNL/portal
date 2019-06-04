@@ -11,7 +11,7 @@ import Event from '../app/Event';
 import { MenuNotifier } from '../menu';
 import { SearchBox } from './SearchBox';
 import { ThemeProvider } from '../theme';
-import { TitleManager, TitleObserver } from '../title';
+import { TitleManager, TitleObserver } from '../state/TitleManager';
 import { kEnableDarkTheme, kEnableHeaderTitle, kDrawerWidth } from '../config';
 
 import AppBar from '@material-ui/core/AppBar';

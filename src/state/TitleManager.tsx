@@ -2,7 +2,7 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import { Observable, Observer } from './app/util/Observable';
+import { Observable, Observer } from '../app/util/Observable';
 
 /**
  * The TitleManager is responsible for propagating title changes throughout the application. It

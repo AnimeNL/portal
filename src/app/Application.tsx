@@ -11,7 +11,7 @@ import Event from './Event';
 import LoginController from './controllers/LoginController';
 import PortalController from './controllers/PortalController';
 import { ServiceWorkerManager } from './ServiceWorkerManager';
-import { TitleManager, TitleObserver } from '../title';
+import { TitleManager, TitleObserver } from '../state/TitleManager';
 import User from './User';
 
 import ErrorView from '../views/ErrorView';

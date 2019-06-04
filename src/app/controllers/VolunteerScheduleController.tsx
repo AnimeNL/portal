@@ -9,7 +9,7 @@ import bind from 'bind-decorator';
 import { Ability } from '../../abilities';
 import ApplicationProperties from '../ApplicationProperties';
 import NotFound from '../../views/NotFound';
-import { TitleManager } from '../../title';
+import { TitleManager } from '../../state/TitleManager';
 import { UploadPath, mockableFetch } from '../../config';
 import { Volunteer } from '../Volunteer';
 import { VolunteerSchedulePage } from '../../views/VolunteerSchedulePage';

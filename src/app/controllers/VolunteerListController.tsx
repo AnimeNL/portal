@@ -6,7 +6,7 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import ApplicationProperties from '../ApplicationProperties';
-import { TitleManager } from '../../title';
+import { TitleManager } from '../../state/TitleManager';
 import { VolunteerListPage } from '../../views/VolunteerListPage';
 import { Volunteer } from '../Volunteer';
 import { VolunteerGroup } from '../VolunteerGroup';

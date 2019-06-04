@@ -11,7 +11,7 @@ import ApplicationProperties from '../ApplicationProperties';
 import { EventSchedulePage } from '../../views/EventSchedulePage';
 import NotFound from '../../views/NotFound';
 import { ProgramEvent } from '../ProgramEvent';
-import { TitleManager } from '../../title';
+import { TitleManager } from '../../state/TitleManager';
 import { UploadPath, mockableFetch } from '../../config';
 
 /**

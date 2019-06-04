@@ -9,7 +9,7 @@ import ApplicationProperties from '../ApplicationProperties';
 import { Location } from '../Location';
 import { LocationSchedulePage } from '../../views/LocationSchedulePage';
 import NotFound from '../../views/NotFound';
-import { TitleManager } from '../../title';
+import { TitleManager } from '../../state/TitleManager';
 
 /**
  * Properties available to the controller through the router.
