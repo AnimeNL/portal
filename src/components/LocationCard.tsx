@@ -44,13 +44,24 @@ export interface LocationCardProps {
     to?: string;
 }
 
+type Properties = LocationCardProps & RouteComponentProps & WithStyles<typeof styles>;
+
 /**
  * The <LocationCard> displays a card for a particular location, wrapping one or more children that
  * indicate the active and upcoming events within this location. If the `to` attribute has been
  * specified, clicking on this location card will trigger a navigation.
  */
-class LocationCard extends React.Component<
-                               LocationCardProps & RouteComponentProps & WithStyles<typeof styles>> {
+class LocationCard extends React.Component<Properties> {
+    /**
+     * Called to determine whether the component should update. We only care about the properties
+     * that are part of LocationCardProps for this, not the style and/or route properties.
+     */
+    shouldComponentUpdate(nextProps: Properties): boolean {
+        return this.props.internal != nextProps.internal ||
+               this.props.label != nextProps.label ||
+               this.props.to != nextProps.to;
+    }
+
     /**
      * Called when the user clicks on the card.
      */

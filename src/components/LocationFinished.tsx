@@ -21,7 +21,7 @@ const styles = (theme: Theme) =>
  * Represents a row that's to be displayed in a <LocationCard>, detailing that there are no more
  * sessions to be hosted in that location.
  */
-class LocationFinished extends React.Component<WithStyles<typeof styles>> {
+class LocationFinished extends React.PureComponent<WithStyles<typeof styles>> {
     render() {
         const { classes } = this.props;
 

@@ -93,7 +93,7 @@ export interface LocationSessionProps {
 /**
  * Represents a row that's to be displayed in a <LocationCard>, detailing a single session.
  */
-class LocationSession extends React.Component<LocationSessionProps & WithStyles<typeof styles>> {
+class LocationSession extends React.PureComponent<LocationSessionProps & WithStyles<typeof styles>> {
     render() {
         const { classes, internal, label, state, timing } = this.props;
 
