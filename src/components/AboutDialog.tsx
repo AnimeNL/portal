@@ -27,11 +27,11 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 const styles = (theme: Theme) =>
     createStyles({
         paper: {
-            backgroundColor: '#104656',
+            backgroundColor: theme.menuActiveBackgroundColor,
         },
 
         appBar: {
-            backgroundColor: '#042833',
+            backgroundColor: theme.headerBackgroundColor,
             position: 'relative',
         },
 
@@ -42,6 +42,7 @@ const styles = (theme: Theme) =>
         },
 
         jpopLogo: {
+            backgroundColor: '#104656',
             background: 'url(/static/images/jpop-portal-logo.png) center / contain no-repeat',
             margin: theme.spacing(1) + 'px 0 0 0',
 
