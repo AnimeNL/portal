@@ -41,7 +41,7 @@ export interface LocationCardProps {
     /**
      * Destination where the user should go to after clicking on the destination.
      */
-    to?: string;
+    to: string;
 }
 
 type Properties = LocationCardProps & RouteComponentProps & WithStyles<typeof styles>;
@@ -57,9 +57,9 @@ class LocationCard extends React.Component<Properties> {
      * that are part of LocationCardProps for this, not the style and/or route properties.
      */
     shouldComponentUpdate(nextProps: Properties): boolean {
-        return this.props.internal != nextProps.internal ||
-               this.props.label != nextProps.label ||
-               this.props.to != nextProps.to;
+        return this.props.internal !== nextProps.internal ||
+               this.props.label !== nextProps.label ||
+               this.props.to !== nextProps.to;
     }
 
     /**
@@ -68,10 +68,6 @@ class LocationCard extends React.Component<Properties> {
     @bind
     onClick() {
         const { history, to } = this.props;
-
-        // Bail out if the `to` attribute was not provided.
-        if (!to)
-            return;
 
         // Push to the history. This will trigger the router to load the next page.
         history.push(to);
