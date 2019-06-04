@@ -32,7 +32,7 @@ export class ServiceWorkerManager {
     registrationPromise_: Promise<ServiceWorkerRegistration>;
 
     constructor() {
-        this.available_ = 'ServiceWorker' in navigator;
+        this.available_ = 'serviceWorker' in navigator;
 
         if (this.available_) {
             this.registrationPromise_ = navigator.serviceWorker.ready;
