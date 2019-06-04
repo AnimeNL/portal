@@ -10,6 +10,7 @@ import { LabeledSessionList } from '../components/LabeledSessionList';
 import { TimedListItem, TimedListItemProps } from '../components/TimedListItem';
 import { Volunteer } from '../app/Volunteer';
 import VolunteerListItem from '../components/VolunteerListItem';
+import { getState } from '../app/util/getState';
 import slug from '../app/util/Slug';
 
 import List from '@material-ui/core/List';
@@ -104,9 +105,8 @@ class VolunteerSchedulePage extends React.Component<Properties, State> {
 
             // TODO: Should we display volunteer availability on this page?
 
-            // TODO: Determine whether this shift is in the past, current or future.
-            const activeIncrement = 1;
-            const state = 'pending';
+            const state = getState(currentTime, shift);
+            const stateIncrement = state === 'past' ? 0 : 1;
 
             const shiftDisplayInfo: ShiftDisplayInfo = {
                 beginTime: shift.beginTime,
@@ -129,11 +129,11 @@ class VolunteerSchedulePage extends React.Component<Properties, State> {
 
             if (day) {
                 day.shifts.push(shiftDisplayInfo);
-                day.pending += activeIncrement;
+                day.pending += stateIncrement;
             } else {
                 days.set(dayIdentifier, {
                     label: shift.beginTime.format('dddd'),
-                    pending: activeIncrement,
+                    pending: stateIncrement,
                     shifts: [ shiftDisplayInfo ],
                     timestamp: dayIdentifier,
                 });

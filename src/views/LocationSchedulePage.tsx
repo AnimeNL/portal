@@ -13,6 +13,7 @@ import { PageHeader, PageHeaderDefaults, PageHeaderProps } from '../components/P
 import { TimedListItem, TimedListItemProps } from '../components/TimedListItem';
 import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
 import { getFloorDescription } from '../app/util/getDescription';
+import { getState } from '../app/util/getState';
 import slug from '../app/util/Slug';
 
 /**
@@ -171,9 +172,7 @@ class LocationSchedulePage extends React.Component<Properties, State> {
         };
 
         for (const session of sessions) {
-            const state = session.beginTime > currentTime
-                              ? 'pending'
-                              : (session.endTime < currentTime ? 'past' : 'active');
+            const state = getState(currentTime, session);
 
             const sessionDisplayInfo: SessionDisplayInfo = {
                 beginTime: session.beginTime,
