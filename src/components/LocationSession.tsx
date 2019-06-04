@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import clsx from 'clsx';
 
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
@@ -13,7 +14,6 @@ import PlayCircleOutlineIcon from '@material-ui/icons/PlayCircleOutline';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
-import blueGrey from '@material-ui/core/colors/blueGrey';
 import createStyles from '@material-ui/core/styles/createStyles';
 import { fade } from '@material-ui/core/styles/colorManipulator';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
@@ -36,6 +36,7 @@ const styles = (theme: Theme) =>
             fontSize: '16px',
         },
 
+        labelInternal: { color: theme.palette.text.disabled },
         label: {
             // TODO: Make this work correctly on desktop.
             // TODO: 50px to compensate for time-until. Dismiss when |!timing|?
@@ -104,8 +105,7 @@ class LocationSession extends React.PureComponent<LocationSessionProps & WithSty
                                          : <MoreHorizIcon className={classes.iconPending} /> }
                 </ListItemIcon>
 
-                <ListItemText className={classes.label}
-                              style={{ color: internal ? blueGrey[400] : undefined }}
+                <ListItemText className={clsx(classes.label, internal && classes.labelInternal)}
                               primaryTypographyProps={{ className: classes.labelText }}>
 
                     {label}

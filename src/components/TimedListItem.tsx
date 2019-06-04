@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import clsx from 'clsx';
 import moment from 'moment';
 
 import ConditionalLink from './ConditionalLink';
@@ -23,17 +24,20 @@ const styles = (theme: Theme) =>
             fontSize: 9,
             verticalAlign: 'top',
         },
-        noWrap: {
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-        },
         link: {
             textDecoration: 'none',
             color: 'inherit',
         },
 
+        timesDisabled: { color: theme.palette.text.disabled },
         times: {
             minWidth: 56,
+        },
+
+        titleInternal: { color: theme.palette.text.disabled },
+        title: {
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
         },
 
         past: {
@@ -158,12 +162,11 @@ class TimedListItem extends React.PureComponent<TimedListItemProps & WithStyles<
             <ConditionalLink className={classes.link} to={to}>
                 <ConditionalListItem className={classes[state]} button={!!to} divider>
 
-                    <div className={classes.times}>
+                    <div className={clsx(classes.times, internal && classes.timesDisabled)}>
                         {times}
                     </div>
 
-                    <ListItemText className={classes.noWrap}
-                                  style={{ color: internal ? blueGrey[400] : undefined }}
+                    <ListItemText className={clsx(classes.title, internal && classes.titleInternal)}
                                   primaryTypographyProps={{ noWrap: true }}
                                   secondary={description}
                                   secondaryTypographyProps={{ noWrap: true }}>
