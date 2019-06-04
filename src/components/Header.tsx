@@ -8,7 +8,7 @@ import bind from 'bind-decorator';
 import { AboutDialog } from './AboutDialog';
 import Environment from '../app/Environment';
 import Event from '../app/Event';
-import { MenuNotifier } from '../menu';
+import { MenuNotifier } from '../state/MenuNotifier';
 import { SearchBox } from './SearchBox';
 import { ThemeProvider } from '../theme';
 import { TitleManager, TitleObserver } from '../state/TitleManager';
@@ -207,7 +207,7 @@ class Header extends React.Component<Properties, State> implements TitleObserver
      */
     @bind
     openMenu(): void {
-        MenuNotifier.openMenu();
+        MenuNotifier.notify(/* open= */ true);
     }
 
     /**

@@ -5,7 +5,7 @@
 import React from 'react';
 import bind from 'bind-decorator';
 
-import { MenuNotifier, MenuObserver } from '../menu';
+import { MenuNotifier, MenuObserver } from '../state/MenuNotifier';
 import { kDrawerWidth } from '../config';
 
 import Divider from '@material-ui/core/Divider';
@@ -66,7 +66,7 @@ class ResponsiveDrawer extends React.Component<WithStyles<typeof styles>, State>
     /**
      * Called when the main menu should toggle.
      */
-    onMenuToggle(open: boolean): void {
+    update(open: boolean): void {
         if (this.state.open === open)
             return;
 
@@ -79,7 +79,7 @@ class ResponsiveDrawer extends React.Component<WithStyles<typeof styles>, State>
      */
     @bind
     onMenuClose(): void {
-        this.onMenuToggle(/* open= */ false);
+        this.update(/* open= */ false);
     }
 
     render() {

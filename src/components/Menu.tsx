@@ -9,7 +9,7 @@ import moment from 'moment';
 import Clock from '../app/Clock';
 import Event from '../app/Event';
 import MenuListItem from './MenuListItem';
-import { MenuNotifier } from '../menu';
+import { MenuNotifier } from '../state/MenuNotifier';
 import MenuSessionIndicator from './MenuSessionIndicator';
 import { UpdateTimeTracker } from './UpdateTimeTracker';
 import slug from '../app/util/Slug';
@@ -165,7 +165,7 @@ class Menu extends React.Component<Properties, State> {
      */
     @bind
     closeMenu() {
-        MenuNotifier.closeMenu();
+        MenuNotifier.notify(/* open= */ false);
     }
 
     render() {
