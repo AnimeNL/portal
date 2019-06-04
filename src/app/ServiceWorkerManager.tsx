@@ -2,6 +2,8 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import { ScheduleNotifier } from '../state/ScheduleNotifier';
+
 /**
  * Scope of the pages that should be controlled by the Service Worker.
  * TODO: Should this rely on some publicUrl environment variable?
@@ -61,11 +63,8 @@ export class ServiceWorkerManager {
                     return;
 
                 installingWorker.addEventListener('statechange', () => {
-                    if (navigator.serviceWorker.controller) {
-                        // TODO: An application update has succeeded, and the page is now running
-                        // with stale JavaScript code. We should fire the update banner.
-                        console.info('An updated service worker has been installed.');
-                    }
+                    if (navigator.serviceWorker.controller)
+                        ScheduleNotifier.notify();
                 })
             });
         } catch (e) {
