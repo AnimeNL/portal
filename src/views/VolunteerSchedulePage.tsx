@@ -3,11 +3,13 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
 import moment from 'moment';
 
 import Clock from '../app/Clock';
 import { LabeledSessionList } from '../components/LabeledSessionList';
 import { TimedListItem, TimedListItemProps } from '../components/TimedListItem';
+import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
 import { Volunteer } from '../app/Volunteer';
 import VolunteerListItem from '../components/VolunteerListItem';
 import { getState } from '../app/util/getState';
@@ -75,6 +77,11 @@ interface State {
      * Array of the various days during which shifts will take place in this location.
      */
     days: ShiftDayDisplayInfo[];
+
+    /**
+     * Moment at which the next automated update of this page should occur.
+     */
+    nextUpdate?: moment.Moment;
 }
 
 /**
@@ -82,8 +89,44 @@ interface State {
  * users will also be able to update the photo associated with this volunteer here.
  */
 class VolunteerSchedulePage extends React.Component<Properties, State> {
+    updateTimer?: NodeJS.Timeout;
     state: State = {
         days: [],
+    }
+
+    componentDidMount() { this.refreshUpdateTimer(); }
+    componentDidUpdate() { this.refreshUpdateTimer(); }
+
+    /**
+     * Refreshes the |updateTimer| by clearing the current one and setting a new one.
+     */
+    private refreshUpdateTimer() {
+        const { clock } = this.props;
+        const { nextUpdate } = this.state;
+
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
+
+        // It's possible that there are no future updates, for example when the last shift for this
+        // volunteer has been finished already.
+        if (!nextUpdate)
+            return;
+
+        this.updateTimer = setTimeout(this.refreshState, nextUpdate.diff(clock.getMoment()));
+    }
+
+    /**
+     * Called by the |updateTimer| as an event listed on the page has finished or is about to start.
+     */
+    @bind
+    private refreshState() {
+        this.setState(VolunteerSchedulePage.getDerivedStateFromProps(this.props));
+        this.refreshUpdateTimer();
+    }
+
+    componentWillUnmount() {
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
     }
 
     /**
@@ -95,6 +138,8 @@ class VolunteerSchedulePage extends React.Component<Properties, State> {
 
         const currentTime = clock.getMoment();
         const days: Map<number, ShiftDayDisplayInfo> = new Map();
+
+        let nextScheduleUpdate = currentTime.clone().add({ years: 1 });;
 
         for (const shift of volunteer.shifts) {
             if (!shift.isEvent())
@@ -121,6 +166,16 @@ class VolunteerSchedulePage extends React.Component<Properties, State> {
                 // the shift on the schedule. This should hopefully be globally unique.
                 key: `${event.id}-${shift.beginTime.unix()}`,
             };
+
+            // Consider this |session| for scheduling the next page update.
+            switch (state) {
+                case 'active':
+                    nextScheduleUpdate = moment.min(nextScheduleUpdate, shift.endTime);
+                    break;
+                case 'pending':
+                    nextScheduleUpdate = moment.min(nextScheduleUpdate, shift.beginTime);
+                    break;
+            }
 
             // Gets an identifier for the current day consistent throughout the sessions. A UNIX
             // timestamp is used rather than a Moment instance as Map can store multiple of those.
@@ -162,12 +217,15 @@ class VolunteerSchedulePage extends React.Component<Properties, State> {
             });
         }
 
-        return { days: sortedDays };
+        return {
+            days: sortedDays,
+            nextUpdate: nextScheduleUpdate
+        };
     }
 
     render() {
         const { onPictureUpdated, volunteer } = this.props;
-        const { days } = this.state;
+        const { days, nextUpdate } = this.state;
 
         return (
             <React.Fragment>
@@ -188,6 +246,8 @@ class VolunteerSchedulePage extends React.Component<Properties, State> {
 
                     </LabeledSessionList>
                 ) }
+
+                <UpdateTimeTracker label={volunteer.name} moment={nextUpdate} />
 
             </React.Fragment>
         );
