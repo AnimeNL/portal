@@ -72,7 +72,11 @@ export class Shift {
      */
     get event(): ProgramEvent {
         if (!this.event_)
-            throw new Error('Unable to access the event when there is none available.');
+            throw new Error(
+                'Unable to access the event when there is none available (' +
+                this.beginTime_.format('Y-MM-DD HH:mm') + ' - ' +
+                this.endTime_.format('Y-MM-DD HH:mm') + ').'
+            );
 
         return this.event_;
     }
