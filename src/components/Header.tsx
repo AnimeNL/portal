@@ -148,7 +148,7 @@ class Header extends React.Component<Properties, State> implements TitleObserver
      * Called when the page's title is being updated. Will update the internal state so that the
      * change can be reflected in the page header.
      */
-    onTitleUpdate(title: string | null): void {
+    update(title: string | null): void {
         const { environment } = this.props;
 
         this.setState({

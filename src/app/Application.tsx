@@ -108,7 +108,7 @@ class Application implements TitleObserver {
     /**
      * Will be called by the TitleManager when the page title updates.
      */
-    onTitleUpdate(title: string | null): void {
+    update(title: string | null): void {
         const { portalTitle } = this.environment;
 
         document.title = title ? title + ' | ' + portalTitle

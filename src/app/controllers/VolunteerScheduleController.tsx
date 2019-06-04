@@ -66,13 +66,13 @@ class VolunteerScheduleController extends React.Component<Properties, State> {
             if (createSlug(volunteer.name) !== slug)
                 continue;
 
-            TitleManager.setTitle(volunteer.name);
+            TitleManager.notify(volunteer.name);
 
             this.setState({ volunteer });
             return;
         }
 
-        TitleManager.setTitle(null);
+        TitleManager.notify(null);
 
         this.setState({ volunteer: undefined });
     }

@@ -48,7 +48,7 @@ class VolunteerListController extends React.Component<ApplicationProperties, Sta
             state.groups.push(group);
         }
 
-        TitleManager.setTitle('Volunteers');
+        TitleManager.notify('Volunteers');
 
         this.setState(state);
     }

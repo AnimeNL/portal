@@ -17,7 +17,7 @@ import { TitleManager } from '../../title';
  */
 class InternalsController extends React.Component<ApplicationProperties> {
     componentWillMount() {
-        TitleManager.setTitle('Internals');
+        TitleManager.notify('Internals');
     }
 
     /**

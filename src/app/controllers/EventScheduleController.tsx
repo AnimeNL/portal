@@ -53,8 +53,8 @@ class EventScheduleController extends React.Component<Properties, State> {
 
         const programEvent = event.getEvent(eventId);
 
-        TitleManager.setTitle(programEvent ? programEvent.sessions[0].name
-                                           : null);
+        TitleManager.notify(programEvent ? programEvent.sessions[0].name
+                                         : null);
 
         return { event: programEvent };
     }

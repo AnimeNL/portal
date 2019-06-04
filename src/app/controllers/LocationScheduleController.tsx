@@ -50,8 +50,8 @@ class LocationScheduleController extends React.Component<Properties, State> {
 
         const location = event.getLocation(locationId);
 
-        TitleManager.setTitle(location ? location.label
-                                       : null);
+        TitleManager.notify(location ? location.label
+                                     : null);
 
         return { location };
     }

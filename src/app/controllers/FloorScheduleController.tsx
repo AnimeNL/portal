@@ -51,8 +51,8 @@ class FloorScheduleController extends React.Component<Properties, State> {
 
         const floor = event.getFloor(floorId);
 
-        TitleManager.setTitle(floor ? floor.label
-                                    : null);
+        TitleManager.notify(floor ? floor.label
+                                  : null);
 
         return { floor };
     }
