@@ -174,7 +174,7 @@ class Event {
                 new Shift(info, volunteer, event, clock);
             }
 
-            this.volunteerTracker = new VolunteerTracker(this.volunteers);
+            this.volunteerTracker = new VolunteerTracker(this.volunteers, clock);
             this.volunteer = this.volunteers.get(user.userToken);
 
             if (eventData.internalNotes)
