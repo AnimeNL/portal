@@ -139,7 +139,7 @@ class VolunteerSchedulePage extends React.Component<Properties, State> {
         const currentTime = clock.getMoment();
         const days: Map<number, ShiftDayDisplayInfo> = new Map();
 
-        let nextScheduleUpdate = currentTime.clone().add({ years: 1 });;
+        let nextScheduleUpdate = currentTime.clone().add({ years: 1 });
 
         for (const shift of volunteer.shifts) {
             if (!shift.isEvent())

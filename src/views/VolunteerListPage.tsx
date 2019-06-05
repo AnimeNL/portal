@@ -5,9 +5,11 @@
 import React from 'react';
 import { RouteComponentProps } from 'react-router-dom';
 import bind from 'bind-decorator';
+import moment from 'moment';
 
 import ApplicationProperties from '../app/ApplicationProperties';
 import { TitleManager } from '../state/TitleManager';
+import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
 import { VolunteerActivityInfo } from '../app/Event';
 import { VolunteerGroupTabs, VolunteerGroupTabInfo } from '../components/VolunteerGroupTabs';
 import VolunteerListItem from '../components/VolunteerListItem';
@@ -53,7 +55,12 @@ interface State {
     /**
      * Volunteers that have to be displayed, with their current activity state.
      */
-    volunteers: VolunteerActivityInfo[],
+    volunteers: VolunteerActivityInfo[];
+
+    /**
+     * Moment at which the next automated update of this page should occur.
+     */
+    nextUpdate?: moment.Moment;
 }
 
 /**
@@ -62,10 +69,45 @@ interface State {
  * multiple groups of volunteers, a tab switcher will be shown as well.
  */
 class VolunteerListPage extends React.Component<Properties & WithStyles<typeof styles>, State> {
+    updateTimer?: NodeJS.Timeout;
     state: State = {
         activeTabIndex: 0,
         tabs: [],
         volunteers: []
+    }
+
+    componentDidMount() { this.refreshUpdateTimer(); }
+    componentDidUpdate() { this.refreshUpdateTimer(); }
+
+    /**
+     * Refreshes the |updateTimer| by clearing the current one and setting a new one.
+     */
+    private refreshUpdateTimer() {
+        const { clock } = this.props;
+        const { nextUpdate } = this.state;
+
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
+
+        // It's possible that there are no future updates, for example because the event is over.
+        if (!nextUpdate)
+            return;
+
+        this.updateTimer = setTimeout(this.refreshState, nextUpdate.diff(clock.getMoment()));
+    }
+
+    /**
+     * Called by the |updateTimer| as an event listed on the page has finished or is about to start.
+     */
+    @bind
+    private refreshState() {
+        this.setState(VolunteerListPage.getDerivedStateFromProps(this.props));
+        this.refreshUpdateTimer();
+    }
+
+    componentWillUnmount() {
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
     }
 
     /**
@@ -117,7 +159,15 @@ class VolunteerListPage extends React.Component<Properties & WithStyles<typeof s
             return lhs.volunteer.name.localeCompare(rhs.volunteer.name);
         });
 
-        return { activeTabIndex, tabs, volunteers };
+        let nextUpdate = props.clock.getMoment().add({ years: 1 });
+        volunteers.forEach(volunteerActivityInfo => {
+            if (volunteerActivityInfo.currentShift)
+                nextUpdate = moment.min(nextUpdate, volunteerActivityInfo.currentShift.endTime);
+            else if (volunteerActivityInfo.upcomingShift)
+                nextUpdate = moment.min(nextUpdate, volunteerActivityInfo.upcomingShift.beginTime);
+        });
+
+        return { activeTabIndex, tabs, volunteers, nextUpdate };
     }
 
     /**
@@ -129,7 +179,7 @@ class VolunteerListPage extends React.Component<Properties & WithStyles<typeof s
     }
 
     render() {
-        const { activeTabIndex, tabs, volunteers } = this.state;
+        const { activeTabIndex, tabs, volunteers, nextUpdate } = this.state;
         const { classes } = this.props;
 
         return (
@@ -149,6 +199,9 @@ class VolunteerListPage extends React.Component<Properties & WithStyles<typeof s
                                            volunteer={volunteer.volunteer}
                                            volunteerActivityInfo={volunteer} /> )}
                 </List>
+
+                <UpdateTimeTracker label="Volunteers" moment={nextUpdate} />
+
             </>
         );
     }
