@@ -13,6 +13,16 @@ import { VolunteerGroupTabs, VolunteerGroupTabInfo } from '../components/Volunte
 import VolunteerListItem from '../components/VolunteerListItem';
 
 import List from '@material-ui/core/List';
+import { Theme } from '@material-ui/core/styles/createMuiTheme';
+import createStyles from '@material-ui/core/styles/createStyles';
+import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
+
+const styles = (theme: Theme) =>
+    createStyles({
+        fullWidth: {
+            ...theme.fullWidthPaperMixin,
+        }
+    });
 
 /**
  * Properties available to the controller through the router.
@@ -51,7 +61,7 @@ interface State {
  * name and an avatar, as well as their title and, if any, their current activity. When there are
  * multiple groups of volunteers, a tab switcher will be shown as well.
  */
-export class VolunteerListPage extends React.Component<Properties, State> {
+class VolunteerListPage extends React.Component<Properties & WithStyles<typeof styles>, State> {
     state: State = {
         activeTabIndex: 0,
         tabs: [],
@@ -110,6 +120,7 @@ export class VolunteerListPage extends React.Component<Properties, State> {
 
     render() {
         const { activeTabIndex, tabs, volunteers } = this.state;
+        const { classes } = this.props;
 
         return (
             <>
@@ -117,13 +128,21 @@ export class VolunteerListPage extends React.Component<Properties, State> {
                                     activeTabIndex={activeTabIndex}
                                     tabs={tabs} />
 
-                <List>
+                <List className={classes.fullWidth}>
                     {volunteers.map(volunteer =>
                         <VolunteerListItem key={volunteer.volunteer.userToken}
                                            type="status"
-                                           volunteer={volunteer.volunteer} /> )}
+                                           active={volunteer.currentShift &&
+                                                       volunteer.currentShift.isEvent()}
+                                           unavailable={volunteer.currentShift &&
+                                                            volunteer.currentShift.isUnavailable()}
+                                           volunteer={volunteer.volunteer}
+                                           volunteerActivityInfo={volunteer} /> )}
                 </List>
             </>
         );
     }
 }
+
+const StyledVolunteerListPage = withStyles(styles)(VolunteerListPage);
+export { StyledVolunteerListPage as VolunteerListPage };
