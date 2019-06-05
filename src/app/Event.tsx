@@ -13,7 +13,6 @@ import User from './User';
 import { Volunteer } from './Volunteer';
 import { VolunteerGroup } from './VolunteerGroup';
 import { VolunteerTracker } from './VolunteerTracker';
-import { ExpandableDescriptionPaper } from '../components/ExpandableDescriptionPaper';
 
 /**
  * Interface describing a volunteer, as well as their current and upcoming activities.
@@ -33,6 +32,21 @@ interface VolunteerActivityInfo {
      * The next shift this volunteer will engage in, if any.
      */
     upcomingShift?: Shift;
+}
+
+/**
+ * Interface representing the activity status for a group of volunteers.
+ */
+interface VolunteerGroupActivityInfo {
+    /**
+     * The group of volunteers this information is about.
+     */
+    group: VolunteerGroup;
+
+    /**
+     * The number of shifts within this group that are currently active.
+     */
+    activeShifts: number;
 }
 
 /**
@@ -247,8 +261,20 @@ class Event {
     /**
      * Returns an iterator that provides access over the groups of volunteers.
      */
-    getVolunteerGroups(): IterableIterator<VolunteerGroup> {
-        return this.volunteerGroups.values();
+    getVolunteerGroups(): VolunteerGroupActivityInfo[] {
+        if (!this.volunteerTracker)
+            throw new Error('The volunteer tracker must be initialized for this method to work.');
+
+        let groups: VolunteerGroupActivityInfo[] = [];
+
+        for (const volunteerGroup of this.volunteerGroups.values()) {
+            groups.push({
+                group: volunteerGroup,
+                activeShifts: this.volunteerTracker.getActiveShiftsForGroup(volunteerGroup),
+            })
+        }
+
+        return groups;
     }
 
     /**

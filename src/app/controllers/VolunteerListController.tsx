@@ -39,7 +39,9 @@ class VolunteerListController extends React.Component<ApplicationProperties, Sta
         const { event } = this.props;
         const state: State = this.state;
 
-        for (const group of event.getVolunteerGroups()) {
+        for (const activityInfo of event.getVolunteerGroups()) {
+            const group = activityInfo.group;
+
             if (group.primary) {
                 state.activeGroupIndex = state.groups.length;
                 state.volunteers = this.getVolunteersForGroup(group);

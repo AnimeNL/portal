@@ -91,7 +91,7 @@ class Menu extends React.Component<Properties, State> {
         // a single group, specialize the display.
         const volunteerGroups = Array.from(event.getVolunteerGroups());
         if (volunteerGroups.length === 1)
-            this.setState({ volunteersLabel: volunteerGroups[0].label });
+            this.setState({ volunteersLabel: volunteerGroups[0].group.label });
 
         // Populate the list of floors available for the event. The counter will continue to update
         // as time goes on, to ensure we have up-to-date information.

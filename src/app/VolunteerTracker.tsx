@@ -4,6 +4,7 @@
 
 import { Shift } from './Shift';
 import { Volunteer } from './Volunteer';
+import { VolunteerGroup } from './VolunteerGroup';
 
 type VolunteerActivityInfo = { currentShift?: Shift; upcomingShift?: Shift; };
 
@@ -26,5 +27,12 @@ export class VolunteerTracker {
      */
     getActivityInfoForVolunteer(volunteer: Volunteer): VolunteerActivityInfo {
         return {};
+    }
+
+    /**
+     * Returns the number of active shifts within the given |volunteerGroup|.
+     */
+    getActiveShiftsForGroup(volunteerGroup: VolunteerGroup): number {
+        return 0;
     }
 }
