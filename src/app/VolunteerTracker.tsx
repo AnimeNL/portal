@@ -48,6 +48,8 @@ export class VolunteerTracker {
 
         this.volunteers = volunteers;
         this.update();
+
+        document.addEventListener('visibilitychange', this.updateIfWindowBecameVisible);
     }
 
     /**
@@ -65,6 +67,16 @@ export class VolunteerTracker {
     }
 
     /**
+     * Listens to visibility change events of the current window. If the window became visible again
+     * the activity state should be updated, as timers might've been suspended by the browser.
+     */
+    @bind
+    updateIfWindowBecameVisible(): void {
+        if (document.visibilityState === 'visible')
+            this.update();
+    }
+
+    /**
      * Updates the volunteer activity state for all volunteers known to the portal.
      */
     @bind
@@ -72,8 +84,6 @@ export class VolunteerTracker {
         const activeShiftsForGroup: Map<VolunteerGroup, number> = new Map();
         const activityInfoForVolunteer: Map<Volunteer, VolunteerActivityInfo> = new Map();
         const currentTime = this.clock.getMoment();
-
-        console.log('xx');
 
         if (this.updateTimer)
             clearTimeout(this.updateTimer);
