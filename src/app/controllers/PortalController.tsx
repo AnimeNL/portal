@@ -13,7 +13,7 @@ import FloorScheduleController from './FloorScheduleController';
 import InternalsController from './InternalsController';
 import LocationScheduleController from './LocationScheduleController';
 import OverviewPage from '../../views/OverviewPage';
-import VolunteerListController from './VolunteerListController';
+import { VolunteerListPage } from '../../views/VolunteerListPage';
 import VolunteerScheduleController from './VolunteerScheduleController';
 import { kCacheNames } from '../../config';
 
@@ -82,7 +82,7 @@ class PortalController extends React.Component<ApplicationProperties> {
                     <RouteController path="/schedule/events/:event" component={EventScheduleController} />
                     <RouteController path="/schedule/floors/:floor" component={FloorScheduleController} />
                     <RouteController path="/schedule/locations/:location" component={LocationScheduleController} />
-                    <RouteController path="/volunteers" exact component={VolunteerListController} />
+                    <RouteController path="/volunteers" exact component={VolunteerListPage} />
                     <RouteController path="/volunteers/:slug" component={VolunteerScheduleController} />
                     <RouteController path="/" exact component={OverviewPage} />
 

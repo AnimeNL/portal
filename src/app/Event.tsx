@@ -17,7 +17,7 @@ import { VolunteerTracker } from './VolunteerTracker';
 /**
  * Interface describing a volunteer, as well as their current and upcoming activities.
  */
-interface VolunteerActivityInfo {
+export interface VolunteerActivityInfo {
     /**
      * The volunteer this structure is defining.
      */

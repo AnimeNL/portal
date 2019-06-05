@@ -3,40 +3,46 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import { RouteComponentProps } from 'react-router-dom';
+import bind from 'bind-decorator';
 
-import { Volunteer } from '../app/Volunteer';
-import { VolunteerGroup } from '../app/VolunteerGroup';
+import ApplicationProperties from '../app/ApplicationProperties';
+import { VolunteerActivityInfo } from '../app/Event';
+import { VolunteerGroupTabs, VolunteerGroupTabInfo } from '../components/VolunteerGroupTabs';
 import VolunteerListItem from '../components/VolunteerListItem';
 
 import List from '@material-ui/core/List';
-import Paper from '@material-ui/core/Paper';
-import Tab from '@material-ui/core/Tab';
-import Tabs from '@material-ui/core/Tabs';
 
 /**
- * Properties accepted by the <VolunteerListPage> element.
+ * Properties available to the controller through the router.
  */
-interface Properties {
+interface RouterProperties {
     /**
-     * The groups of volunteers that should be displayed on the page. Tabs will only show up when
-     * there is more than a single group to show.
+     * Index of the active group that should be displayed.
      */
-    groups: VolunteerGroup[];
+    activeGroupIndex: string;
+}
+
+type Properties = ApplicationProperties & RouteComponentProps<RouterProperties>;
+
+/**
+ * State of the <VolunteerListPage> component.
+ */
+interface State {
+    /**
+     * Index of the tab of volunteers that's currently active.
+     */
+    activeTabIndex: number;
 
     /**
-     * The volunteers that should be displayed for the current group of volunteers.
+     * Tabs that should be displayed on the page.
      */
-    volunteers: Volunteer[];
+    tabs: VolunteerGroupTabInfo[];
 
     /**
-     * Index of the active group of volunteers as available in |groups|.
+     * Volunteers that have to be displayed, with their current activity state.
      */
-    activeGroupIndex: number;
-
-    /**
-     * Event to invoke when the group of volunteers that is to be displayed changes.
-     */
-    onVolunteerGroupChange: (groupIndex: number) => void;
+    volunteers: VolunteerActivityInfo[],
 }
 
 /**
@@ -44,41 +50,68 @@ interface Properties {
  * name and an avatar, as well as their title and, if any, their current activity. When there are
  * multiple groups of volunteers, a tab switcher will be shown as well.
  */
-export class VolunteerListPage extends React.Component<Properties> {
-    render() {
-        const { activeGroupIndex, groups, onVolunteerGroupChange, volunteers } = this.props;
+export class VolunteerListPage extends React.Component<Properties, State> {
+    state: State = {
+        activeTabIndex: 0,
+        tabs: [],
+        volunteers: []
+    }
 
-        let tabs: JSX.Element | null = null;
+    /**
+     * Called when the component mounts or updates, to compute the state. This will trigger React to
+     * request a re-render of the element and the displayed information.
+     */
+    static getDerivedStateFromProps(props: Properties) {
+        let activeTabIndex = 0;
+        let activeVolunteer = props.event.getCurrentVolunteer();
 
-        // Only display the tab switcher when there are multiple groups of volunteers.
-        if (groups.length >= 2) {
-            tabs = (
-                <Paper square>
-                    <Tabs
-                        value={activeGroupIndex}
-                        onChange={(e, groupIndex) => onVolunteerGroupChange(groupIndex)}
-                        indicatorColor="primary"
-                        variant="fullWidth">
+        // (1) Populate the list of tabs based on the volunteer groups.
+        const tabs = props.event.getVolunteerGroups().map((info, index) => {
+            if (activeVolunteer && activeVolunteer.group === info.group)
+                activeTabIndex = index;
 
-                        {groups.map((group, index) => {
-                            return (
-                                <Tab key={index} label={group.label} />
-                            );
-                        })}
+            return {
+                activeShifts: info.activeShifts,
+                label: info.group.label,
+            };
+        });
 
-                    </Tabs>
-                </Paper>
-            );
+        const hash = props.location.hash;
+
+        // (2) Determine the active tab index based on the hash in the URL
+        if (hash.length >= 2) {
+            const potentialActiveTabIndex = parseInt(hash.substr(1), 10);
+            if (potentialActiveTabIndex >= 0 && potentialActiveTabIndex < tabs.length)
+                activeTabIndex = potentialActiveTabIndex;
         }
+
+        // TODO: Populate the list of |volunteers|.
+
+        return { activeTabIndex, tabs };
+    }
+
+    /**
+     * Called when the list of displayed volunteers should change. Causes a navigation.
+     */
+    @bind
+    onVolunteerGroupChange(tabIndex: number) {
+        this.props.history.push('#' + tabIndex);
+    }
+
+    render() {
+        const { activeTabIndex, tabs, volunteers } = this.state;
 
         return (
             <>
-                {tabs}
+                <VolunteerGroupTabs activeTabChange={this.onVolunteerGroupChange}
+                                    activeTabIndex={activeTabIndex}
+                                    tabs={tabs} />
+
                 <List>
                     {volunteers.map(volunteer =>
-                        <VolunteerListItem key={volunteer.userToken}
+                        <VolunteerListItem key={volunteer.volunteer.userToken}
                                            type="status"
-                                           volunteer={volunteer} /> )}
+                                           volunteer={volunteer.volunteer} /> )}
                 </List>
             </>
         );
