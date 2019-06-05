@@ -8,7 +8,7 @@ import Badge from '@material-ui/core/Badge';
 import Paper from '@material-ui/core/Paper';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
-import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
+import withStyles from '@material-ui/core/styles/withStyles';
 
 /**
  * A <Badge> component with styling adjusted to our needs.
