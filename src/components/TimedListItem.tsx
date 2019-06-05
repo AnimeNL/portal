@@ -58,6 +58,7 @@ const styles = (theme: Theme) =>
             fontSize: 'inherit',
             position: 'relative',
             left: theme.spacing(0.5),
+            marginRight: theme.spacing(0.5),
             top: 2,
         }
     });
