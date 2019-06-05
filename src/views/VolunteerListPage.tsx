@@ -105,7 +105,17 @@ class VolunteerListPage extends React.Component<Properties & WithStyles<typeof s
         TitleManager.notify(activeGroup.label);
 
         // (4) Populate the list of volunteers for the given |activeGroup|.
-        const volunteers = event.getVolunteersForGroup(activeGroup);
+        const volunteers = event.getVolunteersForGroup(activeGroup).sort((lhs, rhs) => {
+            const lhsUnavailable = lhs.currentShift && lhs.currentShift.isUnavailable();
+            const rhsUnavailable = rhs.currentShift && rhs.currentShift.isUnavailable();
+
+            if (lhsUnavailable && !rhsUnavailable)
+                return 1;
+            if (rhsUnavailable && !lhsUnavailable)
+                return -1;
+
+            return lhs.volunteer.name.localeCompare(rhs.volunteer.name);
+        });
 
         return { activeTabIndex, tabs, volunteers };
     }
