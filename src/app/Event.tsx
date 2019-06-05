@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import EventLoader from './EventLoader';
+import { EventUpdateChecker } from './EventUpdateChecker';
 import Clock from './Clock';
 import { Floor } from './Floor';
 import { Location } from './Location';
@@ -103,6 +104,11 @@ class Event {
     private volunteerTracker?: VolunteerTracker;
 
     /**
+     * An object that periodically checks whether event updates are available.
+     */
+    private updateChecker?: EventUpdateChecker;
+
+    /**
      * Asynchronously loads the event using the EventLoader. The |user| instance will be used to
      * obtain their authentication token, and to sign them out in case their data expired.
      */
@@ -179,6 +185,10 @@ class Event {
 
             if (eventData.internalNotes)
                 this.internalNotes = eventData.internalNotes;
+
+            // The event data has successfully been loaded, we can now rely on the update checker to
+            // periodically do the same to wait for program updates.
+            this.updateChecker = new EventUpdateChecker(user.authToken, eventData.version);
 
         } catch (e) {
             console.error('Unable to import the event data.', e);
