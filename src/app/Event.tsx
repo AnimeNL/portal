@@ -284,19 +284,23 @@ class Event {
      * @param group The group for which volunteers should be returned.
      * @return An iterator that provides access to all the volunteers in that particular group.
      */
-    *getVolunteersForGroup(group: VolunteerGroup): IterableIterator<VolunteerActivityInfo> {
+    getVolunteersForGroup(group: VolunteerGroup): VolunteerActivityInfo[] {
         if (!this.volunteerTracker)
             throw new Error('The volunteer tracker must be initialized for this method to work.');
+
+        let volunteers: VolunteerActivityInfo[] = [];
 
         for (const volunteer of this.volunteers.values()) {
             if (volunteer.group !== group)
                 continue;
 
-            yield {
+            volunteers.push({
                 ...this.volunteerTracker.getActivityInfoForVolunteer(volunteer),
                 volunteer,
-            };
+            });
         }
+
+        return volunteers;
     }
 }
 

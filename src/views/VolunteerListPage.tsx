@@ -7,6 +7,7 @@ import { RouteComponentProps } from 'react-router-dom';
 import bind from 'bind-decorator';
 
 import ApplicationProperties from '../app/ApplicationProperties';
+import { TitleManager } from '../state/TitleManager';
 import { VolunteerActivityInfo } from '../app/Event';
 import { VolunteerGroupTabs, VolunteerGroupTabInfo } from '../components/VolunteerGroupTabs';
 import VolunteerListItem from '../components/VolunteerListItem';
@@ -65,8 +66,11 @@ export class VolunteerListPage extends React.Component<Properties, State> {
         let activeTabIndex = 0;
         let activeVolunteer = props.event.getCurrentVolunteer();
 
+        const event = props.event;
+        const groups = event.getVolunteerGroups();
+
         // (1) Populate the list of tabs based on the volunteer groups.
-        const tabs = props.event.getVolunteerGroups().map((info, index) => {
+        const tabs = groups.map((info, index) => {
             if (activeVolunteer && activeVolunteer.group === info.group)
                 activeTabIndex = index;
 
@@ -85,9 +89,15 @@ export class VolunteerListPage extends React.Component<Properties, State> {
                 activeTabIndex = potentialActiveTabIndex;
         }
 
-        // TODO: Populate the list of |volunteers|.
+        const activeGroup = groups[activeTabIndex].group;
 
-        return { activeTabIndex, tabs };
+        // (3) Update the page title to reflect the displayed list of volunteers.
+        TitleManager.notify(activeGroup.label);
+
+        // (4) Populate the list of volunteers for the given |activeGroup|.
+        const volunteers = event.getVolunteersForGroup(activeGroup);
+
+        return { activeTabIndex, tabs, volunteers };
     }
 
     /**
