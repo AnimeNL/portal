@@ -3,14 +3,15 @@
 // be found in the LICENSE file.
 
 import bind from 'bind-decorator';
+import moment from 'moment';
 
 import EventLoader from './EventLoader';
 import { ScheduleNotifier } from '../state/ScheduleNotifier';
 
 /**
- * Interval, in milliseconds, at which we should check for event updates.
+ * Interval, in minutes, at which we should check for event updates.
  */
-const kUpdateIntervalMs = 10 * 10 * 1000;  // 10 minutes
+const kUpdateIntervalMinutes = 10;
 
 /**
  * Automatically re-loads the event at a configured interval to check whether updates are available.
@@ -21,6 +22,11 @@ export class EventUpdateChecker {
      * The authentication token for which updates should be processed.
      */
     private authToken: string;
+
+    /**
+     * Moment at which the last update check has been done.
+     */
+    private lastUpdateCheck: moment.Moment;
 
     /**
      * Version of the event that has been loaded into the portal.
@@ -36,7 +42,23 @@ export class EventUpdateChecker {
         this.authToken = authToken;
         this.version = version;
 
-        this.updateTimer = setInterval(this.update, kUpdateIntervalMs);
+        this.lastUpdateCheck = moment();
+        this.updateTimer = setInterval(this.update, kUpdateIntervalMinutes * 60 * 1000);
+
+        document.addEventListener('visibilitychange', this.visibilityChange);
+    }
+
+    /**
+     * Called when the window's visibility status changes. To deal with timer suspension in modern
+     * browsers, we might have to re-set the |updateTimer|.
+     */
+    @bind
+    visibilityChange(): void {
+        if (document.visibilityState !== 'visible')
+            return;
+        
+        if (moment().diff(this.lastUpdateCheck, 'minutes') >= kUpdateIntervalMinutes)
+            this.update();
     }
 
     /**
@@ -46,6 +68,9 @@ export class EventUpdateChecker {
     @bind
     async update(): Promise<void> {
         const eventLoader = new EventLoader();
+
+        // Update the last update time to be *now*.
+        this.lastUpdateCheck = moment();
 
         // If the event data could not be loaded, bail out. If it couldn't be loaded due to user
         // error, for example because their credentials expired, reload the page.
