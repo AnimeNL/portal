@@ -57,7 +57,7 @@ class VolunteerListController extends React.Component<ApplicationProperties, Sta
      * Returns the list of volunteers for the given |group| as an array.
      */
     private getVolunteersForGroup(group: VolunteerGroup): Volunteer[] {
-        return Array.from(this.props.event.getVolunteersForGroup(group));
+        return Array.from(this.props.event.getVolunteersForGroup(group)).map(e => e.volunteer);
     }
 
     /**

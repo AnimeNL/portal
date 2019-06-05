@@ -12,6 +12,28 @@ import { Shift } from './Shift';
 import User from './User';
 import { Volunteer } from './Volunteer';
 import { VolunteerGroup } from './VolunteerGroup';
+import { VolunteerTracker } from './VolunteerTracker';
+import { ExpandableDescriptionPaper } from '../components/ExpandableDescriptionPaper';
+
+/**
+ * Interface describing a volunteer, as well as their current and upcoming activities.
+ */
+interface VolunteerActivityInfo {
+    /**
+     * The volunteer this structure is defining.
+     */
+    volunteer: Volunteer;
+
+    /**
+     * The shift this volunteer is currently engaged in, if any.
+     */
+    currentShift?: Shift;
+
+    /**
+     * The next shift this volunteer will engage in, if any.
+     */
+    upcomingShift?: Shift;
+}
 
 /**
  * Represents the event this volunteer portal exists for, including data on all the volunteers,
@@ -60,6 +82,11 @@ class Event {
      * logged in users have a Volunteer object, as the latter indicates they have a schedule too.
      */
     private volunteer?: Volunteer;
+
+    /**
+     * The volunteer tracker that keeps track of our volunteers' activities.
+     */
+    private volunteerTracker?: VolunteerTracker;
 
     /**
      * Asynchronously loads the event using the EventLoader. The |user| instance will be used to
@@ -133,6 +160,7 @@ class Event {
                 new Shift(info, volunteer, event, clock);
             }
 
+            this.volunteerTracker = new VolunteerTracker(this.volunteers);
             this.volunteer = this.volunteers.get(user.userToken);
 
             if (eventData.internalNotes)
@@ -230,12 +258,18 @@ class Event {
      * @param group The group for which volunteers should be returned.
      * @return An iterator that provides access to all the volunteers in that particular group.
      */
-    *getVolunteersForGroup(group: VolunteerGroup): IterableIterator<Volunteer> {
+    *getVolunteersForGroup(group: VolunteerGroup): IterableIterator<VolunteerActivityInfo> {
+        if (!this.volunteerTracker)
+            throw new Error('The volunteer tracker must be initialized for this method to work.');
+
         for (const volunteer of this.volunteers.values()) {
             if (volunteer.group !== group)
                 continue;
 
-            yield volunteer;
+            yield {
+                ...this.volunteerTracker.getActivityInfoForVolunteer(volunteer),
+                volunteer,
+            };
         }
     }
 }
