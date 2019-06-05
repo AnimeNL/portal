@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import bind from 'bind-decorator';
+import moment from 'moment';
 
 import Clock from './Clock';
 import { Shift } from './Shift';
@@ -36,9 +37,14 @@ export class VolunteerTracker {
      */
     activityInfoForVolunteer: Map<Volunteer, VolunteerActivityInfo> = new Map();
 
+    /**
+     * Timer responsible for keeping the volunteer status up to date.
+     */
+    updateTimer?: NodeJS.Timeout;
+
     constructor(volunteers: Map<string, Volunteer>, clock: Clock) {
         this.clock = clock;
-        this.clock.addObserver(this.onTimeChange);
+        this.clock.addObserver(this.update);
 
         this.volunteers = volunteers;
         this.update();
@@ -59,20 +65,20 @@ export class VolunteerTracker {
     }
 
     /**
-     *  Called when the time of the application changes.
-     */
-    @bind
-    onTimeChange() {
-        this.update();
-    }
-
-    /**
      * Updates the volunteer activity state for all volunteers known to the portal.
      */
+    @bind
     async update(): Promise<void> {
         const activeShiftsForGroup: Map<VolunteerGroup, number> = new Map();
         const activityInfoForVolunteer: Map<Volunteer, VolunteerActivityInfo> = new Map();
         const currentTime = this.clock.getMoment();
+
+        console.log('xx');
+
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
+
+        let nextUpdate = currentTime.clone().add({ years: 1 });
 
         for (const volunteer of this.volunteers.values()) {
             const volunteerGroup = volunteer.group;
@@ -85,9 +91,11 @@ export class VolunteerTracker {
                     continue;  // in the past
                 
                 if (shift.beginTime <= currentTime) {
+                    nextUpdate = moment.min(nextUpdate, shift.endTime);
                     currentShift = shift;
                     continue;
                 } else {
+                    nextUpdate = moment.min(nextUpdate, shift.beginTime);
                     upcomingShift = shift;
                     break;
                 }
@@ -103,6 +111,8 @@ export class VolunteerTracker {
             if (currentShift || upcomingShift)
                 activityInfoForVolunteer.set(volunteer, { currentShift, upcomingShift });
         }
+
+        this.updateTimer = setTimeout(this.update, nextUpdate.diff(currentTime));
 
         this.activeShiftsForGroup = activeShiftsForGroup;
         this.activityInfoForVolunteer = activityInfoForVolunteer;
