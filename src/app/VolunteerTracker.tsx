@@ -2,6 +2,8 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import bind from 'bind-decorator';
+
 import Clock from './Clock';
 import { Shift } from './Shift';
 import { Volunteer } from './Volunteer';
@@ -36,6 +38,7 @@ export class VolunteerTracker {
 
     constructor(volunteers: Map<string, Volunteer>, clock: Clock) {
         this.clock = clock;
+        this.clock.addObserver(this.onTimeChange);
 
         this.volunteers = volunteers;
         this.update();
@@ -53,6 +56,14 @@ export class VolunteerTracker {
      */
     getActiveShiftsForGroup(volunteerGroup: VolunteerGroup): number {
         return this.activeShiftsForGroup.get(volunteerGroup) || 0;
+    }
+
+    /**
+     *  Called when the time of the application changes.
+     */
+    @bind
+    onTimeChange() {
+        this.update();
     }
 
     /**
