@@ -5,8 +5,10 @@
 import { RouteComponentProps, withRouter } from 'react-router-dom';
 import React from 'react';
 import bind from 'bind-decorator';
+import moment from 'moment';
 
 import ApplicationProperties from '../app/ApplicationProperties';
+import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
 import slug from '../app/util/Slug';
 
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
@@ -168,14 +170,55 @@ interface State {
      * unavailable. Will be displayed in a separate box.
      */
     unavailableUntil?: string;
+
+    /**
+     * Moment at which the next automated update of this page should occur.
+     */
+    nextUpdate?: moment.Moment;
 }
 
 type Properties = ApplicationProperties & RouteComponentProps & WithStyles<typeof styles>;
 
 class OverviewPage extends React.Component<Properties, State> {
+    updateTimer?: NodeJS.Timeout;
     state: State = {
         intro: '',
     };
+
+    componentDidMount() { this.refreshUpdateTimer(); }
+    componentDidUpdate() { this.refreshUpdateTimer(); }
+
+    /**
+     * Refreshes the |updateTimer| by clearing the current one and setting a new one.
+     */
+    private refreshUpdateTimer() {
+        const { clock } = this.props;
+        const { nextUpdate } = this.state;
+
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
+
+        // It's possible that there are no future updates, for example when the last shift for this
+        // volunteer has been finished already.
+        if (!nextUpdate)
+            return;
+
+        this.updateTimer = setTimeout(this.refreshState, nextUpdate.diff(clock.getMoment()));
+    }
+
+    /**
+     * Called by the |updateTimer| as an event listed on the page has finished or is about to start.
+     */
+    @bind
+    private refreshState() {
+        this.setState(OverviewPage.getDerivedStateFromProps(this.props));
+        this.refreshUpdateTimer();
+    }
+
+    componentWillUnmount() {
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
+    }
 
     /**
      * Called when the component mounts or updates, to compute the state. This will trigger React to
@@ -184,6 +227,8 @@ class OverviewPage extends React.Component<Properties, State> {
     static getDerivedStateFromProps(props: Properties) {
         const currentTime = props.clock.getMoment();
         const volunteer = props.event.getCurrentVolunteer();
+
+        let nextScheduleUpdate = currentTime.clone().add({ years: 1 });
 
         const { environment } = props;
 
@@ -209,8 +254,10 @@ class OverviewPage extends React.Component<Properties, State> {
                 // The volunteer might have been marked as explicitly being unavailable during this
                 // time, which we can reflect on the overview page too. Otherwise we ignore this.
                 if (shift.isUnavailable()) {
-                    if (isActive)
+                    if (isActive) {
                         initialState.unavailableUntil = shift.endTime.format('HH:mm');
+                        initialState.nextUpdate = moment.min(nextScheduleUpdate, shift.endTime);
+                    }
                     continue;
                 }
 
@@ -227,6 +274,10 @@ class OverviewPage extends React.Component<Properties, State> {
                     timestamp: isActive ? 'until ' + shift.endTime.format('HH:mm')
                                         : shift.beginTime.from(currentTime)
                 };
+
+                // Consider this |shift| for scheduling the next page update.
+                nextScheduleUpdate = moment.min(nextScheduleUpdate, isActive ? shift.endTime :
+                                                                               shift.beginTime);
 
                 if (isActive) {
                     initialState.activeShift = details;
@@ -248,6 +299,7 @@ class OverviewPage extends React.Component<Properties, State> {
             initialState.intro = `Welcome on the ${environment.portalTitle}! ` + kCommonIntro;
         }
 
+        initialState.nextUpdate = nextScheduleUpdate;
         return initialState;
     }
 
@@ -289,7 +341,7 @@ class OverviewPage extends React.Component<Properties, State> {
 
     render() {
         const { classes, environment } = this.props;
-        const { activeShift, intro, unavailableUntil, upcomingShift } = this.state;
+        const { activeShift, intro, unavailableUntil, upcomingShift, nextUpdate } = this.state;
 
         // Choose a random tip to display on the overview page.
         const tip = kTips[Math.floor(Math.random() * kTips.length)];
@@ -383,6 +435,8 @@ class OverviewPage extends React.Component<Properties, State> {
                         </List>
                     </CardContent>
                 </Card>
+
+                <UpdateTimeTracker label="Overview" moment={nextUpdate} />
             </React.Fragment>
         );
     }
