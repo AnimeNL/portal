@@ -119,6 +119,10 @@ class TimedListItem extends React.PureComponent<TimedListItemProps & WithStyles<
         if (!diff)
             return <></>
 
+        // If endTime is the next day at 00:00, skip the +1 indicator
+        if (diff === 1 && endTime.hour() === 0 && endTime.minute() === 0)
+            return <></>
+
         const { classes } = this.props;
 
         return <span className={classes.dateDifference}>+{diff}</span>;
