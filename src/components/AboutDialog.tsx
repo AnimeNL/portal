@@ -44,10 +44,13 @@ const styles = (theme: Theme) =>
         jpopLogo: {
             backgroundColor: '#104656',
             background: 'url(/static/images/jpop-portal-logo.png) center / contain no-repeat',
-            margin: theme.spacing(1) + 'px 0 0 0',
+            margin: 0,
 
             height: 200,
             width: '100%',
+
+            borderTop: theme.spacing(2) + 'px solid #104656',
+            borderBottom: theme.spacing(2) + 'px solid #104656',
         },
 
         card: {
