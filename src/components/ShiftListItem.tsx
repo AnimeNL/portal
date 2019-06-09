@@ -4,11 +4,13 @@
 
 import { Link } from 'react-router-dom';
 import React from 'react';
+import clsx from 'clsx';
 import moment from 'moment';
 
 import { Volunteer } from '../app/Volunteer';
 import slug from '../app/util/Slug';
 
+import HistoryIcon from '@material-ui/icons/History';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -20,6 +22,19 @@ const styles = (theme: Theme) =>
         link: {
             textDecoration: 'none',
             color: 'inherit',
+        },
+        active: {
+
+        },
+        pastIcon: {
+            fontSize: 'inherit',
+            position: 'relative',
+            left: theme.spacing(0.5),
+            marginRight: theme.spacing(0.5),
+            top: 2,
+        },
+        past: {
+            color: theme.palette.text.disabled,
         },
     });
 
@@ -61,14 +76,20 @@ type Properties = ShiftListItemProps & WithStyles<typeof styles>;
  */
 class ShiftListItem extends React.PureComponent<Properties> {
     render() {
-        const { classes, beginTime, endTime, volunteer } = this.props;
+        const { active, beginTime, classes, endTime, past, volunteer } = this.props;
 
         const to = '/volunteers/' + slug(volunteer.name);
 
+        const historyIcon = past ? <HistoryIcon className={classes.pastIcon} />
+                                 : <></>;
+
         return (
             <Link className={classes.link} to={to}>
-                <ListItem button divider>
-                    {volunteer.name}, {beginTime.format('HH:mm')} until {endTime.format('HH:mm')}
+                <ListItem button divider className={clsx(active && classes.active, past && classes.past)}>
+                    <ListItemText primaryTypographyProps={{ noWrap: true }}>
+                        {volunteer.name}, {beginTime.format('HH:mm')} until {endTime.format('HH:mm')}
+                        {historyIcon}
+                    </ListItemText>
                 </ListItem>
             </Link>
         )
