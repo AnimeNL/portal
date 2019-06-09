@@ -6,6 +6,7 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import { Volunteer } from '../app/Volunteer';
+import { nameInitials } from '../app/util/nameInitials';
 
 import Avatar from '@material-ui/core/Avatar';
 import Button from '@material-ui/core/Button';
@@ -59,11 +60,6 @@ const styles = (theme: Theme) =>
             position: 'relative',
         },
     });
-
-// Naive algorithm for getting the initials for a particular name: selecting the first and the last
-// capital available in the name.
-const nameInitials = (name: string) =>
-    name.replace(/[^A-Z]/g, '').replace(/^(.).*(.)/g, '$1$2');
 
 /**
  * Properties accepted by the <AvatarDialogButton> element.

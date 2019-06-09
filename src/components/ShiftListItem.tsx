@@ -9,6 +9,7 @@ import moment from 'moment';
 
 import { Volunteer } from '../app/Volunteer';
 import { formatTime } from './SessionListItem';
+import { nameInitials } from '../app/util/nameInitials';
 import slug from '../app/util/Slug';
 
 import Avatar from '@material-ui/core/Avatar';
@@ -22,11 +23,6 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 // Helper function to select the first name of a particular volunteer.
 const firstName = (volunteer: Volunteer) => volunteer.name.replace(/\s+.*/, '');
-
-// Naive algorithm for getting the initials for a particular name: selecting the first and the last
-// capital available in the name.
-const nameInitials = (name: string) =>
-    name.replace(/[^A-Z]/g, '').replace(/^(.).*(.)/g, '$1$2');
 
 const styles = (theme: Theme) =>
     createStyles({

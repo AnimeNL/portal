@@ -6,6 +6,8 @@ import { Link } from 'react-router-dom';
 import React from 'react';
 import escapeStringRegexp from 'escape-string-regexp';
 
+import { nameInitials } from '../app/util/nameInitials';
+
 import Avatar from '@material-ui/core/Avatar';
 import EventIcon from '@material-ui/icons/Event';
 import ListItem from '@material-ui/core/ListItem';
@@ -16,11 +18,6 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
-
-// Naive algorithm for getting the initials for a particular name: selecting the first and the last
-// capital available in the name.
-const nameInitials = (name: string) =>
-    name.replace(/[^A-Z]/g, '').replace(/^(.).*(.)/g, '$1$2');
 
 const styles = (theme: Theme) =>
     createStyles({
