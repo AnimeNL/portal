@@ -133,6 +133,8 @@ class EventSchedulePage extends React.Component<Properties, State> {
             shifts.push({
                 beginTime: shift.beginTime,
                 endTime: shift.endTime,
+                active: currentTime.isBetween(shift.beginTime, shift.endTime),
+                past: shift.endTime.isBefore(currentTime),
                 volunteer: shift.volunteer,
                 key: index.toString(),
             });
@@ -140,6 +142,11 @@ class EventSchedulePage extends React.Component<Properties, State> {
 
         // (6) Sort the shifts based on when they'll be around for the event, then by name.
         const sortedShifts = shifts.sort((lhs, rhs) => {
+            if (lhs.past && !rhs.past)
+                return 1;
+            if (rhs.past && !lhs.past)
+                return -1;
+
             if (lhs.beginTime < rhs.beginTime)
                 return -1;
             if (rhs.beginTime < lhs.beginTime)

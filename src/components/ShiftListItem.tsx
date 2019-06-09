@@ -38,6 +38,16 @@ export interface ShiftListItemProps {
     endTime: moment.Moment;
 
     /**
+     * Whether the shift is currently active.
+     */
+    active?: boolean;
+
+    /**
+     * Whether the shift happened in the past.
+     */
+    past?: boolean;
+
+    /**
      * The Volunteer who will be working on this shift.
      */
     volunteer: Volunteer;
