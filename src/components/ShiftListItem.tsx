@@ -28,7 +28,7 @@ const styles = (theme: Theme) =>
             color: 'inherit',
         },
         active: {
-
+            ...theme.activeSessionStyle,
         },
         pastIcon: {
             fontSize: 'inherit',
