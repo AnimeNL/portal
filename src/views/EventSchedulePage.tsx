@@ -83,7 +83,9 @@ class EventSchedulePage extends React.Component<Properties, State> {
      * request a re-render of the element and the displayed information.
      */
     static getDerivedStateFromProps(props: Properties) {
-        const { event } = props;
+        const { clock, event } = props;
+
+        const currentTime = clock.getMoment();
 
         const firstSession = event.sessions[0];
         const firstSessionFloor = firstSession.location.floor;
@@ -108,6 +110,7 @@ class EventSchedulePage extends React.Component<Properties, State> {
             sessions.push({
                 beginTime: session.beginTime,
                 endTime: session.endTime,
+                past: session.endTime.isBefore(currentTime),
                 key: index.toString()
             });
         });

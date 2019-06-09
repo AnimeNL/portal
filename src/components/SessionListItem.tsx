@@ -3,8 +3,10 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import clsx from 'clsx';
 import moment from 'moment';
 
+import HistoryIcon from '@material-ui/icons/History';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -16,6 +18,16 @@ const styles = (theme: Theme) =>
         noWrap: {
             overflow: 'hidden',
             textOverflow: 'ellipsis',
+        },
+        pastIcon: {
+            fontSize: 'inherit',
+            position: 'relative',
+            left: theme.spacing(0.5),
+            marginRight: theme.spacing(0.5),
+            top: 2,
+        },
+        past: {
+            color: theme.palette.text.disabled,
         },
     });
 
@@ -32,6 +44,11 @@ export interface SessionListItemProps {
      * Time at which the item finishes. Does not have to be on the same day as |beginTime|.
      */
     endTime: moment.Moment;
+
+    /**
+     * Whether this session happened in the past and should be marked as such.
+     */
+    past?: boolean;
 }
 
 /**
@@ -39,7 +56,7 @@ export interface SessionListItemProps {
  */
 class SessionListItem extends React.Component<SessionListItemProps & WithStyles<typeof styles>> {
     render() {
-        const { classes, beginTime, endTime } = this.props;
+        const { classes, beginTime, endTime, past } = this.props;
 
         let differentDays = false;
 
@@ -54,12 +71,16 @@ class SessionListItem extends React.Component<SessionListItemProps & WithStyles<
                                   : endTime.format('HH:mm');
 
         const title = `${begin} until ${end}`;
+        const historyIcon = past ? <HistoryIcon className={classes.pastIcon} />
+                                 : <></>;
 
         return (
             <ListItem>
-                <ListItemText className={classes.noWrap}
-                              primary={title}
-                              primaryTypographyProps={{ noWrap: true }} />
+                <ListItemText className={clsx(classes.noWrap, past && classes.past)}
+                              primaryTypographyProps={{ noWrap: true }}>
+                    {title}
+                    {historyIcon}
+                </ListItemText>
             </ListItem>
         );
     }
