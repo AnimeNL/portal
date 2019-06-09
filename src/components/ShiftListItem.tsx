@@ -17,6 +17,9 @@ import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
+// Helper function to select the first name of a particular volunteer.
+const firstName = (volunteer: Volunteer) => volunteer.name.replace(/\s+.*/, '');
+
 const styles = (theme: Theme) =>
     createStyles({
         link: {
@@ -80,6 +83,7 @@ class ShiftListItem extends React.PureComponent<Properties> {
 
         const to = '/volunteers/' + slug(volunteer.name);
 
+        // Used to mark shifts that happened in the past as such.
         const historyIcon = past ? <HistoryIcon className={classes.pastIcon} />
                                  : <></>;
 
@@ -87,7 +91,7 @@ class ShiftListItem extends React.PureComponent<Properties> {
             <Link className={classes.link} to={to}>
                 <ListItem button divider className={clsx(active && classes.active, past && classes.past)}>
                     <ListItemText primaryTypographyProps={{ noWrap: true }}>
-                        {volunteer.name}, {beginTime.format('HH:mm')} until {endTime.format('HH:mm')}
+                        <strong>{firstName(volunteer)}</strong>, {beginTime.format('HH:mm')} until {endTime.format('HH:mm')}
                         {historyIcon}
                     </ListItemText>
                 </ListItem>
