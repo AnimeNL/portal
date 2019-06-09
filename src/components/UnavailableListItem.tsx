@@ -9,7 +9,6 @@ import AlarmIcon from '@material-ui/icons/AlarmOff';
 import ListItem from '@material-ui/core/ListItem';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
-import grey from '@material-ui/core/colors/grey';
 import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 
 const styles = (theme: Theme) =>
@@ -41,7 +40,7 @@ interface Properties {
  * The <UnavailableListItem> component can be used in a volunteer header to indicate the fact that
  * the volunteer is unavailable until a preconfigured time.
  */
-class UnavailableListItem extends React.Component<Properties & WithStyles<typeof styles>> {
+class UnavailableListItem extends React.PureComponent<Properties & WithStyles<typeof styles>> {
     render() {
         const { classes, until } = this.props;
 
