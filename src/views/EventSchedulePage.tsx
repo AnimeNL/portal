@@ -3,6 +3,8 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import bind from 'bind-decorator';
+import moment from 'moment';
 
 import Clock from '../app/Clock';
 import { LabeledSessionList } from '../components/LabeledSessionList';
@@ -11,6 +13,7 @@ import { PageHeader, PageHeaderDefaults, PageHeaderProps } from '../components/P
 import { ProgramEvent } from '../app/ProgramEvent';
 import { SessionListItem, SessionListItemProps } from '../components/SessionListItem';
 import { ShiftListItem, ShiftListItemProps } from '../components/ShiftListItem';
+import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
 import { getLocationDescription } from '../app/util/getDescription';
 
 /**
@@ -77,6 +80,11 @@ interface State {
      * List of the shifts that will be taking place as part of this event.
      */
     shifts: ShiftDisplayInfo[];
+
+    /**
+     * Moment at which the next automated update of this page should occur.
+     */
+    nextUpdate?: moment.Moment;
 }
 
 /**
@@ -84,10 +92,47 @@ interface State {
  * about it, as well as the sessions and volunteer shifts scheduled at it.
  */
 class EventSchedulePage extends React.Component<Properties, State> {
+    updateTimer?: NodeJS.Timeout;
     state: State = {
         header: PageHeaderDefaults,
         sessions: [],
         shifts: [],
+    }
+
+    componentDidMount() { this.refreshUpdateTimer(); }
+    componentDidUpdate() { this.refreshUpdateTimer(); }
+
+    /**
+     * Refreshes the |updateTimer| by clearing the current one and setting a new one. This seems to
+     * be necessary due to React's lifetime semantics.
+     */
+    private refreshUpdateTimer() {
+        const { clock } = this.props;
+        const { nextUpdate } = this.state;
+
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
+
+        // It's possible that there are no future updates, for example when the last session in this
+        // location has passed already.
+        if (!nextUpdate)
+            return;
+
+        this.updateTimer = setTimeout(this.refreshState, nextUpdate.diff(clock.getMoment()));
+    }
+
+    /**
+     * Called by the |updateTimer| as an event listed on the page has finished or is about to start.
+     */
+    @bind
+    private refreshState() {
+        this.setState(EventSchedulePage.getDerivedStateFromProps(this.props));
+        this.refreshUpdateTimer();
+    }
+
+    componentWillUnmount() {
+        if (this.updateTimer)
+            clearTimeout(this.updateTimer);
     }
 
     /**
@@ -98,6 +143,8 @@ class EventSchedulePage extends React.Component<Properties, State> {
         const { clock, event } = props;
 
         const currentTime = clock.getMoment();
+
+        let nextScheduleUpdate = currentTime.clone().add({ years: 1 });
 
         const firstSession = event.sessions[0];
         const firstSessionFloor = firstSession.location.floor;
@@ -119,10 +166,18 @@ class EventSchedulePage extends React.Component<Properties, State> {
         // (4) Compile the list of sessions that are part of this event.
         const sessions: SessionDisplayInfo[] = [];
         event.sessions.forEach((session, index) => {
+            const isPast = session.endTime.isBefore(currentTime);
+            if (!isPast) {
+                if (session.endTime.isAfter(currentTime))
+                    nextScheduleUpdate = moment.min(nextScheduleUpdate, session.endTime);
+                else
+                    nextScheduleUpdate = moment.min(nextScheduleUpdate, session.beginTime);
+            }
+
             sessions.push({
                 beginTime: session.beginTime,
                 endTime: session.endTime,
-                past: session.endTime.isBefore(currentTime),
+                past: isPast,
                 key: index.toString()
             });
         });
@@ -130,11 +185,21 @@ class EventSchedulePage extends React.Component<Properties, State> {
         // (5) Compile the list of shifts that are part of this event.
         const shifts: ShiftDisplayInfo[] = [];
         event.shifts.forEach((shift, index) => {
+            const isActive = currentTime.isBetween(shift.beginTime, shift.endTime);
+            const isPast = shift.endTime.isBefore(currentTime);
+
+            if (!isPast) {
+                if (isActive)
+                    nextScheduleUpdate = moment.min(nextScheduleUpdate, shift.endTime);
+                else
+                    nextScheduleUpdate = moment.min(nextScheduleUpdate, shift.beginTime);
+            }
+
             shifts.push({
                 beginTime: shift.beginTime,
                 endTime: shift.endTime,
-                active: currentTime.isBetween(shift.beginTime, shift.endTime),
-                past: shift.endTime.isBefore(currentTime),
+                active: isActive,
+                past: isPast,
                 today: shift.beginTime.isSame(currentTime, 'day'),
                 volunteer: shift.volunteer,
                 key: index.toString(),
@@ -161,12 +226,13 @@ class EventSchedulePage extends React.Component<Properties, State> {
             return lhs.volunteer.name.localeCompare(rhs.volunteer.name);
         });
 
-        return { description, notes, header, sessions, shifts: sortedShifts };
+        return { description, notes, header, sessions,
+                 shifts: sortedShifts, nextUpdate: nextScheduleUpdate };
     }
 
     render() {
         const { mutable, onDescriptionChange } = this.props;
-        const { description, header, notes, sessions, shifts } = this.state;
+        const { description, header, notes, sessions, shifts, nextUpdate } = this.state;
 
         return (
             <React.Fragment>
@@ -190,6 +256,8 @@ class EventSchedulePage extends React.Component<Properties, State> {
                     <LabeledSessionList dense label="Shifts">
                         { shifts.map(shift => <ShiftListItem {...shift} /> ) }
                     </LabeledSessionList> }
+
+                <UpdateTimeTracker label={header.title} moment={nextUpdate} />
 
             </React.Fragment>
         );
