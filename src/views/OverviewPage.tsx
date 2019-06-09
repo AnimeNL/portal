@@ -9,6 +9,7 @@ import moment from 'moment';
 
 import ApplicationProperties from '../app/ApplicationProperties';
 import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
+import { determineUpdateMoment } from '../app/util/determineUpdateMoment';
 import slug from '../app/util/Slug';
 
 import ArrowForwardIcon from '@material-ui/icons/ArrowForward';
@@ -299,7 +300,7 @@ class OverviewPage extends React.Component<Properties, State> {
             initialState.intro = `Welcome on the ${environment.portalTitle}! ` + kCommonIntro;
         }
 
-        initialState.nextUpdate = nextScheduleUpdate;
+        initialState.nextUpdate = determineUpdateMoment(currentTime, nextScheduleUpdate);
         return initialState;
     }
 
