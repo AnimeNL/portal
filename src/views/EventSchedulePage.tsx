@@ -135,6 +135,7 @@ class EventSchedulePage extends React.Component<Properties, State> {
                 endTime: shift.endTime,
                 active: currentTime.isBetween(shift.beginTime, shift.endTime),
                 past: shift.endTime.isBefore(currentTime),
+                today: shift.beginTime.isSame(currentTime, 'day'),
                 volunteer: shift.volunteer,
                 key: index.toString(),
             });

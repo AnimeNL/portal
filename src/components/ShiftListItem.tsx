@@ -8,6 +8,7 @@ import clsx from 'clsx';
 import moment from 'moment';
 
 import { Volunteer } from '../app/Volunteer';
+import { formatTime } from './SessionListItem';
 import slug from '../app/util/Slug';
 
 import HistoryIcon from '@material-ui/icons/History';
@@ -66,6 +67,11 @@ export interface ShiftListItemProps {
     past?: boolean;
 
     /**
+     * Whether the event is happening on the current day.
+     */
+    today?: boolean;
+
+    /**
      * The Volunteer who will be working on this shift.
      */
     volunteer: Volunteer;
@@ -79,9 +85,12 @@ type Properties = ShiftListItemProps & WithStyles<typeof styles>;
  */
 class ShiftListItem extends React.PureComponent<Properties> {
     render() {
-        const { active, beginTime, classes, endTime, past, volunteer } = this.props;
+        const { active, beginTime, classes, endTime, past, today, volunteer } = this.props;
 
         const to = '/volunteers/' + slug(volunteer.name);
+
+        // Duration of the shift, formatted consistent with the session rows.
+        const shiftDuration = formatTime(beginTime, endTime, today);
 
         // Used to mark shifts that happened in the past as such.
         const historyIcon = past ? <HistoryIcon className={classes.pastIcon} />
@@ -91,7 +100,7 @@ class ShiftListItem extends React.PureComponent<Properties> {
             <Link className={classes.link} to={to}>
                 <ListItem button divider className={clsx(active && classes.active, past && classes.past)}>
                     <ListItemText primaryTypographyProps={{ noWrap: true }}>
-                        <strong>{firstName(volunteer)}</strong>, {beginTime.format('HH:mm')} until {endTime.format('HH:mm')}
+                        <strong>{firstName(volunteer)}</strong>, {shiftDuration}
                         {historyIcon}
                     </ListItemText>
                 </ListItem>

@@ -32,6 +32,25 @@ const styles = (theme: Theme) =>
     });
 
 /**
+ * Formats the time for a session (or shift) in a friendly way for displaying.
+ */
+export function formatTime(beginTime: moment.Moment, endTime: moment.Moment, today?: boolean): string {
+    let differentDays = false;
+
+    // The next "day" begins at one o'clock. This avoids a bunch of duplicate labels.
+    if (beginTime.date() !== endTime.date()) {
+        if ((beginTime.date() + 1) !== endTime.date() || endTime.hour() !== 0)
+            differentDays = true;
+    }
+
+    const begin = beginTime.format((!!today ? '' : 'dddd ') + '\\f\\r\\o\\m HH:mm');
+    const end = differentDays ? endTime.format('HH:mm \\o\\n dddd')
+                                : endTime.format('HH:mm');
+
+    return `${begin} until ${end}`;
+};
+
+/**
  * Properties for the <SessionListItem> component.
  */
 export interface SessionListItemProps {
@@ -58,19 +77,7 @@ class SessionListItem extends React.Component<SessionListItemProps & WithStyles<
     render() {
         const { classes, beginTime, endTime, past } = this.props;
 
-        let differentDays = false;
-
-        // The next "day" begins at one o'clock. This avoids a bunch of duplicate labels.
-        if (beginTime.date() !== endTime.date()) {
-            if ((beginTime.date() + 1) !== endTime.date() || endTime.hour() !== 0)
-                differentDays = true;
-        }
-
-        const begin = beginTime.format('dddd \\f\\r\\o\\m HH:mm');
-        const end = differentDays ? endTime.format('HH:mm \\o\\n dddd')
-                                  : endTime.format('HH:mm');
-
-        const title = `${begin} until ${end}`;
+        const title = formatTime(beginTime, endTime);
         const historyIcon = past ? <HistoryIcon className={classes.pastIcon} />
                                  : <></>;
 
