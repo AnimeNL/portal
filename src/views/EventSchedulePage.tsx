@@ -138,9 +138,22 @@ class EventSchedulePage extends React.Component<Properties, State> {
             });
         });
 
-        // TODO: Sort the shifts.
+        // (6) Sort the shifts based on when they'll be around for the event, then by name.
+        const sortedShifts = shifts.sort((lhs, rhs) => {
+            if (lhs.beginTime < rhs.beginTime)
+                return -1;
+            if (rhs.beginTime < lhs.beginTime)
+                return 1;
 
-        return { description, notes, header, sessions, shifts };
+            if (lhs.endTime < rhs.endTime)
+                return -1;
+            if (rhs.endTime < lhs.endTime)
+                return 1;
+
+            return lhs.volunteer.name.localeCompare(rhs.volunteer.name);
+        });
+
+        return { description, notes, header, sessions, shifts: sortedShifts };
     }
 
     render() {
