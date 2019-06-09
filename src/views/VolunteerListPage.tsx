@@ -13,6 +13,7 @@ import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
 import { VolunteerActivityInfo } from '../app/Event';
 import { VolunteerGroupTabs, VolunteerGroupTabInfo } from '../components/VolunteerGroupTabs';
 import VolunteerListItem from '../components/VolunteerListItem';
+import { determineUpdateMoment } from '../app/util/determineUpdateMoment';
 
 import List from '@material-ui/core/List';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -159,13 +160,17 @@ class VolunteerListPage extends React.Component<Properties & WithStyles<typeof s
             return lhs.volunteer.name.localeCompare(rhs.volunteer.name);
         });
 
-        let nextUpdate = props.clock.getMoment().add({ years: 1 });
+        const currentTime = props.clock.getMoment();
+
+        let nextUpdate = currentTime.clone().add({ years: 1 });
         volunteers.forEach(volunteerActivityInfo => {
             if (volunteerActivityInfo.currentShift)
                 nextUpdate = moment.min(nextUpdate, volunteerActivityInfo.currentShift.endTime);
             else if (volunteerActivityInfo.upcomingShift)
                 nextUpdate = moment.min(nextUpdate, volunteerActivityInfo.upcomingShift.beginTime);
         });
+
+        nextUpdate = determineUpdateMoment(currentTime, nextUpdate);
 
         return { activeTabIndex, tabs, volunteers, nextUpdate };
     }
