@@ -10,6 +10,7 @@ import { ExpandableDescriptionPaper } from '../components/ExpandableDescriptionP
 import { PageHeader, PageHeaderDefaults, PageHeaderProps } from '../components/PageHeader';
 import { ProgramEvent } from '../app/ProgramEvent';
 import { SessionListItem, SessionListItemProps } from '../components/SessionListItem';
+import { ShiftListItem, ShiftListItemProps } from '../components/ShiftListItem';
 import { getLocationDescription } from '../app/util/getDescription';
 
 /**
@@ -43,6 +44,11 @@ interface Properties {
 type SessionDisplayInfo = SessionListItemProps & { key: string };
 
 /**
+ * ShiftListItemProps, with a `key` field to ensure uniqueness in the list.
+ */
+type ShiftDisplayInfo = ShiftListItemProps & { key: string };
+
+/**
  * State of the event schedule page. Details both the header as the content that should be displayed
  * on the page, such as sessions and shifts w/ volunteers.
  */
@@ -66,6 +72,11 @@ interface State {
      * List of sessions that will be hosted as part of this event.
      */
     sessions: SessionDisplayInfo[];
+
+    /**
+     * List of the shifts that will be taking place as part of this event.
+     */
+    shifts: ShiftDisplayInfo[];
 }
 
 /**
@@ -76,6 +87,7 @@ class EventSchedulePage extends React.Component<Properties, State> {
     state: State = {
         header: PageHeaderDefaults,
         sessions: [],
+        shifts: [],
     }
 
     /**
@@ -115,14 +127,25 @@ class EventSchedulePage extends React.Component<Properties, State> {
             });
         });
 
-        // TODO: List volunteer shifts on this page.
+        // (5) Compile the list of shifts that are part of this event.
+        const shifts: ShiftDisplayInfo[] = [];
+        event.shifts.forEach((shift, index) => {
+            shifts.push({
+                beginTime: shift.beginTime,
+                endTime: shift.endTime,
+                volunteer: shift.volunteer,
+                key: index.toString(),
+            });
+        });
 
-        return { description, notes, header, sessions };
+        // TODO: Sort the shifts.
+
+        return { description, notes, header, sessions, shifts };
     }
 
     render() {
         const { mutable, onDescriptionChange } = this.props;
-        const { description, header, notes, sessions } = this.state;
+        const { description, header, notes, sessions, shifts } = this.state;
 
         return (
             <React.Fragment>
@@ -141,6 +164,11 @@ class EventSchedulePage extends React.Component<Properties, State> {
                 <LabeledSessionList dense label="Sessions">
                     { sessions.map(session => <SessionListItem {...session} /> ) }
                 </LabeledSessionList>
+
+                { !!shifts.length &&
+                    <LabeledSessionList dense label="Shifts">
+                        { shifts.map(shift => <ShiftListItem {...shift} /> ) }
+                    </LabeledSessionList> }
 
             </React.Fragment>
         );
