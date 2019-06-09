@@ -43,7 +43,9 @@ export function formatTime(beginTime: moment.Moment, endTime: moment.Moment, tod
             differentDays = true;
     }
 
-    const begin = beginTime.format((!!today ? '' : 'dddd ') + '\\f\\r\\o\\m HH:mm');
+    const prefix = !!today ? '\\t\\o\\d\\a\\y ' : 'dddd ';
+
+    const begin = beginTime.format(prefix + '\\f\\r\\o\\m HH:mm');
     const end = differentDays ? endTime.format('HH:mm \\o\\n dddd')
                                 : endTime.format('HH:mm');
 

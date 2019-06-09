@@ -11,8 +11,10 @@ import { Volunteer } from '../app/Volunteer';
 import { formatTime } from './SessionListItem';
 import slug from '../app/util/Slug';
 
+import Avatar from '@material-ui/core/Avatar';
 import HistoryIcon from '@material-ui/icons/History';
 import ListItem from '@material-ui/core/ListItem';
+import ListItemAvatar from '@material-ui/core/ListItemAvatar';
 import ListItemText from '@material-ui/core/ListItemText';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import createStyles from '@material-ui/core/styles/createStyles';
@@ -21,15 +23,23 @@ import withStyles, { WithStyles } from '@material-ui/core/styles/withStyles';
 // Helper function to select the first name of a particular volunteer.
 const firstName = (volunteer: Volunteer) => volunteer.name.replace(/\s+.*/, '');
 
+// Naive algorithm for getting the initials for a particular name: selecting the first and the last
+// capital available in the name.
+const nameInitials = (name: string) =>
+    name.replace(/[^A-Z]/g, '').replace(/^(.).*(.)/g, '$1$2');
+
 const styles = (theme: Theme) =>
     createStyles({
         link: {
             textDecoration: 'none',
             color: 'inherit',
         },
-        active: {
-            ...theme.activeSessionStyle,
+
+        active: { ...theme.activeSessionStyle },
+        root: {
+            padding: theme.spacing(1.5, 2),
         },
+
         pastIcon: {
             fontSize: 'inherit',
             position: 'relative',
@@ -39,6 +49,9 @@ const styles = (theme: Theme) =>
         },
         past: {
             color: theme.palette.text.disabled,
+            '& img': {
+                filter: 'grayscale(80%)',
+            },
         },
     });
 
@@ -98,11 +111,20 @@ class ShiftListItem extends React.PureComponent<Properties> {
 
         return (
             <Link className={classes.link} to={to}>
-                <ListItem button divider className={clsx(active && classes.active, past && classes.past)}>
+                <ListItem button divider
+                          className={clsx(classes.root, active && classes.active, past && classes.past)}>
+
+                    <ListItemAvatar>
+                        <Avatar src={volunteer.avatar}>
+                            {nameInitials(volunteer.name)}
+                        </Avatar>
+                    </ListItemAvatar>
+
                     <ListItemText primaryTypographyProps={{ noWrap: true }}>
                         <strong>{firstName(volunteer)}</strong>, {shiftDuration}
                         {historyIcon}
                     </ListItemText>
+
                 </ListItem>
             </Link>
         )
