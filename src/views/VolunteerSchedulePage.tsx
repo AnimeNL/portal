@@ -9,6 +9,7 @@ import moment from 'moment';
 import Clock from '../app/Clock';
 import { LabeledSessionList } from '../components/LabeledSessionList';
 import { TimedListItem, TimedListItemProps } from '../components/TimedListItem';
+import { UnavailableListItem } from '../components/UnavailableListItem';
 import { UpdateTimeTracker } from '../components/UpdateTimeTracker';
 import { Volunteer } from '../app/Volunteer';
 import VolunteerListItem from '../components/VolunteerListItem';
@@ -79,6 +80,11 @@ interface State {
     days: ShiftDayDisplayInfo[];
 
     /**
+     * Whether the volunteer is currently unavailable.
+     */
+    unavailable?: moment.Moment;
+
+    /**
      * Moment at which the next automated update of this page should occur.
      */
     nextUpdate?: moment.Moment;
@@ -140,15 +146,20 @@ class VolunteerSchedulePage extends React.Component<Properties, State> {
         const days: Map<number, ShiftDayDisplayInfo> = new Map();
 
         let nextScheduleUpdate = currentTime.clone().add({ years: 1 });
+        let unavailable: moment.Moment | undefined;
 
         for (const shift of volunteer.shifts) {
-            if (!shift.isEvent())
+            if (!shift.isEvent()) {
+                if (shift.isUnavailable() && currentTime.isBetween(shift.beginTime, shift.endTime)) {
+                    nextScheduleUpdate = moment.min(nextScheduleUpdate, shift.endTime);
+                    unavailable = shift.endTime;
+                }
+
                 continue;
+            }
 
             const event = shift.event;
             const session = event.sessions[0];
-
-            // TODO: Should we display volunteer availability on this page?
 
             const state = getState(currentTime, shift);
             const stateIncrement = state === 'past' ? 0 : 1;
@@ -219,13 +230,14 @@ class VolunteerSchedulePage extends React.Component<Properties, State> {
 
         return {
             days: sortedDays,
-            nextUpdate: nextScheduleUpdate
+            unavailable,
+            nextUpdate: nextScheduleUpdate,
         };
     }
 
     render() {
         const { onPictureUpdated, volunteer } = this.props;
-        const { days, nextUpdate } = this.state;
+        const { days, nextUpdate, unavailable } = this.state;
 
         return (
             <React.Fragment>
@@ -235,6 +247,7 @@ class VolunteerSchedulePage extends React.Component<Properties, State> {
                         <VolunteerListItem onPictureUpdated={onPictureUpdated}
                                            volunteer={volunteer}
                                            type="header" />
+                        { unavailable && <UnavailableListItem until={unavailable} /> }
                     </List>
                 </Paper>
 
