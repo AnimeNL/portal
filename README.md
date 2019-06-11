@@ -1,5 +1,5 @@
 # Volunteer Portal
-TODO
+This is the front-end code for a Volunteer Portal.
 
 ## Installation
 Installing the volunteer portal for local development is straightforward, and does not require any
