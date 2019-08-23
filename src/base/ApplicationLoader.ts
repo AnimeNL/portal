@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import { Application } from './Application';
+import { ApplicationState } from './ApplicationState';
 import { ConfigurationImpl } from './ConfigurationImpl';
 import { EnvironmentImpl } from './EnvironmentImpl';
 
@@ -34,26 +35,33 @@ export class ApplicationLoader {
         // TODO: Handle errors in the environment initialization path.
         await this.environment.initialize();
 
+        const container = document.getElementById('root')!;
+        const state: ApplicationState = {
+            configuration: this.configuration,
+            environment: this.environment
+        };
+
         // TODO: Find the right approach for user identification + routing + loading the appropriate
         //       application. Right now we're applying either-or.
 
         const enableRegistration = false;
-        const application = enableRegistration ? await this.loadRegistrationApplication()
-                                               : await this.loadLegacyApplication();
+        const application = enableRegistration
+                                ? await this.loadRegistrationApplication(container, state)
+                                : await this.loadLegacyApplication(container, state);
         
-        application.initialize(this.configuration, this.environment);
+        application.initialize();
     }
 
-    private async loadLegacyApplication(): Promise<Application> {
+    private async loadLegacyApplication(container: Element, state: ApplicationState): Promise<Application> {
         const module = await import(/* webpackChunkName: 'legacy' */ '../app/Application');
 
-        return new module.default(document.getElementById('root')!);
+        return new module.default(container, state);
     }
 
-    private async loadRegistrationApplication(): Promise<Application> {
+    private async loadRegistrationApplication(container: Element, state: ApplicationState): Promise<Application> {
         const module =
             await import(/* webpackChunkName: 'registration' */ '../registration/RegistrationApplication');
         
-        return new module.RegistrationApplication();
+        return new module.RegistrationApplication(container, state);
     }
 }

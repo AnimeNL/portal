@@ -6,8 +6,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 
 import { Application as ApplicationInterface } from '../base/Application';
-import { Configuration } from '../base/Configuration';
-import { Environment } from '../base/Environment';
+import { ApplicationState } from '../base/ApplicationState';
 
 import Clock from './Clock';
 import { default as LegacyEnvironment } from './Environment';
@@ -63,7 +62,7 @@ class Application implements ApplicationInterface, TitleObserver {
      */
     serviceWorkerManager: ServiceWorkerManager;
 
-    constructor(container : Element) {
+    constructor(container: Element, state: ApplicationState) {
         this.container = container;
         this.clock = new Clock();
         this.user = new User();
@@ -74,7 +73,7 @@ class Application implements ApplicationInterface, TitleObserver {
         this.serviceWorkerManager.register();
     }
 
-    async initialize(configuration: Configuration, environment: Environment): Promise<void> {
+    async initialize(): Promise<void> {
         await this.environment.initialize();
 
         // The environment must be fully available in order to determine the next steps in routing
