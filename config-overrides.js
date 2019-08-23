@@ -3,8 +3,14 @@
 // be found in the LICENSE file.
 
 const WorkboxWebpackPlugin = require('workbox-webpack-plugin');
+const path = require('path');
 
 module.exports = {
+    jest: function(config) {
+        config.setupFiles.push(path.join(process.cwd(), 'jest-setup.js'));
+        return config;
+    },
+
     webpack: function(config, env) {
         if (config.mode !== 'production')
             return config;
