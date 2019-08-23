@@ -21,33 +21,66 @@ export class EnvironmentImpl implements Environment {
     private configuration: Configuration;
     private data?: IEnvironment;
 
+    /**
+     * Name of the session storage cache in which the environment data will be recorded.
+     */
+    public static kCacheName: string = 'portal-ienvironment';
+
     constructor(configuration: Configuration) {
         this.configuration = configuration;
     }
 
     /**
-     * Initializes the environment by loading the configuration from the Environment API.
+     * Initializes the environment by loading the configuration from the Environment API. The data
+     * will first be attempted to be read from session storage to avoid hitting the network, after
+     * which it will be loaded from the server.
      */
     async initialize(): Promise<boolean> {
         const kErrorPrefix = 'Unable to fetch the environment data: ';
 
         try {
+            if (navigator.cookieEnabled) {
+                const cachedInput = sessionStorage.getItem(EnvironmentImpl.kCacheName);
+                if (cachedInput && this.initializeFromUnverifiedSource(kErrorPrefix, cachedInput))
+                    return true;
+            }
+
             const result = await fetch(this.configuration.getEnvironmentEndpoint());
             if (!result.ok) {
                 console.error(kErrorPrefix + ` status ${result.status}`);
                 return false;
             }
 
-            const unverifiedEnvironment = JSON.parse(await result.text());
-            if (!this.validateEnvironment(unverifiedEnvironment))
+            if (!this.initializeFromUnverifiedSource(kErrorPrefix, await result.text()))
                 return false;
-
-            this.data = unverifiedEnvironment;
+            
+            if (navigator.cookieEnabled)
+                sessionStorage.setItem(EnvironmentImpl.kCacheName, JSON.stringify(this.data));
 
             return true;
 
         } catch (exception) {
             console.error(kErrorPrefix, exception);
+        }
+
+        return false;
+    }
+
+    /**
+     * Attempts to initialize the environment based on the given |unverifiedInput| string. It is
+     * expected to be in a JSON format, conforming to the definition of IEnvironment.
+     */
+    initializeFromUnverifiedSource(errorPrefix: string, unverifiedInput: string): boolean {
+        try {
+            const unverifiedEnvironment = JSON.parse(unverifiedInput);
+            if (!this.validateEnvironment(unverifiedEnvironment))
+                return false;
+
+            this.data = unverifiedEnvironment;
+            return true;
+
+        } catch (exception) {
+            console.error(errorPrefix, exception);
         }
 
         return false;

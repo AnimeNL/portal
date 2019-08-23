@@ -2,6 +2,8 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import 'jest-localstorage-mock';
+
 import mockConsole from 'jest-mock-console';
 
 import { ConfigurationImpl } from './ConfigurationImpl';
@@ -11,7 +13,7 @@ const mockServer = require('mockttp').getLocal({ cors: true });
 
 describe('EnvironmentImpl', () => {
     beforeEach(() => mockServer.start());
-    afterEach(() => mockServer.stop());
+    afterEach(() => mockServer.stop() && sessionStorage.clear());
 
     /**
      * Creates an instance of the EnvironmentImpl object. The |environment| will be served through
@@ -31,7 +33,7 @@ describe('EnvironmentImpl', () => {
         return new EnvironmentImpl(configuration);
     }
 
-    it('should reflect the values of a valid environment', async () => {
+    it('should reflect the values of a valid environment from the network', async () => {
         const environment = createInstance(200, {
             eventName: 'Example Event',
             portalTitle: 'Example Title',
@@ -47,6 +49,29 @@ describe('EnvironmentImpl', () => {
         expect(environment.getSeniorTitle()).toEqual('Example Senior');
         expect(environment.getTimezone()).toEqual('Europe/London');
         expect(environment.getYear()).toEqual(2019);
+    });
+
+    it('should reflect the values of a valid environment from session storage', async () => {
+        sessionStorage.setItem(EnvironmentImpl.kCacheName, JSON.stringify({
+            eventName: 'Example Event',
+            portalTitle: 'Example Title',
+            seniorTitle: 'Example Senior',
+            timezone: 'Europe/London',
+            year: 2019
+        }));
+
+        const environment = createInstance(404, {});
+
+        expect(await environment.initialize()).toBeTruthy();
+
+        expect(environment.getEventName()).toEqual('Example Event');
+        expect(environment.getPortalTitle()).toEqual('Example Title');
+        expect(environment.getSeniorTitle()).toEqual('Example Senior');
+        expect(environment.getTimezone()).toEqual('Europe/London');
+        expect(environment.getYear()).toEqual(2019);
+
+        expect(sessionStorage.getItem).toHaveBeenCalledTimes(2);
+        expect(sessionStorage.setItem).toHaveBeenCalledTimes(2);
     });
 
     it('should fail when the API endpoint is unavailable', async () => {
