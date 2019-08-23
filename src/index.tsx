@@ -2,9 +2,6 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import Application from './app/Application';
+import { ApplicationLoader } from './base/ApplicationLoader';
 
-const container = document.getElementById('root');
-
-const app = new Application(container!);
-app.initialize();
+new ApplicationLoader().initialize();

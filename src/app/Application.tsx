@@ -5,8 +5,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
+import { Application as ApplicationInterface } from '../base/Application';
+import { Configuration } from '../base/Configuration';
+import { Environment } from '../base/Environment';
+
 import Clock from './Clock';
-import Environment from './Environment';
+import { default as LegacyEnvironment } from './Environment';
 import Event from './Event';
 import LoginController from './controllers/LoginController';
 import PortalController from './controllers/PortalController';
@@ -23,7 +27,7 @@ const kEventError = 'Unable to load the event information.';
  * Main runtime of the volunteer portal. Constructed on pageload. Initialisation may happen
  * asynchronously as part of the initialize() method.
  */
-class Application implements TitleObserver {
+class Application implements ApplicationInterface, TitleObserver {
     /**
      * Container in which the application should be rendered.
      */
@@ -39,7 +43,7 @@ class Application implements TitleObserver {
      * Environment under which the application is running—a single deployment of the volunteer
      * portal is able to service multiple groups of volunteers.
      */
-    environment: Environment;
+    environment: LegacyEnvironment;
 
     /**
      * State tracker for the authentication status of the current user. The volunteer portal is only
@@ -62,15 +66,15 @@ class Application implements TitleObserver {
     constructor(container : Element) {
         this.container = container;
         this.clock = new Clock();
-        this.environment = new Environment();
         this.user = new User();
+        this.environment = new LegacyEnvironment();
         this.event = new Event();
 
         this.serviceWorkerManager = new ServiceWorkerManager();
         this.serviceWorkerManager.register();
     }
 
-    async initialize(): Promise<void> {
+    async initialize(configuration: Configuration, environment: Environment): Promise<void> {
         await this.environment.initialize();
 
         // The environment must be fully available in order to determine the next steps in routing
