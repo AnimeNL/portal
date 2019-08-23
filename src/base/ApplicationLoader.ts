@@ -62,6 +62,6 @@ export class ApplicationLoader {
         const module =
             await import(/* webpackChunkName: 'registration' */ '../registration/RegistrationApplication');
         
-        return new module.RegistrationApplication(container, state);
+        return new module.RegistrationApplication(/* container, state */);
     }
 }

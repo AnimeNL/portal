@@ -293,11 +293,11 @@ class OverviewPage extends React.Component<Properties, State> {
 
             // Compile the portal's introduction. This is different depending on whether the user
             // is a volunteer as well, as we'd be able to personalize the message.
-            initialState.intro = `Welcome on the ${environment.portalTitle}, ${volunteer.name}! ` +
+            initialState.intro = `Welcome on the ${environment.getPortalTitle()}, ${volunteer.name}! ` +
                                  `You've been scheduled for ${shiftCount} shifts this weekend. ` +
                                  kCommonIntro;
         } else {
-            initialState.intro = `Welcome on the ${environment.portalTitle}! ` + kCommonIntro;
+            initialState.intro = `Welcome on the ${environment.getPortalTitle()}! ` + kCommonIntro;
         }
 
         initialState.nextUpdate = determineUpdateMoment(currentTime, nextScheduleUpdate);
@@ -352,7 +352,7 @@ class OverviewPage extends React.Component<Properties, State> {
                 <Card className={classes.card}>
                     <CardContent>
                         <Typography variant="h5" component="h2" noWrap>
-                            {environment.eventName}
+                            {environment.getEventName()}
                         </Typography>
                         <Typography variant="body2" component="p">
                             {intro}

@@ -7,9 +7,9 @@ import ReactDOM from 'react-dom';
 
 import { Application as ApplicationInterface } from '../base/Application';
 import { ApplicationState } from '../base/ApplicationState';
+import { Environment } from '../base/Environment';
 
 import Clock from './Clock';
-import { default as LegacyEnvironment } from './Environment';
 import Event from './Event';
 import LoginController from './controllers/LoginController';
 import PortalController from './controllers/PortalController';
@@ -19,7 +19,6 @@ import User from './User';
 
 import ErrorView from '../views/ErrorView';
 
-const kEnvironmentError = 'Unable to load the environment settings.';
 const kEventError = 'Unable to load the event information.';
 
 /**
@@ -42,7 +41,7 @@ class Application implements ApplicationInterface, TitleObserver {
      * Environment under which the application is running—a single deployment of the volunteer
      * portal is able to service multiple groups of volunteers.
      */
-    environment: LegacyEnvironment;
+    environment: Environment;
 
     /**
      * State tracker for the authentication status of the current user. The volunteer portal is only
@@ -66,7 +65,7 @@ class Application implements ApplicationInterface, TitleObserver {
         this.container = container;
         this.clock = new Clock();
         this.user = new User();
-        this.environment = new LegacyEnvironment();
+        this.environment = state.environment;
         this.event = new Event();
 
         this.serviceWorkerManager = new ServiceWorkerManager();
@@ -74,17 +73,7 @@ class Application implements ApplicationInterface, TitleObserver {
     }
 
     async initialize(): Promise<void> {
-        await this.environment.initialize();
-
-        // The environment must be fully available in order to determine the next steps in routing
-        // to the appropriate page. It's loaded from the network, but will be cached to ensure
-        // that subsequent pageloads aren't penalized.
-        if (!this.environment.isAvailable()) {
-            this.displayErrorView(kEnvironmentError);
-            return;
-        }
-
-        this.clock.setTimezone(this.environment.timezone);
+        this.clock.setTimezone(this.environment.getTimezone());
         this.user.initializeFromLocalStorage();
 
         // Lock the user in to an authentication dialog if they haven't identified themselves yet.
@@ -112,7 +101,7 @@ class Application implements ApplicationInterface, TitleObserver {
      * Will be called by the TitleManager when the page title updates.
      */
     update(title: string | null): void {
-        const { portalTitle } = this.environment;
+        const portalTitle = this.environment.getPortalTitle();
 
         document.title = title ? title + ' | ' + portalTitle
                                : portalTitle;

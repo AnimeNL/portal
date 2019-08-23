@@ -9,7 +9,7 @@ import bind from 'bind-decorator';
 import moment from 'moment';
 
 import Clock from '../app/Clock';
-import Environment from '../app/Environment';
+import { Environment } from '../base/Environment';
 import Event from '../app/Event';
 import { Header, HeaderEvents } from '../components/Header';
 import Menu from '../components/Menu';

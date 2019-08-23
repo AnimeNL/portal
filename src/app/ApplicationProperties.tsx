@@ -3,7 +3,7 @@
 // be found in the LICENSE file.
 
 import Clock from './Clock';
-import Environment from './Environment';
+import { Environment } from '../base/Environment';
 import Event from './Event';
 import User from './User';
 import { ServiceWorkerManager } from './ServiceWorkerManager';

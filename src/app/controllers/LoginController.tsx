@@ -5,7 +5,7 @@
 import React from 'react';
 import bind from 'bind-decorator';
 
-import Environment from '../Environment';
+import { Environment } from '../../base/Environment';
 import User from '../User';
 
 import LoginView from '../../views/LoginView';
@@ -44,7 +44,7 @@ class LoginController extends React.Component<Properties> {
 
     render() {
         return <LoginView onLogin={this.onLogin}
-                          seniorTitle={this.props.environment.seniorTitle!} />;
+                          seniorTitle={this.props.environment.getSeniorTitle()} />;
     }
 }
 

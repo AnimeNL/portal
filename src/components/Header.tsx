@@ -6,7 +6,7 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import { AboutDialog } from './AboutDialog';
-import Environment from '../app/Environment';
+import { Environment } from '../base/Environment';
 import Event from '../app/Event';
 import { MenuNotifier } from '../state/MenuNotifier';
 import { SearchBox } from './SearchBox';
@@ -140,7 +140,7 @@ class Header extends React.Component<Properties, State> implements TitleObserver
             TitleManager.addObserver(this);
 
         this.setState({
-            title: environment.portalTitle,
+            title: environment.getPortalTitle(),
         });
     }
 
@@ -153,7 +153,7 @@ class Header extends React.Component<Properties, State> implements TitleObserver
 
         this.setState({
             title: title ? title
-                         : environment.portalTitle
+                         : environment.getPortalTitle()
         });
     }
 

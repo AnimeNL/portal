@@ -39,11 +39,6 @@ export const kEnableDarkTheme = true;
 export const kEnableHeaderTitle = false;
 
 /**
- * Path to the environment configuration file, relative to the server root.
- */
-export const EnvironmentConfigPath = `${host}/${directory}/environment`;
-
-/**
  * Path to the event API, from which event data will be received.
  */
 export const EventPath = `${host}/${directory}/event`;
