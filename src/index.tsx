@@ -5,7 +5,7 @@
 import { ApplicationLoader } from './base/ApplicationLoader';
 
 const loader = new ApplicationLoader();
-loader.initialize().catch(exception => {
+loader.initialize(document.location.pathname).catch(exception => {
     // Always display application runtime exceptions on the page as always-on-top elements.
     const element = document.createElement('div');
 

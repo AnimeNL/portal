@@ -11,7 +11,7 @@ import { User } from './User';
  */
 export interface ApplicationState {
     configuration: Configuration;
-    // TODO: Add the |container|.
+    container: Element;
     environment: Environment;
     user: User;
 }

@@ -7,6 +7,7 @@ import { ApplicationState } from './ApplicationState';
 import { ConfigurationImpl } from './ConfigurationImpl';
 import { EnvironmentImpl } from './EnvironmentImpl';
 import { UserImpl } from './UserImpl';
+import { UserAbility } from './UserAbility';
 
 /**
  * Main application runtime. Will determine the visitor's identity, if any, and load the appropriate
@@ -39,7 +40,7 @@ export class ApplicationLoader {
      * Initializes the Volunteer Portal application by routing them to the appropriate environment
      * to use the portal in.
      */
-    public async initialize(): Promise<void> {
+    public async initialize(route: string): Promise<void> {
         await this.environment.initialize();
         await this.user.initialize();
 
@@ -49,31 +50,42 @@ export class ApplicationLoader {
 
         const state: ApplicationState = {
             configuration: this.configuration,
+            container,
             environment: this.environment,
             user: this.user
         };
 
-        // TODO: Find the right approach for user identification + routing + loading the appropriate
-        //       application. Right now we're applying either-or.
+        const application = await this.routeToApplication(route, state);
 
-        const enableRegistration = false;
-        const application = enableRegistration
-                                ? await this.loadRegistrationApplication(container, state)
-                                : await this.loadLegacyApplication(container, state);
-
+        // Wait for the located application to be initialized.
         await application.initialize();
     }
 
-    private async loadLegacyApplication(container: Element, state: ApplicationState): Promise<Application> {
-        const module = await import(/* webpackChunkName: 'legacy' */ '../app/Application');
+    /**
+     * Identify which application the user has to be routed to based on the |route|. Access to
+     * certain applications may be limited by their abilities.
+     */
+    private async routeToApplication(route: string, state: ApplicationState): Promise<Application> {
+        // 1. The public registration application
+        if (this.user.hasAbility(UserAbility.RegistrationApplication) &&
+                route.startsWith('/hallo')) {
+            return this.loadRegistrationApplication(state);
+        }
 
-        return new module.default(container, state);
+        // DEPRECATED: The legacy portal application.
+        return this.loadLegacyApplication(state);
     }
 
-    private async loadRegistrationApplication(container: Element, state: ApplicationState): Promise<Application> {
+    private async loadLegacyApplication(state: ApplicationState): Promise<Application> {
+        const module = await import(/* webpackChunkName: 'legacy' */ '../app/Application');
+
+        return new module.default(state);
+    }
+
+    private async loadRegistrationApplication(state: ApplicationState): Promise<Application> {
         const module =
             await import(/* webpackChunkName: 'registration' */ '../registration/RegistrationApplication');
         
-        return new module.RegistrationApplication(/* container, state */);
+        return new module.RegistrationApplication(state);
     }
 }

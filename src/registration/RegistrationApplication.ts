@@ -3,11 +3,16 @@
 // be found in the LICENSE file.
 
 import { Application } from '../base/Application';
+import { ApplicationState } from '../base/ApplicationState';
 
 /**
  * The registration application represents the runtime used for the public registration portal,
  * where visitors can register their interest in joining the volunteering team.
  */
 export class RegistrationApplication implements Application {
-    async initialize(): Promise<void> {}
+    constructor(state: ApplicationState) {}
+
+    async initialize(): Promise<void> {
+        throw new Error('Hello, world!');
+    }
 }

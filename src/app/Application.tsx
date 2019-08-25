@@ -61,8 +61,8 @@ class Application implements ApplicationInterface, TitleObserver {
      */
     serviceWorkerManager: ServiceWorkerManager;
 
-    constructor(container: Element, state: ApplicationState) {
-        this.container = container;
+    constructor(state: ApplicationState) {
+        this.container = state.container;
         this.clock = new Clock();
         this.user = new User();
         this.environment = state.environment;
