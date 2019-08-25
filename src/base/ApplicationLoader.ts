@@ -35,7 +35,10 @@ export class ApplicationLoader {
         // TODO: Handle errors in the environment initialization path.
         await this.environment.initialize();
 
-        const container = document.getElementById('root')!;
+        const container = document.getElementById('root');
+        if (!container)
+            throw new Error('No elements could be found having @id=`root`.');
+
         const state: ApplicationState = {
             configuration: this.configuration,
             environment: this.environment
@@ -48,7 +51,7 @@ export class ApplicationLoader {
         const application = enableRegistration
                                 ? await this.loadRegistrationApplication(container, state)
                                 : await this.loadLegacyApplication(container, state);
-        
+
         application.initialize();
     }
 
