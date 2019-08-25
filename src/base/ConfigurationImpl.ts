@@ -7,6 +7,7 @@ import { Configuration } from './Configuration';
 /**
  * Default endpoint URLs as defined in the documentation.
  */
+const kContentEndpoint = '/api/content';
 const kEnvironmentEndpoint = '/api/environment';
 
 /**
@@ -23,10 +24,19 @@ export class ConfigurationImpl implements Configuration {
     /**
      * Override variables that can be set for testing purposes.
      */
+    contentOverride?: string;
     environmentOverride?: string;
 
     constructor() {
         this.hostname = process.env.REACT_APP_API_HOST || '';
+    }
+
+    getContentEndpoint(): string {
+        return this.contentOverride || (this.hostname + kContentEndpoint);
+    }
+
+    setContentEndpoint(endpoint: string): void {
+        this.contentOverride = endpoint;
     }
 
     getEnvironmentEndpoint(): string {

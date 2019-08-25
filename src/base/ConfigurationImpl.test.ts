@@ -8,11 +8,14 @@ describe('ConfigurationImpl', () => {
     it('has the ability to programmatically override configuration', () => {
         const configuration = new ConfigurationImpl();
 
-        const originalEndpoint = configuration.getEnvironmentEndpoint();
+        const originalContentEndpoint = configuration.getContentEndpoint();
+        const originalEnvironmentEndpoint = configuration.getEnvironmentEndpoint();
 
+        configuration.setContentEndpoint('custom-endpoint');
         configuration.setEnvironmentEndpoint('custom-endpoint');
 
-        expect(configuration.getEnvironmentEndpoint()).not.toEqual(originalEndpoint);
+        expect(configuration.getContentEndpoint()).not.toEqual(originalContentEndpoint);
+        expect(configuration.getEnvironmentEndpoint()).not.toEqual(originalEnvironmentEndpoint);
     });
 
     it('has the ability to override configuration based on the environment', () => {

@@ -16,6 +16,7 @@ TODO
 The volunteer portal requires a number of API calls in order to work properly. They can be provided
 by any back-end, but must follow certain documented semantics.
 
+  * [/api/content](API.md#apicontent)
   * [/api/environment](API.md#apienvironment)
   * [/api/login](API.md#apilogin)
   * [/api/event](API.md#apievent)

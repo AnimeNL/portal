@@ -3,6 +3,21 @@ The volunteer portal requires a number of API calls in order to work properly. T
 by any back-end, as long as the returned data matches the specification below. Data for all API
 calls must be returned in JSON. Optional fields must be given, but may be set to `null`.
 
+### /api/content
+Returns static content that can be rendered on the registration application.
+
+| Property         | Type            | Description |
+| :---             | :---            | :--- |
+| `lastUpdate`     | `number`        | Time, in milliseconds since the UNIX epoch, at which the content was last updated. |
+| `pages`          | `ContentPage[]` | Pages of content that should be available on the portal. |
+
+##### `ContentPage` interface
+
+| Property     | Type     | Description |
+| :---         | :---     | :--- |
+| `url`        | `string` | URL of the page, relative to the application's base. |
+| `content`    | `string` | Content of the page. May contain markdown content. |
+
 ### /api/environment
 Returns information about the volunteer portal environment, enabling it to be customized for a
 particular event or group of volunteers. Must accept `GET` requests.

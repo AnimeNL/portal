@@ -8,6 +8,12 @@
  */
 export interface Configuration {
     /**
+     * Returns a URL to the endpoint where data of the Content API can be obtained.
+     * @see https://github.com/AnimeNL/portal/blob/master/API.md#apicontent
+     */
+    getContentEndpoint(): string;
+
+    /**
      * Returns a URL to the endpoint where data of the Environment API can be obtained.
      * @see https://github.com/AnimeNL/portal/blob/master/API.md#apienvironment
      */

@@ -40,12 +40,23 @@ function validate<T>(input: any, inputName: string, property: string, validateFn
     return true
 }
 
+function isArray(input: any): boolean {
+    return typeof input === 'object' && Array.isArray(input);
+}
+
 function isNumber(input: any): boolean {
     return typeof input === 'number';
 }
 
 function isString(input: any): boolean {
     return typeof input === 'string';
+}
+
+/**
+ * 
+ */
+export function validateArray(input: any, inputName: string, property: string): boolean {
+    return validate(input, inputName, property, isArray);
 }
 
 /**
