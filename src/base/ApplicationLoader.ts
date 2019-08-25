@@ -6,6 +6,7 @@ import { Application } from './Application';
 import { ApplicationState } from './ApplicationState';
 import { ConfigurationImpl } from './ConfigurationImpl';
 import { EnvironmentImpl } from './EnvironmentImpl';
+import { UserImpl } from './UserImpl';
 
 /**
  * Main application runtime. Will determine the visitor's identity, if any, and load the appropriate
@@ -22,9 +23,16 @@ export class ApplicationLoader {
      */
     private environment: EnvironmentImpl;
 
+    /**
+     * The User instance describing the user representing the client. They may be identified and
+     * have a certain set of abilities attached to them.
+     */
+    private user: UserImpl;
+
     public constructor() {
         this.configuration = new ConfigurationImpl();
         this.environment = new EnvironmentImpl(this.configuration);
+        this.user = new UserImpl(this.configuration);
     }
 
     /**
@@ -32,8 +40,8 @@ export class ApplicationLoader {
      * to use the portal in.
      */
     public async initialize(): Promise<void> {
-        // TODO: Handle errors in the environment initialization path.
         await this.environment.initialize();
+        await this.user.initialize();
 
         const container = document.getElementById('root');
         if (!container)
@@ -41,7 +49,8 @@ export class ApplicationLoader {
 
         const state: ApplicationState = {
             configuration: this.configuration,
-            environment: this.environment
+            environment: this.environment,
+            user: this.user
         };
 
         // TODO: Find the right approach for user identification + routing + loading the appropriate
@@ -52,7 +61,7 @@ export class ApplicationLoader {
                                 ? await this.loadRegistrationApplication(container, state)
                                 : await this.loadLegacyApplication(container, state);
 
-        application.initialize();
+        await application.initialize();
     }
 
     private async loadLegacyApplication(container: Element, state: ApplicationState): Promise<Application> {
