@@ -14,10 +14,23 @@ const kEnvironmentEndpoint = '/api/environment';
  * test runner to change behaviour. These should not be used in a production environment.
  */
 export class ConfigurationImpl implements Configuration {
+    /**
+     * The portal will, by default, use the hostname included in the HTTP request. This can be
+     * overridden by setting the REACT_APP_API_HOST environmental variable at build time.
+     */
+    hostname: string;
+
+    /**
+     * Override variables that can be set for testing purposes.
+     */
     environmentOverride?: string;
 
+    constructor() {
+        this.hostname = process.env.REACT_APP_API_HOST || '';
+    }
+
     getEnvironmentEndpoint(): string {
-        return this.environmentOverride || kEnvironmentEndpoint;
+        return this.environmentOverride || (this.hostname + kEnvironmentEndpoint);
     }
 
     setEnvironmentEndpoint(endpoint: string): void {
