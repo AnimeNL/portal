@@ -28,7 +28,10 @@ export class UserImpl implements User {
     /**
      * Initializes the User class with all associated state.
      */
-    async initialize(): Promise<void> {}
+    async initialize(): Promise<boolean> {
+        // TODO: Handle initialization.
+        return true;
+    }
 
     hasAbility(ability: UserAbility): boolean {
         return this.abilities.has(ability);

@@ -25,7 +25,7 @@ export class RegistrationApplication implements Application {
     }
 
     async initialize(): Promise<void> {
-        if (!this.contentProvider.initialize()) {
+        if (!await this.contentProvider.initialize()) {
             this.renderFatalError('Unable to initialize the content provider.');
             return;
         }

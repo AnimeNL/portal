@@ -41,8 +41,11 @@ export class ApplicationLoader {
      * to use the portal in.
      */
     public async initialize(route: string): Promise<void> {
-        await this.environment.initialize();
-        await this.user.initialize();
+        if (!await this.environment.initialize())
+            throw new Error('Unable to initialize the portal environment.');
+
+        if (!await this.user.initialize())
+            throw new Error('Unable to initialize the portal user.');
 
         const container = document.getElementById('root');
         if (!container)
