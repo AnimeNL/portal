@@ -5,7 +5,6 @@
 import { Configuration } from '../base/Configuration';
 import { ContentLoader } from './ContentLoader';
 import { IContent } from '../api/IContent';
-import { IContentPage } from '../api/IContentPage';
 
 /**
  * Message to include with the exception thrown when data is being accessed before the content
