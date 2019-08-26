@@ -9,12 +9,8 @@ import { ContentProvider } from './ContentProvider';
 import { IContent } from '../api/IContent';
 
 describe('ContentProvider', () => {
-    function createContentProvider() {
-        return new ContentProvider(new ConfigurationImpl());
-    }
-
     it('should be able to distinguish the home page from leaf pages', () => {
-        const contentProvider = createContentProvider();
+        const contentProvider = new ContentProvider();
 
         const kContent: IContent = {
             lastUpdate: 123456,
@@ -28,17 +24,18 @@ describe('ContentProvider', () => {
 
         expect(contentProvider.initializeWithContent(kContent)).toBeTruthy();
 
-        expect(contentProvider.hasPage('/')).toBeFalsy();
-        expect(contentProvider.hasPage('/404')).toBeFalsy();
+        expect(contentProvider.hasPage('/')).toBeTruthy();
+        expect(contentProvider.hasPage('/404')).toBeTruthy();
         expect(contentProvider.hasPage('/foo')).toBeTruthy();
         expect(contentProvider.hasPage('/bar')).toBeTruthy();
 
-        // Verify that the page list includes the page in insertion order.
+        // Verify that the page list includes the page in insertion order, with the special-cased
+        // pages removed from the list.
         expect(contentProvider.getPageList()).toEqual(['/foo', '/bar']);
     });
 
     it('should fail when the home page could not be found', () => {
-        const contentProvider = createContentProvider();
+        const contentProvider = new ContentProvider();
         const restoreConsole = mockConsole();
 
         const kContent: IContent = {
@@ -57,7 +54,7 @@ describe('ContentProvider', () => {
     });
 
     it('should fail when the error page could not be found', () => {
-        const contentProvider = createContentProvider();
+        const contentProvider = new ContentProvider();
         const restoreConsole = mockConsole();
 
         const kContent: IContent = {
@@ -76,7 +73,7 @@ describe('ContentProvider', () => {
     });
 
     it('should fail when there are duplicate URLs', () => {
-        const contentProvider = createContentProvider();
+        const contentProvider = new ContentProvider();
         const restoreConsole = mockConsole();
 
         const kContent: IContent = {
@@ -96,7 +93,7 @@ describe('ContentProvider', () => {
     });
 
     it('should be able to return the content for a request URL', () => {
-        const contentProvider = createContentProvider();
+        const contentProvider = new ContentProvider();
 
         const kContent: IContent = {
             lastUpdate: 123456,
@@ -112,12 +109,12 @@ describe('ContentProvider', () => {
         expect(contentProvider.hasPage('/foo')).toBeTruthy();
 
         expect(contentProvider.getErrorPageContent()).toStrictEqual('not found');
-        expect(contentProvider.getHomePageContent()).toStrictEqual('homepage');
+        expect(contentProvider.getPageContent('/')).toStrictEqual('homepage');
         expect(contentProvider.getPageContent('/foo')).toStrictEqual('leaf page #1');
     });
 
     it('should be able to return the content last update time', () => {
-        const contentProvider = createContentProvider();
+        const contentProvider = new ContentProvider();
 
         const kContent: IContent = {
             lastUpdate: 123456,
@@ -133,13 +130,12 @@ describe('ContentProvider', () => {
     });
 
     it('should throw when accessing properties before loading succeeds', () => {
-        const contentProvider = createContentProvider();
+        const contentProvider = new ContentProvider();
 
-        expect(() => contentProvider.getErrorPageContent()).toThrowError();
-        expect(() => contentProvider.getHomePageContent()).toThrowError();
         expect(() => contentProvider.getPageList()).toThrowError();
-        expect(() => contentProvider.hasPage('/foo')).toThrowError();
         expect(() => contentProvider.getPageContent('/foo')).toThrowError();
+        expect(() => contentProvider.getErrorPageContent()).toThrowError();
+        expect(() => contentProvider.hasPage('/foo')).toThrowError();
         expect(() => contentProvider.getLastUpdate()).toThrowError();
     });
 });
