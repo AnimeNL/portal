@@ -3,10 +3,10 @@
 // be found in the LICENSE file.
 
 import React from 'react';
-import { Route, Switch } from 'react-router-dom'
+import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import { ContentProvider } from './ContentProvider';
-import { kRegistrationApplicationBasename as kBasename } from '../base/ApplicationBasename';
+import { kRegistrationApplicationBasename } from '../base/ApplicationBasename';
 
 import { ContentView } from './components/ContentView';
 import { RegistrationLayout } from './components/RegistrationLayout';
@@ -48,8 +48,7 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
      */
     componentDidMount(): void {
         const contentProvider = new ContentProvider();
-
-        contentProvider.initialize().then(result => {
+        contentProvider.initialize(kRegistrationApplicationBasename).then(result => {
             this.setState({
                 contentAvailable: result,
                 fatalErrorMessage: result ? undefined
@@ -66,19 +65,31 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
      */
     render(): JSX.Element {
         const { contentAvailable, contentProvider, fatalErrorMessage } = this.state;
+        const kBasename = kRegistrationApplicationBasename;
+
+        // Utility element that enables using components for routing that should be receiving the
+        // same properties as the <PortalController>, on top of the existing routing properties.
+        const RouteTo = (props: any): JSX.Element => {
+            const renderComponent = (routeProps: RouteComponentProps): JSX.Element =>
+                React.createElement(props.component, { ...routeProps, contentProvider });
+
+            return <Route path={props.path}
+                          exact={props.exact}
+                          render={renderComponent} />;
+        };
 
         return (
             <RegistrationLayout>
     
                 { contentAvailable &&
                   <Switch>
-                      <Route path={kBasename + "/"} exact component={ContentView} />
+                      <RouteTo path={kBasename + "/"} exact component={ContentView} />
 
                       { /* Include all the content provider's pages in the router. */ }
-                      { this.state.contentProvider.getPageList().forEach(url =>
-                            <Route path={kBasename + url} exact component={ContentView} />) }
+                      { contentProvider.getPageList().map(url =>
+                            <RouteTo path={kBasename + url} component={ContentView} />) }
 
-                      <Route component={ContentView} />
+                      <RouteTo component={ContentView} />
                   </Switch> }
 
                 { fatalErrorMessage &&

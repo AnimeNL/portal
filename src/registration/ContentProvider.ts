@@ -7,10 +7,25 @@ import { ContentLoader } from './ContentLoader';
 import { IContent } from '../api/IContent';
 
 /**
+ * Special-cased path that indicates the error 404 ("Not Found") page.
+ */
+const kErrorPageUrl = '/404';
+
+/**
+ * Special-cased path that indicates the home page.
+ */
+const kHomePageUrl = '/';
+
+/**
  * Message to include with the exception thrown when data is being accessed before the content
  * provider has been initialized properly.
  */
 const kExceptionMessage = 'The content provider has not been successfully initialized yet.';
+
+/**
+ * Returns whether the given |url| is a special-cased Url.
+ */
+const isSpecialUrl = (url: string) => url === kErrorPageUrl || url === kHomePageUrl;
 
 /**
  * The content provider maintains an overview of all the available content pages, and distinguishes
@@ -25,8 +40,9 @@ const kExceptionMessage = 'The content provider has not been successfully initia
  * - All other pages will be included in getPageList() and can be obtained through getPageContent().
  */
 export class ContentProvider {
+    private basename: string = '';
+
     private errorPage: string | undefined;
-    private homePage: string | undefined;
     private pages: Map<string /* url */, string /* content */> = new Map();
 
     private lastUpdate: number | undefined;
@@ -35,12 +51,14 @@ export class ContentProvider {
     /**
      * Initializes the content provider. All data will be loaded, after which the homepage will be
      * identified and the leaf pages will be stored in a request map.
+     * 
+     * @param basename The basename from which content will be served.
      */
-    async initialize(): Promise<boolean> {
+    async initialize(basename: string): Promise<boolean> {
         const configuration = ApplicationState.getConfiguration();
         const contentLoader = new ContentLoader(configuration);
-        if (!contentLoader)
-            return false;
+
+        this.basename = basename;
 
         if (await contentLoader.initialize())
             return this.initializeWithContent(contentLoader.getContent());
@@ -53,102 +71,42 @@ export class ContentProvider {
      * enable testing of this functionality independently from the ContentLoader.
      */
     initializeWithContent(content: IContent): boolean {
-        const kHomepageUrl = '/';
-        const kNotFoundUrl = '/404';
-
         for (const contentPage of content.pages) {
-            const { url, content } = contentPage;
+            const { url } = contentPage;
 
-            switch (url) {
-                case kHomepageUrl:
-                    if (this.homePage) {
-                        console.error('Duplicate content provided for the homepage.');
-                        return false;
-                    }
-
-                    this.homePage = content;
-                    break;
-                
-                case kNotFoundUrl:
-                    if (this.errorPage) {
-                        console.error('Duplicate content provided for the error page.');
-                        return false;
-                    }
-
-                    this.errorPage = content;
-                    break;
-
-                default:
-                    if (this.pages.has(url)) {
-                        console.error(`Duplicate content provided for the given URL (${url}).`);
-                        return false;
-                    }
-
-                    this.pages.set(url, content);
-                    break;
+            if (this.pages.has(url)) {
+                console.error(`Duplicate content provided for the given URL (${url}).`);
+                return false;
             }
+
+            this.pages.set(url, contentPage.content);
         }
 
-        if (!this.errorPage) {
+        if (!this.pages.has(kErrorPageUrl)) {
             console.error('No content provided for the error page.');
             return false;
         }
 
-        if (!this.homePage) {
+        if (!this.pages.has(kHomePageUrl)) {
             console.error('No content provided for the homepage.');
             return false;
         }
 
-        this.initialized = true;
         this.lastUpdate = content.lastUpdate;
+        this.initialized = true;
 
         return true;
     }
 
     /**
-     * Returns the page that should be displayed when the requested page could not been found.
-     * Requires the content provider to have been successfully initialized.
-     */
-    getErrorPageContent(): string {
-        if (!this.initialized || !this.errorPage)
-            throw new Error(kExceptionMessage);
-        
-        return this.errorPage;
-    }
-
-    /**
-     * Returns the page that should be displayed when no specific page has been requested. Requires
-     * the content provider to have been successfully initialized.
-     */
-    getHomePageContent(): string {
-        if (!this.initialized || !this.homePage)
-            throw new Error(kExceptionMessage);
-        
-        return this.homePage;
-    }
-
-    /**
-     * Returns an array with the URLs that are available from the content provider. Requires the
-     * content provider to have been successfully initialized.
+     * Returns an array with the URLs that are available from the content provider. Special URLs
+     * will be filtered. Requires the content provider to have been successfully initialized.
      */
     getPageList(): string[] {
         if (!this.initialized)
             throw new Error(kExceptionMessage);
 
-        return Array.from(this.pages.keys());
-    }
-
-    /**
-     * Returns whether the page identified by |url| is known to the content provider. Requires the
-     * content provider to have been successfully initialized.
-     * 
-     * @param url The URL to check existance for.
-     */
-    hasPage(url: string): boolean {
-        if (!this.initialized)
-            throw new Error(kExceptionMessage);
-
-        return this.pages.has(url);
+        return Array.from(this.pages.keys()).filter(url => !isSpecialUrl(url));
     }
 
     /**
@@ -161,11 +119,41 @@ export class ContentProvider {
         if (!this.initialized)
             throw new Error(kExceptionMessage);
 
-        const contentPage = this.pages.get(url);
+        // Normalize the |url| to remove the basename and other junk from it.
+        const normalizedUrl = this.normalizeUrl(url);
+
+        const contentPage = this.pages.get(normalizedUrl);
         if (!contentPage)
-            throw new Error(`No page could be found for the given URL (${url}).`);        
+            throw new Error(`No page could be found for the given URL (${normalizedUrl}).`);        
         
         return contentPage;
+    }
+
+    /**
+     * Returns the page that should be displayed when the requested page could not been found.
+     * Requires the content provider to have been successfully initialized.
+     */
+    getErrorPageContent(): string {
+        if (!this.initialized)
+            throw new Error(kExceptionMessage);
+        
+        return this.pages.get(kErrorPageUrl)!;
+    }
+
+    /**
+     * Returns whether the page identified by |url| is known to the content provider. Requires the
+     * content provider to have been successfully initialized.
+     * 
+     * @param url The URL to check existance for.
+     */
+    hasPage(url: string): boolean {
+        if (!this.initialized)
+            throw new Error(kExceptionMessage);
+
+        // Normalize the |url| to remove the basename and other junk from it.
+        const normalizedUrl = this.normalizeUrl(url);
+
+        return this.pages.has(normalizedUrl);
     }
 
     /**
@@ -175,9 +163,19 @@ export class ContentProvider {
      * @TODO Return a moment() instance instead of the raw UNIX timestamp.
      */
     getLastUpdate(): number {
-        if (!this.initialized || !this.lastUpdate)
+        if (!this.initialized)
             throw new Error(kExceptionMessage);
         
-        return this.lastUpdate;
+        return this.lastUpdate!;
+    }
+
+    /**
+     * Normalizes the given |url|. The basename will be removed from it.
+     */
+    private normalizeUrl(url: string): string {
+        if (this.basename.length && url.startsWith(this.basename))
+            return url.substr(this.basename.length);
+
+        return url;
     }
 }
