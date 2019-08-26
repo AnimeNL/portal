@@ -4,10 +4,11 @@
 
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import { Application } from '../base/Application';
 import { ApplicationState } from '../base/ApplicationState';
-
+import { ContentProvider } from './ContentProvider';
 import { RegistrationLayout } from './components/RegistrationLayout';
 
 /**
@@ -16,13 +17,18 @@ import { RegistrationLayout } from './components/RegistrationLayout';
  */
 export class RegistrationApplication implements Application {
     private container: Element;
+    private contentProvider: ContentProvider;
 
     constructor(state: ApplicationState) {
         this.container = state.container;
+        this.contentProvider = new ContentProvider(state.configuration);
     }
 
     async initialize(): Promise<void> {
-        // TODO: Initialize state for the Registration application.
+        if (!this.contentProvider.initialize()) {
+            this.renderFatalError('Unable to initialize the content provider.');
+            return;
+        }
 
         this.render();
     }
@@ -35,6 +41,16 @@ export class RegistrationApplication implements Application {
         ReactDOM.render(
             <RegistrationLayout>
                 Hello, world!
+            </RegistrationLayout>, this.container);
+    }
+
+    /**
+     * Renders a fatal error that occurred in displaying the Registration application.
+     */
+    renderFatalError(message: string): void {
+        ReactDOM.render(
+            <RegistrationLayout>
+                {message}
             </RegistrationLayout>, this.container);
     }
 }

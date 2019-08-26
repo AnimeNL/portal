@@ -51,7 +51,10 @@ export class ContentProvider {
         if (!contentLoader)
             return false;
 
-        return this.initializeWithContent(contentLoader.getContent());
+        if (await contentLoader.initialize())
+            return this.initializeWithContent(contentLoader.getContent());
+
+        return false;
     }
 
     /**

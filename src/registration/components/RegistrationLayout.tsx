@@ -21,6 +21,7 @@ const styles = (theme: Theme) =>
             alignItems: 'center',
             justifyContent: 'center',
 
+            backgroundAttachment: 'fixed',
             backgroundPosition: 'bottom right',
             backgroundSize: 'cover',
 
@@ -32,11 +33,16 @@ const styles = (theme: Theme) =>
                 backgroundImage: 'url(https://stewards.team/static/images/background-desktop.jpg)',
             },
 
-            '& > img': { maxWidth: '60vw' },
+            '& > img': {
+                marginTop: '2em',
+                width: '256px'
+            },
         },
         content: {
             marginTop: '2em',
             marginBottom: '1em',
+
+            maxWidth: '1280px',
             width: '90%',
         },
         footer: {
@@ -58,7 +64,7 @@ class RegistrationLayoutBase extends React.PureComponent<WithStyles<typeof style
 
         return (
             <div className={classes.container}>
-                <img src="https://stewards.team/static/images/logo-portal.png" alt="J-POP AnimeCon 2020 logo" />
+                <img src="https://stewards.team/static/images/logo-portal-384.png" alt="J-POP AnimeCon 2020 logo" />
                 <Paper className={classes.content}>
                     {children}
                 </Paper>
