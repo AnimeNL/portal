@@ -5,7 +5,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { Application as ApplicationInterface } from '../base/Application';
 import { ApplicationState } from '../base/ApplicationState';
 import { Environment } from '../base/Environment';
 
@@ -25,7 +24,7 @@ const kEventError = 'Unable to load the event information.';
  * Main runtime of the volunteer portal. Constructed on pageload. Initialisation may happen
  * asynchronously as part of the initialize() method.
  */
-class Application implements ApplicationInterface, TitleObserver {
+class Application implements TitleObserver {
     /**
      * Container in which the application should be rendered.
      */
@@ -61,11 +60,11 @@ class Application implements ApplicationInterface, TitleObserver {
      */
     serviceWorkerManager: ServiceWorkerManager;
 
-    constructor(state: ApplicationState) {
-        this.container = state.container;
+    constructor() {
+        this.container = document.getElementById('root')!;
         this.clock = new Clock();
         this.user = new User();
-        this.environment = state.environment;
+        this.environment = ApplicationState.getEnvironment();
         this.event = new Event();
 
         this.serviceWorkerManager = new ServiceWorkerManager();

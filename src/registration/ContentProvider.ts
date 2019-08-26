@@ -2,7 +2,7 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import { Configuration } from '../base/Configuration';
+import { ApplicationState } from '../base/ApplicationState';
 import { ContentLoader } from './ContentLoader';
 import { IContent } from '../api/IContent';
 
@@ -25,28 +25,20 @@ const kExceptionMessage = 'The content provider has not been successfully initia
  * - All other pages will be included in getPageList() and can be obtained through getPageContent().
  */
 export class ContentProvider {
-    private configuration: Configuration;
-
-    // Content that will be available after initialize() has completed.
     private errorPage: string | undefined;
     private homePage: string | undefined;
-    private pages: Map<string /* url */, string /* content */>;
+    private pages: Map<string /* url */, string /* content */> = new Map();
 
     private lastUpdate: number | undefined;
-    private initialized: boolean;
-
-    constructor(configuration: Configuration) {
-        this.configuration = configuration;
-        this.initialized = false;
-        this.pages = new Map();
-    }
+    private initialized: boolean = false;
 
     /**
      * Initializes the content provider. All data will be loaded, after which the homepage will be
      * identified and the leaf pages will be stored in a request map.
      */
     async initialize(): Promise<boolean> {
-        const contentLoader = new ContentLoader(this.configuration);
+        const configuration = ApplicationState.getConfiguration();
+        const contentLoader = new ContentLoader(configuration);
         if (!contentLoader)
             return false;
 

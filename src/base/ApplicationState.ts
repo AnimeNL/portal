@@ -9,9 +9,40 @@ import { User } from './User';
 /**
  * Interface that defines the properties that will be shared to applications by the loader.
  */
-export interface ApplicationState {
-    configuration: Configuration;
-    container: Element;
-    environment: Environment;
-    user: User;
-}
+export class ApplicationState {
+    private static configuration: Configuration;
+    private static environment: Environment;
+    private static user: User;
+
+    /**
+     * Initializes the ApplicationState for first-time usage.
+     */
+    public static initialize(configuration: Configuration,
+                             environment: Environment,
+                             user: User): void {
+        ApplicationState.configuration = configuration;
+        ApplicationState.environment = environment;
+        ApplicationState.user = user;
+    }
+
+    /**
+     * Returns the global Configuration object.
+     */
+    public static getConfiguration(): Configuration {
+        return ApplicationState.configuration;
+    }
+
+    /**
+     * Returns the global Environment object.
+     */
+    public static getEnvironment(): Environment {
+        return ApplicationState.environment;
+    }
+
+    /**
+     * Returns the global User object.
+     */
+    public static getUser(): User {
+        return ApplicationState.user;
+    }
+};

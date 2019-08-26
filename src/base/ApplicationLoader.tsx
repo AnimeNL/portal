@@ -2,12 +2,35 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import { Application } from './Application';
+import { BrowserRouter, Route, Switch } from 'react-router-dom'
+import React from 'react';
+import ReactDOM from 'react-dom';
+
 import { ApplicationState } from './ApplicationState';
 import { ConfigurationImpl } from './ConfigurationImpl';
 import { EnvironmentImpl } from './EnvironmentImpl';
 import { UserImpl } from './UserImpl';
 import { UserAbility } from './UserAbility';
+import { kRegistrationApplicationBasename } from './ApplicationBasename';
+
+/**
+ * Message that should be displayed while the application is loading.
+ */
+const LoadingMessage = (): JSX.Element => <p>Loading application...</p>;
+
+/**
+ * Component for lazily loading the registration application.
+ */
+const RegistrationApplication = React.lazy(() =>
+    import(/* webpackChunkName: 'registration' */ '../registration/RegistrationApplication'));
+
+/**
+ * Component for lazily loading the legacy application.
+ */
+const LegacyApplication = () => {
+    // TODO: Re-enable the legacy application when updated to the new routing mechanism.
+    return <p>LegacyApplication</p>;
+};
 
 /**
  * Main application runtime. Will determine the visitor's identity, if any, and load the appropriate
@@ -51,44 +74,27 @@ export class ApplicationLoader {
         if (!container)
             throw new Error('No elements could be found having @id=`root`.');
 
-        const state: ApplicationState = {
-            configuration: this.configuration,
-            container,
-            environment: this.environment,
-            user: this.user
-        };
+        // Initialize the global application state before going any further.
+        ApplicationState.initialize(this.configuration, this.environment, this.user);
 
-        const application = await this.routeToApplication(route, state);
-
-        // Wait for the located application to be initialized.
-        await application.initialize();
+        this.render(container);
     }
 
     /**
-     * Identify which application the user has to be routed to based on the |route|. Access to
-     * certain applications may be limited by their abilities.
+     * Sets the global context and loads the appropriate application based on routing properties.
      */
-    private async routeToApplication(route: string, state: ApplicationState): Promise<Application> {
-        // 1. The public registration application
-        if (this.user.hasAbility(UserAbility.RegistrationApplication) &&
-                route.startsWith('/hallo')) {
-            return this.loadRegistrationApplication(state);
-        }
+    render(container: Element): void {
+        ReactDOM.render(
+            <BrowserRouter>
+                <React.Suspense fallback={<LoadingMessage />}>
+                    <Switch>
+                        { this.user.hasAbility(UserAbility.RegistrationApplication) &&
+                        <Route path={kRegistrationApplicationBasename}
+                                component={RegistrationApplication} /> }
 
-        // DEPRECATED: The legacy portal application.
-        return this.loadLegacyApplication(state);
-    }
-
-    private async loadLegacyApplication(state: ApplicationState): Promise<Application> {
-        const module = await import(/* webpackChunkName: 'legacy' */ '../app/Application');
-
-        return new module.default(state);
-    }
-
-    private async loadRegistrationApplication(state: ApplicationState): Promise<Application> {
-        const module =
-            await import(/* webpackChunkName: 'registration' */ '../registration/RegistrationApplication');
-        
-        return new module.RegistrationApplication(state);
+                        <Route component={LegacyApplication} />
+                    </Switch>
+                </React.Suspense>
+            </BrowserRouter>, container);
     }
 }
