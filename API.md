@@ -11,6 +11,13 @@ Returns static content that can be rendered on the registration application.
 | `lastUpdate`     | `number`        | Time, in milliseconds since the UNIX epoch, at which the content was last updated. |
 | `pages`          | `ContentPage[]` | Pages of content that should be available on the portal. |
 
+Implementations **must** provide pages for the following two URLs:
+
+| URL    | Description |
+| :---   | :---  |
+| `/`    | Home page of the site, will be displayed by default. |
+| `/404` | Error page to be displayed when a non-existent page has been requested. |
+
 ##### `ContentPage` interface
 
 | Property     | Type     | Description |
