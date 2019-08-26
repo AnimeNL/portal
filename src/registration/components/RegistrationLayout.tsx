@@ -47,7 +47,7 @@ const styles = (theme: Theme) =>
         },
         footer: {
             paddingBottom: '125px',
-            fontSize: '.8em',
+
             '& > a': {
                 color: '#4E342E',
             },
