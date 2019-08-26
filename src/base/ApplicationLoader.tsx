@@ -13,6 +13,10 @@ import { UserImpl } from './UserImpl';
 import { UserAbility } from './UserAbility';
 import { kRegistrationApplicationBasename } from './ApplicationBasename';
 
+import CssBaseline from '@material-ui/core/CssBaseline';
+import ThemeProvider from '@material-ui/styles/ThemeProvider';
+import { createMuiTheme } from '@material-ui/core/styles';
+
 /**
  * Message that should be displayed while the application is loading.
  */
@@ -84,17 +88,22 @@ export class ApplicationLoader {
      * Sets the global context and loads the appropriate application based on routing properties.
      */
     render(container: Element): void {
-        ReactDOM.render(
-            <BrowserRouter>
-                <React.Suspense fallback={<LoadingMessage />}>
-                    <Switch>
-                        { this.user.hasAbility(UserAbility.RegistrationApplication) &&
-                        <Route path={kRegistrationApplicationBasename}
-                                component={RegistrationApplication} /> }
+        const theme = createMuiTheme();
 
-                        <Route component={LegacyApplication} />
-                    </Switch>
-                </React.Suspense>
-            </BrowserRouter>, container);
+        ReactDOM.render(
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <BrowserRouter>
+                    <React.Suspense fallback={<LoadingMessage />}>
+                        <Switch>
+                            { this.user.hasAbility(UserAbility.RegistrationApplication) &&
+                            <Route path={kRegistrationApplicationBasename}
+                                    component={RegistrationApplication} /> }
+
+                            <Route component={LegacyApplication} />
+                        </Switch>
+                    </React.Suspense>
+                </BrowserRouter>
+            </ThemeProvider>, container);
     }
 }
