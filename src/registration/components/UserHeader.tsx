@@ -6,7 +6,8 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import { ApplicationState } from '../../base/ApplicationState';
-import { Colors} from '../Colors';
+import { Colors } from '../Colors';
+import { UserLoginDialog } from './UserLoginDialog';
 
 import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -52,6 +53,11 @@ interface InternalState {
     identified: boolean;
 
     /**
+     * Whether the login dialog should be displayed to the user.
+     */
+    loginDialogDisplayed: boolean;
+
+    /**
      * Whether the status of the signed in user's application should be displayed.
      */
     statusDisplayed: boolean;
@@ -70,6 +76,7 @@ interface InternalState {
 class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, InternalState> {
     state: InternalState = {
         identified: false,
+        loginDialogDisplayed: false,
         statusDisplayed: false,
         title: 'Volunteer Portal',
     };
@@ -85,11 +92,31 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
         this.setState({ identified, title });
     }
 
+    /**
+     * Handles the modal login flow that's available on every page of the registration portal. Login
+     * status is shared across all applications. Users need an e-mail address and an access code in
+     * order to be able to authenticate to the application.
+     */
     @bind
-    openLoginDialog(): void {
-
+    async triggerModalLoginFlow(): Promise<void> {
+        this.setState({ loginDialogDisplayed: true });
     }
 
+    @bind
+    async onLoginAttempt(): Promise<boolean> {
+        await new Promise(resolve => setTimeout(resolve, 2500));
+        return false;
+    }
+
+    @bind
+    onLoginCancel(): void {
+        this.setState({ loginDialogDisplayed: false });
+    }
+
+    /**
+     * Toggles display of the status overflow, which displays where in the sign-up process the user
+     * is. The actual user status is conveyed to us as an ability.
+     */
     @bind
     toggleStatusDisplay(): void {
         this.setState({ statusDisplayed: !this.state.statusDisplayed });
@@ -97,10 +124,11 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
 
     render(): JSX.Element {
         const { classes } = this.props;
-        const { identified, statusDisplayed, title } = this.state;
+        const { identified, loginDialogDisplayed, statusDisplayed, title } = this.state;
 
         return (
             <>
+
                 <div className={classes.root}>
                     <Typography variant="h6" component="h1" className={classes.title}>
                         {title}
@@ -110,10 +138,11 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
                             Status
                         </Button> }
                     { !identified &&
-                        <Button color="inherit" onClick={this.openLoginDialog}>
+                        <Button color="inherit" onClick={this.triggerModalLoginFlow}>
                             Inloggen
                         </Button> }
                 </div>
+
                 { identified &&
                     <ExpansionPanel expanded={statusDisplayed} className={classes.noMargin}>
                         <ExpansionPanelSummary className={classes.hide} />
@@ -121,6 +150,12 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
                             Hello, world!
                         </ExpansionPanelDetails>
                     </ExpansionPanel> }
+
+                { !identified &&
+                    <UserLoginDialog onCancel={this.onLoginCancel}
+                                     onLogin={this.onLoginAttempt}
+                                     open={loginDialogDisplayed} /> }
+
             </>
         );
     }
