@@ -4,7 +4,6 @@
 
 import mockConsole from 'jest-mock-console';
 
-import { ConfigurationImpl } from '../base/ConfigurationImpl';
 import { ContentProvider } from './ContentProvider';
 import { IContent } from '../api/IContent';
 

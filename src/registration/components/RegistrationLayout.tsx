@@ -3,6 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 import Paper from '@material-ui/core/Paper';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
@@ -19,7 +20,7 @@ const styles = (theme: Theme) =>
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
+            justifyContent: 'top',
 
             backgroundAttachment: 'fixed',
             backgroundPosition: 'bottom right',
@@ -33,7 +34,7 @@ const styles = (theme: Theme) =>
                 backgroundImage: 'url(https://stewards.team/static/images/background-desktop.jpg)',
             },
 
-            '& > img': {
+            '& > a > img': {
                 marginTop: '2em',
                 width: '256px'
             },
@@ -64,7 +65,9 @@ class RegistrationLayoutBase extends React.PureComponent<WithStyles<typeof style
 
         return (
             <div className={classes.container}>
-                <img src="https://stewards.team/static/images/logo-portal-384.png" alt="J-POP AnimeCon 2020 logo" />
+                <Link to="/registration/">
+                    <img src="https://stewards.team/static/images/logo-portal-384.png" alt="J-POP Logo" />
+                </Link>
                 <Paper className={classes.content}>
                     {children}
                 </Paper>
