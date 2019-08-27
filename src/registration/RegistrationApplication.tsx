@@ -10,6 +10,7 @@ import { kRegistrationApplicationBasename } from '../base/ApplicationBasename';
 
 import { ContentView } from './components/ContentView';
 import { RegistrationLayout } from './components/RegistrationLayout';
+import { UserHeader } from './components/UserHeader';
 
 /**
  * State that can be maintained by the registration application. Assumed to continue to be mounted
@@ -81,6 +82,8 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
         return (
             <RegistrationLayout>
     
+                <UserHeader />
+
                 { contentAvailable &&
                   <Switch>
                       <RouteTo path={kBasename + "/"} exact component={ContentView} />

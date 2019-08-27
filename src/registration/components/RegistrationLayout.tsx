@@ -36,6 +36,7 @@ const styles = (theme: Theme) =>
 
             '& > a > img': {
                 marginTop: '2em',
+                maxWidth: '40vw',
                 width: '256px'
             },
         },
@@ -66,7 +67,7 @@ class RegistrationLayoutBase extends React.PureComponent<WithStyles<typeof style
         return (
             <div className={classes.container}>
                 <Link to="/registration/">
-                    <img src="https://stewards.team/static/images/logo-portal-384.png" alt="J-POP Logo" />
+                    <img src="https://stewards.team/static/images/logo-portal.png" alt="J-POP Logo" />
                 </Link>
                 <Paper className={classes.content}>
                     {children}
