@@ -40,8 +40,6 @@ const isSpecialUrl = (url: string) => url === kErrorPageUrl || url === kHomePage
  * - All other pages will be included in getPageList() and can be obtained through getPageContent().
  */
 export class ContentProvider {
-    private basename: string = '';
-
     private errorPage: string | undefined;
     private pages: Map<string /* url */, string /* content */> = new Map();
 
@@ -51,14 +49,10 @@ export class ContentProvider {
     /**
      * Initializes the content provider. All data will be loaded, after which the homepage will be
      * identified and the leaf pages will be stored in a request map.
-     * 
-     * @param basename The basename from which content will be served.
      */
-    async initialize(basename: string): Promise<boolean> {
+    async initialize(): Promise<boolean> {
         const configuration = ApplicationState.getConfiguration();
         const contentLoader = new ContentLoader(configuration);
-
-        this.basename = basename;
 
         if (await contentLoader.initialize())
             return this.initializeWithContent(contentLoader.getContent());
@@ -119,12 +113,9 @@ export class ContentProvider {
         if (!this.initialized)
             throw new Error(kExceptionMessage);
 
-        // Normalize the |url| to remove the basename and other junk from it.
-        const normalizedUrl = this.normalizeUrl(url);
-
-        const contentPage = this.pages.get(normalizedUrl);
+        const contentPage = this.pages.get(url);
         if (!contentPage)
-            throw new Error(`No page could be found for the given URL (${normalizedUrl}).`);        
+            throw new Error(`No page could be found for the given URL (${url}).`);        
         
         return contentPage;
     }
@@ -150,10 +141,7 @@ export class ContentProvider {
         if (!this.initialized)
             throw new Error(kExceptionMessage);
 
-        // Normalize the |url| to remove the basename and other junk from it.
-        const normalizedUrl = this.normalizeUrl(url);
-
-        return this.pages.has(normalizedUrl);
+        return this.pages.has(url);
     }
 
     /**
@@ -167,15 +155,5 @@ export class ContentProvider {
             throw new Error(kExceptionMessage);
         
         return this.lastUpdate!;
-    }
-
-    /**
-     * Normalizes the given |url|. The basename will be removed from it.
-     */
-    private normalizeUrl(url: string): string {
-        if (this.basename.length && url.startsWith(this.basename))
-            return url.substr(this.basename.length);
-
-        return url;
     }
 }

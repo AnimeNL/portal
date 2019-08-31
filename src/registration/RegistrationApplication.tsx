@@ -8,7 +8,6 @@ import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 import { ContentProvider } from './ContentProvider';
 import { LoginController } from './controllers/LoginController';
 import { LoginControllerContext } from './controllers/LoginControllerContext';
-import { kRegistrationApplicationBasename } from '../base/ApplicationBasename';
 
 import { ContentView } from './components/ContentView';
 import { RegistrationLayout } from './components/RegistrationLayout';
@@ -58,7 +57,7 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
      */
     componentDidMount(): void {
         const contentProvider = new ContentProvider();
-        contentProvider.initialize(kRegistrationApplicationBasename).then(result => {
+        contentProvider.initialize().then(result => {
             this.setState({
                 contentAvailable: result,
                 fatalErrorMessage: result ? undefined
@@ -75,7 +74,6 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
      */
     render(): JSX.Element {
         const { contentAvailable, contentProvider, loginController, fatalErrorMessage } = this.state;
-        const kBasename = kRegistrationApplicationBasename;
 
         // Utility element that enables using components for routing that should be receiving the
         // same properties as the <PortalController>, on top of the existing routing properties.
@@ -98,7 +96,7 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
                         <Switch>
                             { /* Include all the content provider's pages in the router. */ }
                             { contentProvider.getPageList().map(url =>
-                                    <RouteTo path={url} component={ContentView} />) }
+                                    <RouteTo path={url} exact component={ContentView} />) }
 
                             { /* Welcome view for users that aren't allowed to access the portal. */ }
                             <RouteTo path="/" exact component={WelcomeView} />
