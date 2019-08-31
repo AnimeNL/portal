@@ -43,7 +43,7 @@ export class WelcomeView extends React.PureComponent<RegistrationProperties> {
                         <ListItemIcon>
                             <ExitToAppIcon />
                         </ListItemIcon>
-                        <ListItemText primary="AnimeCon website…" />
+                        <ListItemText primary="Ga naar animecon.nl…" />
                     </ListItem>
                 </List>
             </>

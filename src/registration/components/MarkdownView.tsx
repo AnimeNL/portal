@@ -15,6 +15,9 @@ const styles = (theme: Theme) =>
         root: {
             padding: theme.spacing(0, 2),
 
+            // Render most text according to Material's body1 style.
+            ...theme.typography.body1,
+
             '& a': {
                 color: '#4E342E',
             },

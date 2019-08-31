@@ -97,11 +97,13 @@ class UserHeaderBase extends React.Component<Properties, InternalState> {
         const environment = ApplicationState.getEnvironment();
         const user = ApplicationState.getUser();
 
+        const actionAvailable = this.shouldActionBeAvailable();
+
         const identified = user.hasAccount();
         const title = identified ? personaliseTitle('Peter Beverloo')
                                  : environment.getPortalTitle();
 
-        this.setState({ identified, title });
+        this.setState({ actionAvailable, identified, title });
     }
 
     componentDidUpdate(prevProps: Properties): void {
@@ -110,11 +112,18 @@ class UserHeaderBase extends React.Component<Properties, InternalState> {
         if (props.location.pathname === prevProps.location.pathname)
             return;
         
-        const actionAvailable = props.location.pathname.startsWith(kRegistrationApplicationBasename);
+        const actionAvailable = this.shouldActionBeAvailable();
         if (state.actionAvailable === actionAvailable)
             return;
         
         this.setState({ actionAvailable });
+    }
+
+    /**
+     * Returns whether the action should be available on the current page.
+     */
+    private shouldActionBeAvailable(): boolean {
+        return this.props.location.pathname.startsWith(kRegistrationApplicationBasename);
     }
 
     @bind
