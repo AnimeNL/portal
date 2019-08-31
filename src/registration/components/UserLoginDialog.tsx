@@ -6,6 +6,7 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import { Colors } from '../Colors';
+import { LoginControllerContext } from '../controllers/LoginControllerContext';
 
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -40,43 +41,28 @@ const styles = (theme: Theme) =>
     });
 
 /**
- * Expression used to validate access codes. Must be a positive number between one and ten digits.
- */
-const kValidCodeExpression = /^\d{1,10}$/;
-
-/**
- * Expression used to validate e-mail addresses. Based on RFC 2822.
- */
-const kValidateEmailExpression = /[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-
-/**
  * State internal to the <UserLoginDialog> component.
  */
 interface InternalState {
     /**
-     * Value of the code field in the dialog form.
+     * Value of the access code field in the dialog form.
      */
-    code: string;
+    accessCode: string;
 
     /**
-     * Error message for the access code field, if any.
+     * Value of the e-mail address field in the dialog form.
      */
-    codeError?: string;
+    emailAddress: string;
 
     /**
-     * Value of the e-mail field in the dialog form.
+     * The error message that should be displayed to the user.
      */
-    email: string;
-
-    /**
-     * Error message for the e-mail field, if any.
-     */
-    emailError?: string;
+    errorMessage?: string;
 
     /**
      * Whether the form is currently being validated.
      */
-    validating: boolean;
+    validating?: boolean;
 }
 
 /**
@@ -84,16 +70,10 @@ interface InternalState {
  */
 interface UserLoginDialogProperties {
     /**
-     * A callback that will be invoked when the [Cancel] button has been pressed.
+     * A callback that will be invoked when login flow has been completed. Will be called with
+     * |identified|, which indicates whether the user is now identified to an account.
      */
-    onCancel: () => void;
-
-    /**
-     * A callback that will be invoked when the user is attempting to sign in to their account. The
-     * |email| and |code| arguments will have non-empty values for this call. The returned boolean
-     * indicates whether the login was successful or not.
-     */
-    onLogin: (email: string, code: string) => Promise<boolean>;
+    onFinished: (identified: boolean) => void;
 
     /**
      * Whether the user login dialog should be open. It'll be displayed as a modal dialog that
@@ -109,11 +89,26 @@ type Properties = UserLoginDialogProperties & WithStyles<typeof styles>;
  * user to log in to their account.
  */
 class UserLoginDialogBase extends React.Component<Properties, InternalState> {
+    static contextType = LoginControllerContext;
+    
+    /**
+     * The login context available to the login dialog. Will be set by React.
+     */
+    context!: React.ContextType<typeof LoginControllerContext>;
+
     state: InternalState = {
-        code: '',
-        email: '',
-        validating: false,
+        accessCode: '',
+        emailAddress: '',
     };
+
+    /**
+     * Called when the user cancels the login request. The dialog will be finished without changing
+     * their login state, presumably because they forgot their details or have no account.
+     */
+    @bind
+    handleCancel(): void {
+        this.props.onFinished(/* identified= */ false);
+    }
 
     /**
      * Called when the login button has been pressed. The given data will be validated, and, when
@@ -121,35 +116,36 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
      */
     @bind
     async handleLogin(): Promise<void> {
-        const { code, email } = this.state;
+        const { accessCode, emailAddress } = this.state;
 
-        let codeError = '';
-        let emailError = '';
+        let errorMessage: string | undefined = '';
+        let validating = false;
 
-        if (!code.length) {
-            codeError = 'Veld is verplicht';
-        } else if (!kValidCodeExpression.test(code)) {
-            codeError = 'Ongeldige toegangscode';
-        }
+        if (!accessCode.length)
+            errorMessage = 'Toegangscode is verplicht';
+        else if (!emailAddress.length)
+            errorMessage = 'E-mailadres is verplicht';
+        else if (!this.context.validateAccessCode(accessCode))
+            errorMessage = 'Toegangscode is niet geldig';
+        else if (!this.context.validateEmailAddress(emailAddress))
+            errorMessage = 'E-mailadres is niet geldig';
 
-        if (!email.length) {
-            emailError = 'Veld is verplicht';
-        } else if (!kValidateEmailExpression.test(email.toLowerCase())) {
-            emailError = 'Ongeldig e-mailadres';
-        }
+        validating = !errorMessage.length;
 
-        // The details can be validated if both error fields are without value.
-        const validating = !codeError.length && !emailError.length;
-
-        this.setState({ codeError, emailError, validating });
+        this.setState({ errorMessage, validating });
         if (!validating)
             return;
 
-        const result = await this.props.onLogin(email, code);
-        if (!result)
-            codeError = 'Onbekende toegangscode.';
+        // Asynchronously handle the login. This functionality is provided by the LoginController.
+        const response = await this.context.requestLogin(accessCode, emailAddress);
 
-        this.setState({ emailError, validating: false });
+        errorMessage = response.message;
+        validating = false;
+
+        if (response.result)
+            this.props.onFinished(/* identified= */ true);
+
+        this.setState({ errorMessage, validating });
     }
 
     /**
@@ -159,12 +155,12 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
     @bind
     handleUpdate(event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>): void {
         switch (event.target.id) {
-            case 'code':
-                this.setState({ code: event.target.value });
+            case 'accessCode':
+                this.setState({ accessCode: event.target.value });
                 break;
 
-            case 'email':
-                this.setState({ email: event.target.value });
+            case 'emailAddress':
+                this.setState({ emailAddress: event.target.value });
                 break;            
 
             default:
@@ -173,42 +169,42 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
     }
 
     render(): JSX.Element {
-        const { classes, onCancel, open } = this.props;
-        const { code, codeError, email, emailError, validating } = this.state;
+        const { classes, open } = this.props;
+        const { accessCode, emailAddress, validating } = this.state;
 
         return (
-            <Dialog onBackdropClick={onCancel}
+            <Dialog onBackdropClick={this.handleCancel}
                     open={open}>
+
                 <DialogTitle>
                     Inloggen
                 </DialogTitle>
+
                 <DialogContent className={classes.removeTopPadding}>
                     <DialogContentText className={classes.contentText}>
                         Toegangscode vergeten? Stuur een e-mailtje naar de <a href="mailto:security@animecon.nl">stewardleiding</a>.
                     </DialogContentText>
 
-                    <TextField error={!!emailError}
-                               helperText={emailError || undefined}
-                               label="E-mailadres"
+                    <TextField label="E-mailadres"
                                type="email"
                                onChange={this.handleUpdate}
                                margin="none"
-                               value={email}
-                               id="email"
+                               value={emailAddress}
+                               id="emailAddress"
                                fullWidth required autoFocus />
-                    <TextField error={!!codeError}
-                               helperText={codeError || undefined}
-                               label="Toegangscode"
+
+                    <TextField label="Toegangscode"
                                type="number"
                                onChange={this.handleUpdate}
                                margin="dense"
-                               value={code}
-                               id="code"
+                               value={accessCode}
+                               id="accessCode"
                                fullWidth required />
 
                 </DialogContent>
+
                 <DialogActions>
-                    <Button onClick={onCancel}>
+                    <Button onClick={this.handleCancel}>
                         Annuleren
                     </Button>
                     <div className={classes.wrapper}>
@@ -224,6 +220,7 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
 
                     </div>
                 </DialogActions>
+                
             </Dialog>
         );
     }

@@ -6,6 +6,8 @@ import React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import { ContentProvider } from './ContentProvider';
+import { LoginController } from './controllers/LoginController';
+import { LoginControllerContext } from './controllers/LoginControllerContext';
 import { kRegistrationApplicationBasename } from '../base/ApplicationBasename';
 
 import { ContentView } from './components/ContentView';
@@ -28,6 +30,11 @@ interface InternalState {
     contentProvider: ContentProvider;
 
     /**
+     * Instance of the login controller for the registration application.
+     */
+    loginController: LoginController,
+
+    /**
      * Fatal error message that stops the registration application from working.
      */
     fatalErrorMessage?: string;
@@ -40,7 +47,8 @@ interface InternalState {
 export default class RegistrationApplication extends React.PureComponent<{}, InternalState> {
     state: InternalState = {
         contentAvailable: false,
-        contentProvider: new ContentProvider()
+        contentProvider: new ContentProvider(),
+        loginController: new LoginController(),
     };
 
     /**
@@ -65,7 +73,7 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
      * choice automatically. Each page will be displayed in the same, canonical layout.
      */
     render(): JSX.Element {
-        const { contentAvailable, contentProvider, fatalErrorMessage } = this.state;
+        const { contentAvailable, contentProvider, loginController, fatalErrorMessage } = this.state;
         const kBasename = kRegistrationApplicationBasename;
 
         // Utility element that enables using components for routing that should be receiving the
@@ -81,25 +89,27 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
 
         return (
             <RegistrationLayout>
-    
-                <UserHeader />
+                <LoginControllerContext.Provider value={loginController}>
 
-                { contentAvailable &&
-                  <Switch>
-                      <RouteTo path={kBasename + "/"} exact component={ContentView} />
+                    <UserHeader />
 
-                      { /* Include all the content provider's pages in the router. */ }
-                      { contentProvider.getPageList().map(url =>
-                            <RouteTo path={kBasename + url} component={ContentView} />) }
+                    { contentAvailable &&
+                    <Switch>
+                        <RouteTo path={kBasename + "/"} exact component={ContentView} />
 
-                      <RouteTo component={ContentView} />
-                  </Switch> }
+                        { /* Include all the content provider's pages in the router. */ }
+                        { contentProvider.getPageList().map(url =>
+                                <RouteTo path={kBasename + url} component={ContentView} />) }
 
-                { fatalErrorMessage &&
-                  <div>
-                      <b>Something went wrong</b>: {fatalErrorMessage}
-                  </div> }
+                        <RouteTo component={ContentView} />
+                    </Switch> }
 
+                    { fatalErrorMessage &&
+                    <div>
+                        <b>Something went wrong</b>: {fatalErrorMessage}
+                    </div> }
+
+                  </LoginControllerContext.Provider>
             </RegistrationLayout>
         );
     }

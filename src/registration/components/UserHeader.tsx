@@ -92,24 +92,16 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
         this.setState({ identified, title });
     }
 
-    /**
-     * Handles the modal login flow that's available on every page of the registration portal. Login
-     * status is shared across all applications. Users need an e-mail address and an access code in
-     * order to be able to authenticate to the application.
-     */
     @bind
-    async triggerModalLoginFlow(): Promise<void> {
+    onLogin(): void {
         this.setState({ loginDialogDisplayed: true });
     }
 
     @bind
-    async onLoginAttempt(): Promise<boolean> {
-        await new Promise(resolve => setTimeout(resolve, 2500));
-        return false;
-    }
+    onLoginFinished(identified: boolean): void {
+        if (identified !== this.state.identified)
+            this.componentDidMount();
 
-    @bind
-    onLoginCancel(): void {
         this.setState({ loginDialogDisplayed: false });
     }
 
@@ -138,7 +130,7 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
                             Status
                         </Button> }
                     { !identified &&
-                        <Button color="inherit" onClick={this.triggerModalLoginFlow}>
+                        <Button color="inherit" onClick={this.onLogin}>
                             Inloggen
                         </Button> }
                 </div>
@@ -152,8 +144,7 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
                     </ExpansionPanel> }
 
                 { !identified &&
-                    <UserLoginDialog onCancel={this.onLoginCancel}
-                                     onLogin={this.onLoginAttempt}
+                    <UserLoginDialog onFinished={this.onLoginFinished}
                                      open={loginDialogDisplayed} /> }
 
             </>
