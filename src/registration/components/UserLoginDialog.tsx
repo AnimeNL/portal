@@ -15,10 +15,13 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-import TextField from '@material-ui/core/TextField';
+import FormControl from '@material-ui/core/FormControl';
+import Input from '@material-ui/core/Input';
+import InputLabel from '@material-ui/core/InputLabel';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { WithStyles, default as withStyles } from '@material-ui/core/styles/withStyles';
 import createStyles from '@material-ui/core/styles/createStyles';
+import deepOrange from '@material-ui/core/colors/deepOrange';
 
 const styles = (theme: Theme) =>
     createStyles({
@@ -37,6 +40,13 @@ const styles = (theme: Theme) =>
             '& > a ': {
                 color: Colors.kHyperlinkColor,
             }
+        },
+
+        errorText: {
+            backgroundColor: deepOrange[100],
+            borderRadius: theme.shape.borderRadius,
+            marginBottom: 0,
+            padding: theme.spacing(1),
         },
     });
 
@@ -108,6 +118,13 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
     @bind
     handleCancel(): void {
         this.props.onFinished(/* identified= */ false);
+
+        this.setState({
+            accessCode: '',
+            emailAddress: '',
+            errorMessage: undefined,
+            validating: undefined,
+        });
     }
 
     /**
@@ -121,14 +138,14 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
         let errorMessage: string | undefined = '';
         let validating = false;
 
-        if (!accessCode.length)
-            errorMessage = 'Toegangscode is verplicht';
-        else if (!emailAddress.length)
+        if (!emailAddress.length)
             errorMessage = 'E-mailadres is verplicht';
-        else if (!this.context.validateAccessCode(accessCode))
-            errorMessage = 'Toegangscode is niet geldig';
+        else if (!accessCode.length)
+            errorMessage = 'Toegangscode is verplicht';
         else if (!this.context.validateEmailAddress(emailAddress))
             errorMessage = 'E-mailadres is niet geldig';
+        else if (!this.context.validateAccessCode(accessCode))
+            errorMessage = 'Toegangscode is niet geldig';
 
         validating = !errorMessage.length;
 
@@ -170,7 +187,7 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
 
     render(): JSX.Element {
         const { classes, open } = this.props;
-        const { accessCode, emailAddress, validating } = this.state;
+        const { accessCode, emailAddress, errorMessage, validating } = this.state;
 
         return (
             <Dialog onBackdropClick={this.handleCancel}
@@ -185,21 +202,29 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
                         Toegangscode vergeten? Stuur een e-mailtje naar de <a href="mailto:security@animecon.nl">stewardleiding</a>.
                     </DialogContentText>
 
-                    <TextField label="E-mailadres"
-                               type="email"
-                               onChange={this.handleUpdate}
-                               margin="none"
-                               value={emailAddress}
-                               id="emailAddress"
-                               fullWidth required autoFocus />
+                    <DialogContentText className={classes.errorText}>
+                        {errorMessage}
+                    </DialogContentText>
 
-                    <TextField label="Toegangscode"
-                               type="number"
-                               onChange={this.handleUpdate}
-                               margin="dense"
-                               value={accessCode}
-                               id="accessCode"
-                               fullWidth required />
+                    <FormControl margin="dense" required fullWidth>
+                        <InputLabel htmlFor="emailAddress">E-mailadres</InputLabel>
+                        <Input
+                            id="emailAddress"
+                            type="email"
+                            value={emailAddress}
+                            onChange={this.handleUpdate}
+                            autoComplete="email" />
+                    </FormControl>
+
+                    <FormControl margin="dense" required fullWidth>
+                        <InputLabel htmlFor="accessCode">Toegangscode</InputLabel>
+                        <Input
+                            id="accessCode"
+                            type="number"
+                            value={accessCode}
+                            onChange={this.handleUpdate}
+                            autoComplete="current-password" />
+                    </FormControl>
 
                 </DialogContent>
 
@@ -220,7 +245,7 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
 
                     </div>
                 </DialogActions>
-                
+
             </Dialog>
         );
     }
