@@ -15,7 +15,7 @@ Implementations **must** provide pages for the following two URLs:
 
 | URL    | Description |
 | :---   | :---  |
-| `/`    | Home page of the site, will be displayed by default. |
+| `/`    | Home page of the portal, will be displayed by default. |
 | `/404` | Error page to be displayed when a non-existent page has been requested. |
 
 ##### `ContentPage` interface

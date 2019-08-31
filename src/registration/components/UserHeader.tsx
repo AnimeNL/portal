@@ -3,7 +3,7 @@
 // be found in the LICENSE file.
 
 import React from 'react';
-import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
+import { RouteComponentProps, withRouter } from 'react-router-dom';
 import bind from 'bind-decorator';
 
 import { ApplicationState } from '../../base/ApplicationState';

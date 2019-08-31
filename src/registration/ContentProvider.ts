@@ -9,12 +9,12 @@ import { IContent } from '../api/IContent';
 /**
  * Special-cased path that indicates the error 404 ("Not Found") page.
  */
-const kErrorPageUrl = '/404';
+export const kErrorPageUrl = '/404';
 
 /**
  * Special-cased path that indicates the home page.
  */
-const kHomePageUrl = '/';
+export const kHomePageUrl = '/';
 
 /**
  * Message to include with the exception thrown when data is being accessed before the content
