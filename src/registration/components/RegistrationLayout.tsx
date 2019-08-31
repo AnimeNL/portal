@@ -15,14 +15,12 @@ import createStyles from '@material-ui/core/styles/createStyles';
 
 const styles = (theme: Theme) =>
     createStyles({
-        container: {
-            minHeight: '100%',
-            minWidth: '100%',
+        background: {
+            position: 'fixed',
+            zIndex: -1,
 
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'top',
+            width: '100vw',
+            height: '100vh',
 
             backgroundAttachment: 'fixed',
             backgroundPosition: 'bottom right',
@@ -35,6 +33,13 @@ const styles = (theme: Theme) =>
             [theme.breakpoints.up('sm')]: {
                 backgroundImage: 'url(https://stewards.team/static/images/background-desktop.jpg)',
             },
+        },
+
+        container: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'top',
 
             '& > a > img': {
                 marginTop: '2em',
@@ -67,17 +72,20 @@ class RegistrationLayoutBase extends React.PureComponent<WithStyles<typeof style
         const { children, classes } = this.props;
 
         return (
-            <div className={classes.container}>
-                <Link to="/registration/">
-                    <img src="https://stewards.team/static/images/logo-portal.png" alt="J-POP Logo" />
-                </Link>
-                <Paper className={classes.content}>
-                    {children}
-                </Paper>
-                <Typography variant="body2" className={classes.footer}>
-                    AnimeCon Volunteer Portal — <a href="https://github.com/AnimeNL/portal">source code</a>
-                </Typography>
-            </div>
+            <>
+                <div className={classes.background}></div>
+                <div className={classes.container}>
+                    <Link to="/registration/">
+                        <img src="https://stewards.team/static/images/logo-portal.png" alt="J-POP Logo" />
+                    </Link>
+                    <Paper className={classes.content}>
+                        {children}
+                    </Paper>
+                    <Typography variant="body2" className={classes.footer}>
+                        AnimeCon Volunteer Portal — <a href="https://github.com/AnimeNL/portal">source code</a>
+                    </Typography>
+                </div>
+            </>
         );
     }
 }
