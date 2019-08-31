@@ -38,7 +38,7 @@ const styles = (theme: Theme) =>
         },
         title: {
             flexGrow: 1,
-            lineHeight: '36px',
+            lineHeight: '38px',
         },
         status: {
             backgroundColor: amber[50],
