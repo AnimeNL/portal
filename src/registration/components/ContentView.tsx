@@ -15,8 +15,7 @@ import createStyles from '@material-ui/core/styles/createStyles';
 const styles = (theme: Theme) =>
     createStyles({
         markdown: {
-            paddingLeft: theme.spacing(2),
-            paddingRight: theme.spacing(2),
+            padding: theme.spacing(0, 2),
 
             '& a': {
                 color: '#4E342E',

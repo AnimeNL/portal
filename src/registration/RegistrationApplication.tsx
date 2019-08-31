@@ -95,24 +95,24 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
                     <UserHeader />
 
                     { contentAvailable &&
-                    <Switch>
-                        <RouteTo path={kBasename + "/"} exact component={ContentView} />
+                        <Switch>
+                            <RouteTo path={kBasename + "/"} exact component={ContentView} />
 
-                        { /* Include all the content provider's pages in the router. */ }
-                        { contentProvider.getPageList().map(url =>
-                                <RouteTo path={kBasename + url} component={ContentView} />) }
+                            { /* Include all the content provider's pages in the router. */ }
+                            { contentProvider.getPageList().map(url =>
+                                    <RouteTo path={kBasename + url} component={ContentView} />) }
 
-                        { /* Welcome view for users that aren't allowed to access the portal. */ }
-                        <RouteTo path="/" exact component={WelcomeView} />
+                            { /* Welcome view for users that aren't allowed to access the portal. */ }
+                            <RouteTo path="/" exact component={WelcomeView} />
 
-                        { /* Fall-back route that will display the 404 error page. */ }
-                        <RouteTo component={ContentView} />
-                    </Switch> }
+                            { /* Fall-back route that will display the 404 error page. */ }
+                            <RouteTo component={ContentView} />
+                        </Switch> }
 
                     { fatalErrorMessage &&
-                    <div>
-                        <b>Something went wrong</b>: {fatalErrorMessage}
-                    </div> }
+                        <div>
+                            <b>Something went wrong</b>: {fatalErrorMessage}
+                        </div> }
 
                   </LoginControllerContext.Provider>
             </RegistrationLayout>
