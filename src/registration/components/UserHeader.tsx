@@ -118,37 +118,43 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
         const { classes } = this.props;
         const { identified, loginDialogDisplayed, statusDisplayed, title } = this.state;
 
-        return (
-            <>
-
-                <div className={classes.root}>
-                    <Typography variant="h6" component="h1" className={classes.title}>
-                        {title}
-                    </Typography>
-                    { identified &&
+        if (identified) {
+            return (
+                <>
+                    <div className={classes.root}>
+                        <Typography variant="h6" component="h1" className={classes.title}>
+                            {title}
+                        </Typography>
                         <Button color="inherit" onClick={this.toggleStatusDisplay}>
                             Status
-                        </Button> }
-                    { !identified &&
-                        <Button color="inherit" onClick={this.onLogin}>
-                            Inloggen
-                        </Button> }
-                </div>
+                        </Button>
+                    </div>
 
-                { identified &&
                     <ExpansionPanel expanded={statusDisplayed} className={classes.noMargin}>
                         <ExpansionPanelSummary className={classes.hide} />
                         <ExpansionPanelDetails>
                             Hello, world!
                         </ExpansionPanelDetails>
-                    </ExpansionPanel> }
+                    </ExpansionPanel>
+                </>
+            );
+        } else {
+            return (
+                <>
+                    <div className={classes.root}>
+                        <Typography variant="h6" component="h1" className={classes.title}>
+                            {title}
+                        </Typography>
+                        <Button color="inherit" onClick={this.onLogin}>
+                            Inloggen
+                        </Button>
+                    </div>
 
-                { !identified &&
                     <UserLoginDialog onFinished={this.onLoginFinished}
-                                     open={loginDialogDisplayed} /> }
-
-            </>
-        );
+                                     open={loginDialogDisplayed} />
+                </>
+            );
+        }
     }
 }
 
