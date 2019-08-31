@@ -5,6 +5,8 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+import { Colors } from '../Colors';
+
 import Paper from '@material-ui/core/Paper';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
@@ -51,7 +53,7 @@ const styles = (theme: Theme) =>
             paddingBottom: '125px',
 
             '& > a': {
-                color: '#4E342E',
+                color: Colors.kHyperlinkColor,
             },
         },
     });

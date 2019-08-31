@@ -19,4 +19,9 @@ export const Colors = {
      * Text colour to use on the contrasting background color.
      */
     kContrastForegroundColor: common.white,
+
+    /**
+     * Text colour for hyperlinks.
+     */
+    kHyperlinkColor: brown[800],
 };

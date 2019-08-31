@@ -5,6 +5,8 @@
 import React from 'react';
 import bind from 'bind-decorator';
 
+import { Colors } from '../Colors';
+
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Dialog from '@material-ui/core/Dialog';
@@ -28,6 +30,12 @@ const styles = (theme: Theme) =>
             left: '50%',
             marginTop: -12,
             marginLeft: -12,
+        },
+
+        contentText: {
+            '& > a ': {
+                color: Colors.kHyperlinkColor,
+            }
         },
     });
 
@@ -175,9 +183,10 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
                     Inloggen
                 </DialogTitle>
                 <DialogContent className={classes.removeTopPadding}>
-                <DialogContentText>
+                    <DialogContentText className={classes.contentText}>
                         Toegangscode vergeten? Stuur een e-mailtje naar de <a href="mailto:security@animecon.nl">stewardleiding</a>.
                     </DialogContentText>
+
                     <TextField error={!!emailError}
                                helperText={emailError || undefined}
                                label="E-mailadres"
@@ -196,7 +205,7 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
                                value={code}
                                id="code"
                                fullWidth required />
-                    
+
                 </DialogContent>
                 <DialogActions>
                     <Button onClick={onCancel}>
