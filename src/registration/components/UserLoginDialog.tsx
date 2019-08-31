@@ -10,6 +10,7 @@ import { LoginControllerContext } from '../controllers/LoginControllerContext';
 
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Collapse from '@material-ui/core/Collapse';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -25,7 +26,8 @@ import deepOrange from '@material-ui/core/colors/deepOrange';
 
 const styles = (theme: Theme) =>
     createStyles({
-        removeTopPadding: { paddingTop: 0 },
+        noTopPadding: { paddingTop: 0 },
+        noTopMargin: { marginTop: -4 },
 
         wrapper: { position: 'relative' },
         loginButtonProgress: {
@@ -45,7 +47,6 @@ const styles = (theme: Theme) =>
         errorText: {
             backgroundColor: deepOrange[100],
             borderRadius: theme.shape.borderRadius,
-            marginBottom: 0,
             padding: theme.spacing(1),
         },
     });
@@ -193,20 +194,24 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
             <Dialog onBackdropClick={this.handleCancel}
                     open={open}>
 
+                <form onSubmit={this.handleLogin}>
+
                 <DialogTitle>
                     Inloggen
                 </DialogTitle>
 
-                <DialogContent className={classes.removeTopPadding}>
+                <DialogContent className={classes.noTopPadding}>
                     <DialogContentText className={classes.contentText}>
                         Toegangscode vergeten? Stuur een e-mailtje naar de <a href="mailto:security@animecon.nl">stewardleiding</a>.
                     </DialogContentText>
 
-                    <DialogContentText className={classes.errorText}>
-                        {errorMessage}
-                    </DialogContentText>
+                    <Collapse in={!!errorMessage}>
+                        <DialogContentText className={classes.errorText}>
+                            {errorMessage}
+                        </DialogContentText>
+                    </Collapse>
 
-                    <FormControl margin="dense" required fullWidth>
+                    <FormControl margin="dense" className={classes.noTopMargin} required fullWidth>
                         <InputLabel htmlFor="emailAddress">E-mailadres</InputLabel>
                         <Input
                             id="emailAddress"
@@ -236,7 +241,8 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
 
                         <Button onClick={this.handleLogin}
                                 disabled={validating}
-                                color="primary">
+                                color="primary"
+                                type="submit">
                             Inloggen
                         </Button>
 
@@ -245,6 +251,8 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
 
                     </div>
                 </DialogActions>
+
+                </form>
 
             </Dialog>
         );
