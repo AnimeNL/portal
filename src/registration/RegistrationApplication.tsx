@@ -96,7 +96,7 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
                         <Switch>
                             { /* Include all the content provider's pages in the router. */ }
                             { contentProvider.getPageList().map(url =>
-                                    <RouteTo path={url} exact component={ContentView} />) }
+                                    <RouteTo path={url} key={url} exact component={ContentView} />) }
 
                             { /* Welcome view for users that aren't allowed to access the portal. */ }
                             <RouteTo path="/" exact component={WelcomeView} />
