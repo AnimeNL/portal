@@ -13,6 +13,7 @@ import { kRegistrationApplicationBasename } from '../base/ApplicationBasename';
 import { ContentView } from './components/ContentView';
 import { RegistrationLayout } from './components/RegistrationLayout';
 import { UserHeader } from './components/UserHeader';
+import { WelcomeView } from './components/WelcomeView';
 
 /**
  * State that can be maintained by the registration application. Assumed to continue to be mounted
@@ -101,6 +102,10 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
                         { contentProvider.getPageList().map(url =>
                                 <RouteTo path={kBasename + url} component={ContentView} />) }
 
+                        { /* Welcome view for users that aren't allowed to access the portal. */ }
+                        <RouteTo path="/" exact component={WelcomeView} />
+
+                        { /* Fall-back route that will display the 404 error page. */ }
                         <RouteTo component={ContentView} />
                     </Switch> }
 

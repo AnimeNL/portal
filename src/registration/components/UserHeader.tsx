@@ -16,6 +16,7 @@ import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import Typography from '@material-ui/core/Typography';
 import { WithStyles, default as withStyles } from '@material-ui/core/styles/withStyles';
+import amber from '@material-ui/core/colors/amber';
 import createStyles from '@material-ui/core/styles/createStyles';
 
 const styles = (theme: Theme) =>
@@ -35,6 +36,9 @@ const styles = (theme: Theme) =>
         },
         title: {
             flexGrow: 1,
+        },
+        status: {
+            backgroundColor: amber[50],
         },
     });
 
@@ -132,7 +136,7 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
 
                     <ExpansionPanel expanded={statusDisplayed} className={classes.noMargin}>
                         <ExpansionPanelSummary className={classes.hide} />
-                        <ExpansionPanelDetails>
+                        <ExpansionPanelDetails className={classes.status}>
                             Hello, world!
                         </ExpansionPanelDetails>
                     </ExpansionPanel>

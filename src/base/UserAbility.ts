@@ -12,5 +12,6 @@ export enum UserAbility {
     /**
      * Access to particular applications part of this portal.
      */
-    RegistrationApplication
+    RegistrationApplication,
+    ScheduleApplication,
 }

@@ -20,7 +20,7 @@ import { createMuiTheme } from '@material-ui/core/styles';
 /**
  * Message that should be displayed while the application is loading.
  */
-const LoadingMessage = (): JSX.Element => <p>Loading application...</p>;
+const LoadingMessage = (): JSX.Element => <></>;
 
 /**
  * Component for lazily loading the registration application.
@@ -90,17 +90,27 @@ export class ApplicationLoader {
     render(container: Element): void {
         const theme = createMuiTheme();
 
+        const canAccessRegistration = this.user.hasAbility(UserAbility.RegistrationApplication);
+        const canAccessSchedule = this.user.hasAbility(UserAbility.ScheduleApplication);
+
         ReactDOM.render(
             <ThemeProvider theme={theme}>
                 <CssBaseline />
                 <BrowserRouter>
                     <React.Suspense fallback={<LoadingMessage />}>
                         <Switch>
-                            { this.user.hasAbility(UserAbility.RegistrationApplication) &&
-                            <Route path={kRegistrationApplicationBasename}
-                                    component={RegistrationApplication} /> }
+                            { canAccessRegistration &&
+                                <Route path={kRegistrationApplicationBasename}
+                                       component={RegistrationApplication} /> }
 
-                            <Route component={LegacyApplication} />
+                            { /* Default to the Schedule Application if access has been granted. */ }
+                            { canAccessSchedule &&
+                                <Route component={LegacyApplication} /> }
+
+                            { /* Default to the Registration Application in that cannot be accessed. */ }
+                            { canAccessRegistration && !canAccessSchedule &&
+                                <Route component={RegistrationApplication} /> }
+
                         </Switch>
                     </React.Suspense>
                 </BrowserRouter>
