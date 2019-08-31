@@ -3,11 +3,13 @@
 // be found in the LICENSE file.
 
 import React from 'react';
+import { Link, RouteComponentProps, withRouter } from 'react-router-dom';
 import bind from 'bind-decorator';
 
 import { ApplicationState } from '../../base/ApplicationState';
 import { Colors } from '../Colors';
 import { UserLoginDialog } from './UserLoginDialog';
+import { kRegistrationApplicationBasename } from '../../base/ApplicationBasename';
 
 import Button from '@material-ui/core/Button';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
@@ -36,6 +38,7 @@ const styles = (theme: Theme) =>
         },
         title: {
             flexGrow: 1,
+            lineHeight: '36px',
         },
         status: {
             backgroundColor: amber[50],
@@ -52,19 +55,24 @@ const personaliseTitle = (fullName: string) => 'Welkom ' + fullName.replace(/\s.
  */
 interface InternalState {
     /**
+     * Whether the action at the top-right side of the header bar should be available.
+     */
+    actionAvailable: boolean;
+
+    /**
      * Whether the user has identified to an account. This reflects the available options.
      */
-    identified: boolean;
+    identified?: boolean;
 
     /**
      * Whether the login dialog should be displayed to the user.
      */
-    loginDialogDisplayed: boolean;
+    loginDialogDisplayed?: boolean;
 
     /**
      * Whether the status of the signed in user's application should be displayed.
      */
-    statusDisplayed: boolean;
+    statusDisplayed?: boolean;
 
     /**
      * Page title that should be displayed, either the portal title or the name of the user that's
@@ -73,15 +81,15 @@ interface InternalState {
     title: string;
 }
 
+type Properties = RouteComponentProps & WithStyles<typeof styles>;
+
 /**
  * The <UserHeader> component is displayed on top of every page on the registration portal. Users
  * have the ability to identify themselves to see the progress of their application.
  */
-class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, InternalState> {
+class UserHeaderBase extends React.Component<Properties, InternalState> {
     state: InternalState = {
-        identified: false,
-        loginDialogDisplayed: false,
-        statusDisplayed: false,
+        actionAvailable: false,
         title: 'Volunteer Portal',
     };
 
@@ -94,6 +102,19 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
                                  : environment.getPortalTitle();
 
         this.setState({ identified, title });
+    }
+
+    componentDidUpdate(prevProps: Properties): void {
+        const { props, state } = this;
+
+        if (props.location.pathname === prevProps.location.pathname)
+            return;
+        
+        const actionAvailable = props.location.pathname.startsWith(kRegistrationApplicationBasename);
+        if (state.actionAvailable === actionAvailable)
+            return;
+        
+        this.setState({ actionAvailable });
     }
 
     @bind
@@ -120,7 +141,7 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
 
     render(): JSX.Element {
         const { classes } = this.props;
-        const { identified, loginDialogDisplayed, statusDisplayed, title } = this.state;
+        const { actionAvailable, identified, loginDialogDisplayed, statusDisplayed, title } = this.state;
 
         if (identified) {
             return (
@@ -129,9 +150,10 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
                         <Typography variant="h6" component="h1" className={classes.title}>
                             {title}
                         </Typography>
-                        <Button color="inherit" onClick={this.toggleStatusDisplay}>
-                            Status
-                        </Button>
+                        { actionAvailable &&
+                            <Button color="inherit" onClick={this.toggleStatusDisplay}>
+                                Status
+                            </Button> }
                     </div>
 
                     <ExpansionPanel expanded={statusDisplayed} className={classes.noMargin}>
@@ -149,17 +171,18 @@ class UserHeaderBase extends React.PureComponent<WithStyles<typeof styles>, Inte
                         <Typography variant="h6" component="h1" className={classes.title}>
                             {title}
                         </Typography>
-                        <Button color="inherit" onClick={this.onLogin}>
-                            Inloggen
-                        </Button>
+                        { actionAvailable &&
+                            <Button color="inherit" onClick={this.onLogin}>
+                                Inloggen
+                            </Button> }
                     </div>
 
                     <UserLoginDialog onFinished={this.onLoginFinished}
-                                     open={loginDialogDisplayed} />
+                                     open={!!loginDialogDisplayed} />
                 </>
             );
         }
     }
 }
 
-export const UserHeader = withStyles(styles)(UserHeaderBase);
+export const UserHeader = withRouter(withStyles(styles)(UserHeaderBase));
