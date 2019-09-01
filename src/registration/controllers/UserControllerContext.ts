@@ -9,7 +9,7 @@ import React from 'react';
  * be displayed to the user in case of a failure.
  */
 export type LoginResult = { result: boolean, message?: string };
-export type RegistrationResult = LoginResult;
+export type RegistrationResult = { result: boolean, accessCode?: number; message?: string };
 
 /**
  * Information made available for a registration request. All fields are mandatory.

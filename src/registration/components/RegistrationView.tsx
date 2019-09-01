@@ -35,6 +35,7 @@ import deepOrange from '@material-ui/core/colors/deepOrange';
 /**
  * These pathnames map to pages that we can obtain through the content provider.
  */
+const kRegistrationConfirm = '/registration/internal/confirm';
 const kRegistrationIntro = '/registration/internal/intro';
 
 const styles = (theme: Theme) =>
@@ -114,6 +115,11 @@ interface InternalState {
     nightShifts?: string;
     socialMedia?: string;
     dataProcessing?: string;
+
+    /**
+     * The access code in case their registration has succeeded.
+     */
+    confirmationAccessCode?: number;
 }
 
 /**
@@ -254,17 +260,30 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
             dataProcessing: this.state.dataProcessing === 'true'
         });
 
+        let confirmationAccessCode = response.result ? response.accessCode
+                                                     : undefined;
+
         errorMessage = response.message;
         registering = false;
 
-        // TODO: Communicate the successful registration to the user.
-
-        this.setState({ errorMessage, registering });
+        this.setState({ confirmationAccessCode, errorMessage, registering });
     }
 
     render(): JSX.Element {
-        const { classes } = this.props;
-        const { errorMessage, registering, introText } = this.state;
+        const { classes, contentProvider } = this.props;
+        const { confirmationAccessCode, errorMessage, registering, introText } = this.state;
+
+        if (confirmationAccessCode) {
+            if (!contentProvider.hasPage(kRegistrationConfirm))
+                return <></>;
+
+            let content = contentProvider.getPageContent(kRegistrationConfirm);
+
+            content = content.replace('{emailAddress}', this.state.emailAddress!);
+            content = content.replace('{accessCode}', confirmationAccessCode.toString());
+
+            return <MarkdownView content={content} />
+        }
 
         return (
             <MuiPickersUtilsProvider utils={MomentUtils}>
