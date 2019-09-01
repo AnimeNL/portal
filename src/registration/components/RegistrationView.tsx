@@ -242,11 +242,22 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
         if (!registering)
             return;
 
-        // TODO: Hook up with the UserController.
-        await new Promise(resolve => setTimeout(resolve, 3000));
+        const response = await this.context.requestRegistration({
+            firstName: this.state.firstName!,
+            lastName: this.state.lastName!,
+            emailAddress: this.state.emailAddress!,
+            telephoneNumber: this.state.telephoneNumber!,
+            dateOfBirth: this.state.dateOfBirth,
+            fullAvailability: this.state.fullAvailability === 'true',
+            nightShifts: this.state.nightShifts === 'true',
+            socialMedia: this.state.socialMedia === 'true',
+            dataProcessing: this.state.dataProcessing === 'true'
+        });
 
-        errorMessage = 'Not yet implemented! :)';
+        errorMessage = response.message;
         registering = false;
+
+        // TODO: Communicate the successful registration to the user.
 
         this.setState({ errorMessage, registering });
     }

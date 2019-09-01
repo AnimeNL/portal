@@ -4,7 +4,7 @@
 
 import EmailValidator from 'email-validator';
 
-import { IUserController, LoginResult } from './UserControllerContext';
+import { IUserController, LoginResult, RegistrationInfo, RegistrationResult } from './UserControllerContext';
 
 /**
  * Implementation of the user controller. Made available to 
@@ -15,6 +15,16 @@ export class UserController implements IUserController {
      * per the portal's requirements. Asynchronously returns a LoginResult.
      */
     async requestLogin(accessCode: string, emailAddress: string): Promise<LoginResult> {
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+        return { result: false, message: 'NOT IMPLEMENTED' };
+    }
+
+    /**
+     * Requests an account to be created for the given |info|. All fields are expected to have been
+     * validated already. Asynchronously returns a RegistrationResult.
+     */
+    async requestRegistration(info: RegistrationInfo): Promise<RegistrationResult> {
         await new Promise(resolve => setTimeout(resolve, 3000));
 
         return { result: false, message: 'NOT IMPLEMENTED' };
