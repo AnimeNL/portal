@@ -41,7 +41,10 @@ const styles = (theme: Theme) =>
             },
             '& h2, h3, h4, strong': {
                 fontWeight: 500,
-            }
+            },
+
+            '& h3 + p': { marginTop: 0 },
+            '& h3': { marginBottom: 0 },
         }
     });
 
