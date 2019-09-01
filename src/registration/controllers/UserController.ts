@@ -4,12 +4,12 @@
 
 import EmailValidator from 'email-validator';
 
-import { ILoginController, LoginResult } from './LoginControllerContext';
+import { IUserController, LoginResult } from './UserControllerContext';
 
 /**
- * Implementation of the login controller. Made available to 
+ * Implementation of the user controller. Made available to 
  */
-export class LoginController implements ILoginController {
+export class UserController implements IUserController {
     /**
      * Requests a login for the given |accessCode| and |emailAddress|. Both are expected to validate
      * per the portal's requirements. Asynchronously returns a LoginResult.

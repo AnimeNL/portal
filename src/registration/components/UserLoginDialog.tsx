@@ -6,7 +6,7 @@ import React from 'react';
 import bind from 'bind-decorator';
 
 import { Colors } from '../Colors';
-import { LoginControllerContext } from '../controllers/LoginControllerContext';
+import { UserControllerContext } from '../controllers/UserControllerContext';
 
 import Button from '@material-ui/core/Button';
 import CircularProgress from '@material-ui/core/CircularProgress';
@@ -100,12 +100,12 @@ type Properties = UserLoginDialogProperties & WithStyles<typeof styles>;
  * user to log in to their account.
  */
 class UserLoginDialogBase extends React.Component<Properties, InternalState> {
-    static contextType = LoginControllerContext;
+    static contextType = UserControllerContext;
     
     /**
      * The login context available to the login dialog. Will be set by React.
      */
-    context!: React.ContextType<typeof LoginControllerContext>;
+    context!: React.ContextType<typeof UserControllerContext>;
 
     state: InternalState = {
         accessCode: '',

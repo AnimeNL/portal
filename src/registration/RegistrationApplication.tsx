@@ -6,8 +6,9 @@ import React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 
 import { ContentProvider } from './ContentProvider';
-import { LoginController } from './controllers/LoginController';
-import { LoginControllerContext } from './controllers/LoginControllerContext';
+import { UserController } from './controllers/UserController';
+import { UserControllerContext } from './controllers/UserControllerContext';
+import { kRegistrationApplicationBasename } from '../base/ApplicationBasename';
 
 import { ContentView } from './components/ContentView';
 import { RegistrationLayout } from './components/RegistrationLayout';
@@ -30,14 +31,14 @@ interface InternalState {
     contentProvider: ContentProvider;
 
     /**
-     * Instance of the login controller for the registration application.
-     */
-    loginController: LoginController,
-
-    /**
      * Fatal error message that stops the registration application from working.
      */
     fatalErrorMessage?: string;
+
+    /**
+     * Instance of the user controller for the registration application.
+     */
+    userController: UserController;
 }
 
 /**
@@ -48,7 +49,7 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
     state: InternalState = {
         contentAvailable: false,
         contentProvider: new ContentProvider(),
-        loginController: new LoginController(),
+        userController: new UserController(),
     };
 
     /**
@@ -73,8 +74,9 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
      * choice automatically. Each page will be displayed in the same, canonical layout.
      */
     render(): JSX.Element {
-        const { contentAvailable, contentProvider, loginController, fatalErrorMessage } = this.state;
-
+        const { contentAvailable, contentProvider, userController, fatalErrorMessage } = this.state;
+        const kBasename = kRegistrationApplicationBasename;
+        
         // Utility element that enables using components for routing that should be receiving the
         // same properties as the <PortalController>, on top of the existing routing properties.
         const RouteTo = (props: any): JSX.Element => {
@@ -88,12 +90,15 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
 
         return (
             <RegistrationLayout>
-                <LoginControllerContext.Provider value={loginController}>
+                <UserControllerContext.Provider value={userController}>
 
                     <UserHeader />
 
                     { contentAvailable &&
                         <Switch>
+                            { /* The actual registration forms and logic. */ }
+                            <RouteTo path={kBasename + "/aanmelden.html"} exact component={WelcomeView} />
+
                             { /* Include all the content provider's pages in the router. */ }
                             { contentProvider.getPageList().map(url =>
                                     <RouteTo path={url} key={url} exact component={ContentView} />) }
@@ -110,7 +115,7 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
                             <b>Something went wrong</b>: {fatalErrorMessage}
                         </div> }
 
-                  </LoginControllerContext.Provider>
+                  </UserControllerContext.Provider>
             </RegistrationLayout>
         );
     }

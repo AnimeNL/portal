@@ -11,9 +11,9 @@ import React from 'react';
 export type LoginResult = { result: boolean, message?: string };
 
 /**
- * Interface that a LoginControllerContext has to support.
+ * Interface that a UserControllerContext has to support.
  */
-export interface ILoginController {
+export interface IUserController {
     /**
      * Requests a login for the given |accessCode| and |emailAddress|. Both are expected to validate
      * per the portal's requirements. Asynchronously returns a LoginResult.
@@ -32,10 +32,10 @@ export interface ILoginController {
 }
 
 /**
- * The LoginControllerContext. Provides the necessary values for a default implementation that
+ * The UserControllerContext. Provides the necessary values for a default implementation that
  * rejects all inputs.
  */
-export const LoginControllerContext = React.createContext<ILoginController>({
+export const UserControllerContext = React.createContext<IUserController>({
     requestLogin: async (accessCode: string, emailAddress: string) => ({ result: false }),
     validateAccessCode: (value: string) => false,
     validateEmailAddress: (value: string) => false,
