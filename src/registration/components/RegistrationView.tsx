@@ -169,46 +169,10 @@ class RegistrationViewBase extends React.PureComponent<Properties, InternalState
                                                         disableFuture />
                                 </FormControl>
                             </Grid>
-
-                            { /* TODO: Component specific to the type of volunteer? */ }
-
                             <Grid item xs={12}>
                                 <Typography variant="h5" className={classes.title}>
                                     Algemene Voorkeuren
                                 </Typography>
-                            </Grid>
-                            <Grid item xs={6} sm={3} className={classes.label}>
-                                <Typography variant="body1">
-                                   Wat is je t-shirtmaat?
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={6} sm={9}>
-                                <FormControl variant="outlined" fullWidth>
-                                    <Select input={<OutlinedInput labelWidth={0} />} fullWidth>
-                                        <MenuItem value="XXS">XXS</MenuItem>
-                                        <MenuItem value="XS">XS</MenuItem>
-                                        <MenuItem value="S">S</MenuItem>
-                                        <MenuItem value="M">M</MenuItem>
-                                        <MenuItem value="L">L</MenuItem>
-                                        <MenuItem value="XL">XL</MenuItem>
-                                        <MenuItem value="XXL">XXL</MenuItem>
-                                        <MenuItem value="XXXL">XXXL</MenuItem>
-                                    </Select>
-                                </FormControl>
-                            </Grid>
-                            <Grid item xs={6} sm={3} className={classes.label}>
-                                <Typography variant="body1">
-                                    T-shirt in girly fit?
-                                </Typography>
-                            </Grid>
-                            <Grid item xs={6} sm={9}>
-                                <FormControl variant="outlined" fullWidth>
-                                    <Select input={<OutlinedInput labelWidth={0} />}
-                                            fullWidth>
-                                        <MenuItem value="Ja">Ja</MenuItem>
-                                        <MenuItem value="Nee">Nee</MenuItem>
-                                    </Select>
-                                </FormControl>
                             </Grid>
                             <Grid item xs={6} sm={3} className={classes.label}>
                                 <Typography variant="body1">
