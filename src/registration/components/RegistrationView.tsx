@@ -118,7 +118,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
     context!: React.ContextType<typeof UserControllerContext>;
 
     state: InternalState = {
-        dateOfBirth: 'January 1, 1990',  // initial value
+        dateOfBirth: '1990-01-01',  // initial value
     };
 
     componentDidMount() {
@@ -266,7 +266,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
                                                         label="Geboortedatum"
                                                         inputVariant="outlined" 
                                                         onChange={this.handleDateUpdate}
-                                                        format="DD/MM/YYYY"
+                                                        format="YYYY-MM-DD"
                                                         value={this.state.dateOfBirth}
                                                         disableFuture />
                                 </FormControl>
