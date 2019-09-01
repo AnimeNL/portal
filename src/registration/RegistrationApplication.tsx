@@ -12,6 +12,7 @@ import { kRegistrationApplicationBasename } from '../base/ApplicationBasename';
 
 import { ContentView } from './components/ContentView';
 import { RegistrationLayout } from './components/RegistrationLayout';
+import { RegistrationView } from './components/RegistrationView';
 import { UserHeader } from './components/UserHeader';
 import { WelcomeView } from './components/WelcomeView';
 
@@ -97,7 +98,7 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
                     { contentAvailable &&
                         <Switch>
                             { /* The actual registration forms and logic. */ }
-                            <RouteTo path={kBasename + "/aanmelden.html"} exact component={WelcomeView} />
+                            <RouteTo path={kBasename + "/aanmelden.html"} exact component={RegistrationView} />
 
                             { /* Include all the content provider's pages in the router. */ }
                             { contentProvider.getPageList().map(url =>

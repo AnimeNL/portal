@@ -103,7 +103,7 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
     static contextType = UserControllerContext;
     
     /**
-     * The login context available to the login dialog. Will be set by React.
+     * The user context available to the login dialog. Will be set by React.
      */
     context!: React.ContextType<typeof UserControllerContext>;
 
