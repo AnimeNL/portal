@@ -183,6 +183,38 @@ requests. May be cached offline.
 | :---      | :---      | :--- |
 | `success` | `boolean` | Always set to `false` to indicate that event data is not available. |
 
+### /api/registration
+Handles volunteer registration from the Registration application. Must accept `POST` requests.
+
+#### 🡆 POST fields
+
+| Property           | Type      | Description |
+| :---               | :---      | :--- |
+| `firstName`        | `string`  | The volunteer's first name. |
+| `lastName`         | `string`  | The volunteer's last name. |
+| `emailAddress`     | `string`  | The volunteer's e-mail address. |
+| `telephoneNumber`  | `string`  | The volunteer's phone number. Format unspecified. |
+| `dateOfBirth`      | `string`  | The volunteer's date of birth. YYYY-MM-DD. |
+| `fullAvailability` | `boolean` | Whether the volunteer is available for the full event. |
+| `nightShifts`      | `boolean` | Whether the volunteer is willing to run night shifts. |
+| `socialMedia`      | `boolean` | Whether the volunteer wants to be included on social media. |
+| `dataProcessing`   | `boolean` | Whether the volunteer agrees with data processing guidelines. |
+
+#### 🡄 Success response
+
+| Property         | Type       | Description |
+| :---             | :---       | :--- |
+| `success`        | `boolean`  | Always set to `true` to indicate registration succeeded. |
+| `accessCode`     | `number`   | The access code with which they can identify themselves. |
+
+#### 🡄 Failure response
+
+| Property         | Type       | Description |
+| :---             | :---       | :--- |
+| `success`        | `boolean`  | Always set to `false` to indicate registration failed. |
+| `message`        | `string`   | Message that's to be displayed to the user about the failure. |
+
+
 ### /api/upload
 Handles data uploads from the portal, for instance uploading a new avatar. Authentication must
 happen dilligently on the server side. Must accept `POST` requests.

@@ -20,4 +20,5 @@ by any back-end, but must follow certain documented semantics.
   * [/api/environment](API.md#apienvironment)
   * [/api/login](API.md#apilogin)
   * [/api/event](API.md#apievent)
+  * [/api/registration](API.md#apiregistration)
   * [/api/upload](API.md#apiupload)
