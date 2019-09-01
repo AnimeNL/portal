@@ -205,6 +205,9 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
     async handleSubmit(event: React.FormEvent): Promise<void> {
         event.preventDefault();
 
+        if (this.state.registering)
+            return;
+
         let errorMessage: string | undefined = '';
         let registering = false;
 
