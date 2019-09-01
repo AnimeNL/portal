@@ -7,6 +7,7 @@ import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/picker
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
 import bind from 'bind-decorator';
+import clsx from 'clsx';
 
 import { Colors } from '../Colors';
 import { MarkdownView } from './MarkdownView';
@@ -14,6 +15,7 @@ import { RegistrationProperties } from '../RegistrationProperties';
 import { UserControllerContext } from '../controllers/UserControllerContext';
 
 import Button from '@material-ui/core/Button';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import Collapse from '@material-ui/core/Collapse';
 import Divider from '@material-ui/core/Divider';
 import FormControl from '@material-ui/core/FormControl';
@@ -58,6 +60,15 @@ const styles = (theme: Theme) =>
             display: 'flex',
             alignItems: 'center',
         },
+        buttonProgress: {
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            marginTop: -20,
+            marginLeft: -12,
+        },
+        buttonWrapper: { display: 'inline-block', position: 'relative' },
+        buttonDisabled: { backgroundColor: '#E0E0E0 !important' },
         button: {
             backgroundColor: Colors.kHyperlinkColor,
             color: theme.palette.getContrastText(Colors.kHyperlinkColor) + ' !important',
@@ -85,6 +96,11 @@ interface InternalState {
      * Error message seen while validating the form. Optional.
      */
     errorMessage?: string;
+
+    /**
+     * Whether a registration request is being made to the server.
+     */
+    registering: boolean;
 
     /**
      * Values of the individual fields in the form.
@@ -118,6 +134,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
     context!: React.ContextType<typeof UserControllerContext>;
 
     state: InternalState = {
+        registering: false,
         dateOfBirth: '1990-01-01',  // initial value
     };
 
@@ -188,15 +205,52 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
     async handleSubmit(event: React.FormEvent): Promise<void> {
         event.preventDefault();
 
-        // TODO: Start the validation.
-        console.log(this.state);
+        let errorMessage: string | undefined = '';
+        let registering = false;
 
-        this.setState({ errorMessage: 'test' });
+        const isBool = /^(true)|(false)$/;
+
+        if (!this.state.firstName || !this.state.firstName.length)
+            errorMessage = 'Voornaam is verplicht';
+        else if (!this.state.lastName || !this.state.lastName.length)
+            errorMessage = 'Achternaam is verplicht';
+        else if (!this.state.emailAddress || !this.state.emailAddress.length)
+            errorMessage = 'E-mailadres is verplicht';
+        else if (!this.context.validateEmailAddress(this.state.emailAddress))
+            errorMessage = 'E-mailadres is niet geldig';
+        else if (!this.state.telephoneNumber || !this.state.telephoneNumber.length)
+            errorMessage = 'Telefoonnummer is verplicht';
+        else if (!this.state.dateOfBirth || !this.state.dateOfBirth.length)
+            errorMessage = 'Geboortedatum is verplicht';
+        else if (!/^\d{4}-\d{2}-\d{2}$/.test(this.state.dateOfBirth))
+            errorMessage = 'Geboortedatum is niet geldig';
+        else if (!this.state.fullAvailability || !isBool.test(this.state.fullAvailability))
+            errorMessage = 'Beschikbaarheid is verplicht';
+        else if (!this.state.nightShifts || !isBool.test(this.state.nightShifts))
+            errorMessage = 'Voorkeur nachtinzet is verplicht';
+        else if (!this.state.socialMedia || !isBool.test(this.state.socialMedia))
+            errorMessage = 'Voorkeur deelname social media is verplicht';
+        else if (!this.state.dataProcessing || this.state.dataProcessing !== 'true')
+            errorMessage = 'Akkoord met dataverwerking is verplicht';
+        
+        registering = !errorMessage.length;
+
+        this.setState({ errorMessage, registering });
+        if (!registering)
+            return;
+
+        // TODO: Hook up with the UserController.
+        await new Promise(resolve => setTimeout(resolve, 3000));
+
+        errorMessage = 'Not yet implemented! :)';
+        registering = false;
+
+        this.setState({ errorMessage, registering });
     }
 
     render(): JSX.Element {
         const { classes } = this.props;
-        const { errorMessage, introText } = this.state;
+        const { errorMessage, registering, introText } = this.state;
 
         return (
             <MuiPickersUtilsProvider utils={MomentUtils}>
@@ -286,7 +340,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
                                     <Select name="fullAvailability"
                                             input={<OutlinedInput labelWidth={0} />}
                                             onChange={this.handleSelectUpdate}
-                                            value={this.state.fullAvailability} fullWidth>
+                                            value={this.state.fullAvailability} required fullWidth>
                                         <MenuItem value="true">Ja</MenuItem>
                                         <MenuItem value="false">Nee</MenuItem>
                                     </Select>
@@ -302,7 +356,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
                                     <Select name="nightShifts"
                                             input={<OutlinedInput labelWidth={0} />}
                                             onChange={this.handleSelectUpdate}
-                                            value={this.state.nightShifts} fullWidth>
+                                            value={this.state.nightShifts} required fullWidth>
                                         <MenuItem value="true">Ja</MenuItem>
                                         <MenuItem value="false">Nee</MenuItem>
                                     </Select>
@@ -318,7 +372,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
                                     <Select name="socialMedia"
                                             input={<OutlinedInput labelWidth={0} />}
                                             onChange={this.handleSelectUpdate}
-                                            value={this.state.socialMedia} fullWidth>
+                                            value={this.state.socialMedia} required fullWidth>
                                         <MenuItem value="true">Ja</MenuItem>
                                         <MenuItem value="false">Nee</MenuItem>
                                     </Select>
@@ -334,17 +388,26 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
                                     <Select name="dataProcessing"
                                             input={<OutlinedInput labelWidth={0} />}
                                             onChange={this.handleSelectUpdate}
-                                            value={this.state.dataProcessing} fullWidth>
+                                            value={this.state.dataProcessing} required fullWidth>
                                         <MenuItem value="true">Ja</MenuItem>
                                         <MenuItem value="false">Nee</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
                             <Grid item xs={12}>
-                                <Button type="submit" className={classes.button}>
-                                    <HowToRegIcon className={classes.buttonIcon} />
-                                    Meld je aan!
-                                </Button>
+                                <div className={classes.buttonWrapper}>
+                                    <Button type="submit" disabled={registering}
+                                            className={clsx(classes.button,
+                                                            registering && classes.buttonDisabled)}>
+                                        <HowToRegIcon className={classes.buttonIcon} />
+                                        Meld je aan!
+                                    </Button>
+
+                                    { registering &&
+                                        <CircularProgress className={classes.buttonProgress}
+                                                          size={24}/> }
+
+                                </div>
                             </Grid>
                         </Grid>
                     </div>
