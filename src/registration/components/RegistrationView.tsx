@@ -14,6 +14,7 @@ import { RegistrationProperties } from '../RegistrationProperties';
 import { UserControllerContext } from '../controllers/UserControllerContext';
 
 import Button from '@material-ui/core/Button';
+import Collapse from '@material-ui/core/Collapse';
 import Divider from '@material-ui/core/Divider';
 import FormControl from '@material-ui/core/FormControl';
 import Grid from '@material-ui/core/Grid';
@@ -27,6 +28,7 @@ import Typography from '@material-ui/core/Typography';
 import { WithStyles, default as withStyles } from '@material-ui/core/styles/withStyles';
 import createStyles from '@material-ui/core/styles/createStyles';
 import { darken } from '@material-ui/core/styles/colorManipulator';
+import deepOrange from '@material-ui/core/colors/deepOrange';
 
 /**
  * These pathnames map to pages that we can obtain through the content provider.
@@ -42,6 +44,12 @@ const styles = (theme: Theme) =>
             '& sup': {
                 color: 'red',
             },
+        },
+        errorText: {
+            backgroundColor: deepOrange[100],
+            borderRadius: theme.shape.borderRadius,
+            padding: theme.spacing(1),
+            margin: theme.spacing(2, 2, 0, 2),
         },
         title: {
             marginBottom: 0,
@@ -72,6 +80,11 @@ interface InternalState {
      * Cached React component for the introduction text. Created at mount time.
      */
     introText?: JSX.Element;
+
+    /**
+     * Error message seen while validating the form. Optional.
+     */
+    errorMessage?: string;
 
     /**
      * Values of the individual fields in the form.
@@ -172,22 +185,30 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
      * of the UserControllerContext, after which a registration request will be started.
      */
     @bind
-    handleSubmit(event: React.FormEvent): void {
+    async handleSubmit(event: React.FormEvent): Promise<void> {
         event.preventDefault();
 
         // TODO: Start the validation.
         console.log(this.state);
+
+        this.setState({ errorMessage: 'test' });
     }
 
     render(): JSX.Element {
         const { classes } = this.props;
-        const { introText } = this.state;
+        const { errorMessage, introText } = this.state;
 
         return (
             <MuiPickersUtilsProvider utils={MomentUtils}>
                 {introText}
 
                 <Divider />
+
+                <Collapse in={!!errorMessage}>
+                    <Typography variant="body1" className={classes.errorText}>
+                        {errorMessage}
+                    </Typography>
+                </Collapse>
 
                 <form onSubmit={this.handleSubmit}>
                     <div className={classes.root}>
