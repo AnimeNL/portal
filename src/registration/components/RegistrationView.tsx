@@ -6,6 +6,7 @@ import MomentUtils from '@date-io/moment';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import React from 'react';
 import { Link, RouteComponentProps } from 'react-router-dom';
+import bind from 'bind-decorator';
 
 import { Colors } from '../Colors';
 import { MarkdownView } from './MarkdownView';
@@ -71,6 +72,19 @@ interface InternalState {
      * Cached React component for the introduction text. Created at mount time.
      */
     introText?: JSX.Element;
+
+    /**
+     * Values of the individual fields in the form.
+     */
+    firstName?: string;
+    lastName?: string;
+    emailAddress?: string;
+    telephoneNumber?: string;
+    dateOfBirth: string;
+    fullAvailability?: string;
+    nightShifts?: string;
+    socialMedia?: string;
+    dataProcessing?: string;
 }
 
 /**
@@ -82,7 +96,7 @@ type Properties = RegistrationProperties & RouteComponentProps & WithStyles<type
  * The registration view provides users with the ability to sign up for volunteering at this event.
  * We'll ask them for all necessary information, which will be validated and uploaded when ready.
  */
-class RegistrationViewBase extends React.PureComponent<Properties, InternalState> {
+class RegistrationViewBase extends React.Component<Properties, InternalState> {
     static contextType = UserControllerContext;
     
     /**
@@ -90,7 +104,9 @@ class RegistrationViewBase extends React.PureComponent<Properties, InternalState
      */
     context!: React.ContextType<typeof UserControllerContext>;
 
-    state: InternalState = {};
+    state: InternalState = {
+        dateOfBirth: 'January 1, 1990',  // initial value
+    };
 
     componentDidMount() {
         const { contentProvider } = this.props;
@@ -106,6 +122,63 @@ class RegistrationViewBase extends React.PureComponent<Properties, InternalState
         });
     }
 
+    /**
+     * Handles an updated value in one of the textual input fields, and updates the internal state
+     * to match the update.
+     */
+    @bind
+    handleTextUpdate(event: React.ChangeEvent<HTMLInputElement>): void {
+        switch (event.target.name) {
+            case 'firstName': this.setState({ firstName: event.target.value }); break;
+            case 'lastName': this.setState({ lastName: event.target.value }); break;
+            case 'emailAddress': this.setState({ emailAddress: event.target.value }); break;
+            case 'telephoneNumber': this.setState({ telephoneNumber: event.target.value }); break;
+            default:
+                throw new Error('Unknown text field update: ' + event.target.name);
+        }
+    }
+
+    /**
+     * Handles an updated value in the date of birth field, and updates the internal state.
+     */
+    @bind
+    handleDateUpdate(date: unknown, value?: string | null): void {
+        if (!value) return;
+
+        this.setState({ dateOfBirth: value });
+    }
+
+    /**
+     * Handles an updated value in one of the select boxes, and updates the internal state to match.
+     */
+    @bind
+    handleSelectUpdate(event: React.ChangeEvent<{ name?: string; value: unknown }>): void {
+        const stateValue: string | undefined =
+            typeof event.target.value === 'string' ? event.target.value as string
+                                                   : undefined;
+
+        switch (event.target.name) {
+            case 'fullAvailability': this.setState({ fullAvailability: stateValue }); break;
+            case 'nightShifts': this.setState({ nightShifts: stateValue }); break;
+            case 'socialMedia': this.setState({ socialMedia: stateValue }); break;
+            case 'dataProcessing': this.setState({ dataProcessing: stateValue }); break;
+            default:
+                throw new Error('Unknown select field update: ' + event.target.name);
+        }
+    }
+
+    /**
+     * Called when the form is being submitted. All fields will be validated per the requirements
+     * of the UserControllerContext, after which a registration request will be started.
+     */
+    @bind
+    handleSubmit(event: React.FormEvent): void {
+        event.preventDefault();
+
+        // TODO: Start the validation.
+        console.log(this.state);
+    }
+
     render(): JSX.Element {
         const { classes } = this.props;
         const { introText } = this.state;
@@ -116,7 +189,7 @@ class RegistrationViewBase extends React.PureComponent<Properties, InternalState
 
                 <Divider />
 
-                <form>
+                <form onSubmit={this.handleSubmit}>
                     <div className={classes.root}>
                         <Grid container spacing={2}>
                             <Grid item xs={12}>
@@ -125,47 +198,55 @@ class RegistrationViewBase extends React.PureComponent<Properties, InternalState
                                 </Typography>
                             </Grid>
                             <Grid item xs={6}>
-                                <TextField id="firstName"
+                                <TextField name="firstName"
                                            label="Voornaam"
                                            margin="none"
                                            variant="outlined"
                                            autoComplete="given-name"
+                                           onChange={this.handleTextUpdate}
+                                           value={this.state.firstName}
                                            required fullWidth />
                             </Grid>
                             <Grid item xs={6}>
-                                <TextField id="lastName"
+                                <TextField name="lastName"
                                            label="Achternaam"
                                            margin="none"
                                            variant="outlined"
                                            autoComplete="family-name"
+                                           onChange={this.handleTextUpdate}
+                                           value={this.state.lastName}
                                            required fullWidth />
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField id="email"
+                                <TextField name="emailAddress"
                                            label="E-mailadres"
                                            margin="none"
                                            variant="outlined"
                                            autoComplete="email"
                                            type="email"
+                                           onChange={this.handleTextUpdate}
+                                           value={this.state.emailAddress}
                                            required fullWidth />
                             </Grid>
                             <Grid item xs={12}>
-                                <TextField id="phoneNumber"
+                                <TextField name="telephoneNumber"
                                            label="Telefoonnummer"
                                            margin="none"
                                            variant="outlined"
                                            autoComplete="tel"
                                            type="tel"
+                                           onChange={this.handleTextUpdate}
+                                           value={this.state.telephoneNumber}
                                            required fullWidth />
                             </Grid>
                             <Grid item xs={12}>
                                 <FormControl variant="outlined" fullWidth>
-                                    <KeyboardDatePicker id="birthdate"
+                                    <KeyboardDatePicker name="dateOfBirth"
                                                         label="Geboortedatum"
                                                         inputVariant="outlined" 
-                                                        onChange={() => true}
+                                                        onChange={this.handleDateUpdate}
                                                         format="DD/MM/YYYY"
-                                                        value="January 1, 1990"
+                                                        value={this.state.dateOfBirth}
                                                         disableFuture />
                                 </FormControl>
                             </Grid>
@@ -181,10 +262,12 @@ class RegistrationViewBase extends React.PureComponent<Properties, InternalState
                             </Grid>
                             <Grid item xs={6} sm={9}>
                                 <FormControl variant="outlined" fullWidth>
-                                    <Select input={<OutlinedInput labelWidth={0} />}
-                                            fullWidth>
-                                        <MenuItem value="Ja">Ja</MenuItem>
-                                        <MenuItem value="Nee">Nee</MenuItem>
+                                    <Select name="fullAvailability"
+                                            input={<OutlinedInput labelWidth={0} />}
+                                            onChange={this.handleSelectUpdate}
+                                            value={this.state.fullAvailability} fullWidth>
+                                        <MenuItem value="true">Ja</MenuItem>
+                                        <MenuItem value="false">Nee</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -195,10 +278,12 @@ class RegistrationViewBase extends React.PureComponent<Properties, InternalState
                             </Grid>
                             <Grid item xs={6} sm={9}>
                                 <FormControl variant="outlined" fullWidth>
-                                    <Select input={<OutlinedInput labelWidth={0} />}
-                                            fullWidth>
-                                        <MenuItem value="Ja">Ja</MenuItem>
-                                        <MenuItem value="Nee">Nee</MenuItem>
+                                    <Select name="nightShifts"
+                                            input={<OutlinedInput labelWidth={0} />}
+                                            onChange={this.handleSelectUpdate}
+                                            value={this.state.nightShifts} fullWidth>
+                                        <MenuItem value="true">Ja</MenuItem>
+                                        <MenuItem value="false">Nee</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -209,10 +294,12 @@ class RegistrationViewBase extends React.PureComponent<Properties, InternalState
                             </Grid>
                             <Grid item xs={6} sm={9}>
                                 <FormControl variant="outlined" fullWidth>
-                                    <Select input={<OutlinedInput labelWidth={0} />}
-                                            fullWidth>
-                                        <MenuItem value="Ja">Ja</MenuItem>
-                                        <MenuItem value="Nee">Nee</MenuItem>
+                                    <Select name="socialMedia"
+                                            input={<OutlinedInput labelWidth={0} />}
+                                            onChange={this.handleSelectUpdate}
+                                            value={this.state.socialMedia} fullWidth>
+                                        <MenuItem value="true">Ja</MenuItem>
+                                        <MenuItem value="false">Nee</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
@@ -223,10 +310,12 @@ class RegistrationViewBase extends React.PureComponent<Properties, InternalState
                             </Grid>
                             <Grid item xs={6} sm={9}>
                                 <FormControl variant="outlined" fullWidth>
-                                    <Select input={<OutlinedInput labelWidth={0} />}
-                                            fullWidth>
-                                        <MenuItem value="Ja">Ja</MenuItem>
-                                        <MenuItem value="Nee">Nee</MenuItem>
+                                    <Select name="dataProcessing"
+                                            input={<OutlinedInput labelWidth={0} />}
+                                            onChange={this.handleSelectUpdate}
+                                            value={this.state.dataProcessing} fullWidth>
+                                        <MenuItem value="true">Ja</MenuItem>
+                                        <MenuItem value="false">Nee</MenuItem>
                                     </Select>
                                 </FormControl>
                             </Grid>
