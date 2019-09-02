@@ -7,7 +7,7 @@ import moment from 'moment';
 import { ILoginRequest, ILoginResponse } from '../api/ILogin';
 
 import { Configuration } from './Configuration';
-import { User } from './User';
+import { LoginResult, User } from './User';
 import { UserAbility } from './UserAbility';
 import { validateArray, validateBoolean, validateNumber, validateString } from './TypeValidators';
 
@@ -126,10 +126,10 @@ export class UserImpl implements User {
      * Attempts to process the login |request|. A promise will be returned that indicates whether
      * the user successfully logged in to an account. If so, the User interface will self-update.
      */
-    async login(request: ILoginRequest): Promise<boolean> {
+    async login(request: ILoginRequest): Promise<LoginResult> {
         if (!navigator.cookieEnabled) {
             console.error('Unable to process the login request: cookies are disabled.');
-            return false;
+            return LoginResult.ErrorCookiesDisabled;
         }
 
         const kErrorPrefix = 'Unable to fetch the login response: ';
@@ -146,36 +146,40 @@ export class UserImpl implements User {
 
             if (!result.ok) {
                 console.error(kErrorPrefix + ` status ${result.status}`);
-                return false;
+                return LoginResult.ErrorServerIssue;
             }
             
             const resultText = await result.text();
+            const resultCode = this.initializeFromUnverifiedSource(kErrorPrefix, resultText);
 
-            if (!this.initializeFromUnverifiedSource(kErrorPrefix, resultText))
-                return false;
+            if (resultCode != LoginResult.Success)
+                return resultCode;
             
             // Store the |resultText| in local storage, so that the user can continue to be logged
             // in across same-site navigations. The expiration time will continue to take effect.
             localStorage.setItem(UserImpl.kCacheName, resultText);
 
-            return true;
+            return LoginResult.Success;
 
         } catch (exception) {
             console.error(kErrorPrefix, exception);
         }
 
-        return false;
+        return LoginResult.ErrorConnectionIssue;
     }
 
     /**
      * Initializes the |unverifiedInput| as a ILoginResponse object. It's required to be JSON. Will
      * mutate local class state when successful.
      */
-    initializeFromUnverifiedSource(errorPrefix: string, unverifiedInput: string): boolean {
+    initializeFromUnverifiedSource(errorPrefix: string, unverifiedInput: string): LoginResult {
         try {
             const unverifiedResponse = JSON.parse(unverifiedInput);
             if (!this.validateLoginResponse(unverifiedResponse))
-                return false;
+                return LoginResult.ErrorServerIssue;
+
+            if (!unverifiedResponse.success)
+                return LoginResult.ErrorUserIssue;
 
             this.userName = unverifiedResponse.userName;
             this.userToken = unverifiedResponse.userToken;
@@ -189,13 +193,13 @@ export class UserImpl implements User {
                     this.abilities.add(userAbility);
             });
 
-            return true;
+            return LoginResult.Success;
 
         } catch (exception) {
             console.error(errorPrefix, exception);
         }
 
-        return false;
+        return LoginResult.ErrorServerIssue;
     }
 
     /**
@@ -204,10 +208,11 @@ export class UserImpl implements User {
     validateLoginResponse(unverifiedResponse: any): unverifiedResponse is ILoginResponse {
         const kInterfaceName = 'ILoginResponse';
 
-        if (!validateBoolean(unverifiedResponse, kInterfaceName, 'success') ||
-            !unverifiedResponse.success) {
+        if (!validateBoolean(unverifiedResponse, kInterfaceName, 'success'))
             return false;
-        }
+        
+        if (!unverifiedResponse.success)
+            return true;
 
         return validateString(unverifiedResponse, kInterfaceName, 'userName') &&
                validateString(unverifiedResponse, kInterfaceName, 'userToken') &&

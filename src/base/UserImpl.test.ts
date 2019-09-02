@@ -9,6 +9,7 @@ import mockConsole from 'jest-mock-console';
 import { ILoginRequest } from '../api/ILogin';
 
 import { ConfigurationImpl } from './ConfigurationImpl';
+import { LoginResult } from './User';
 import { UserAbility } from './UserAbility';
 import { UserImpl, kDefaultAbilities } from './UserImpl';
 
@@ -100,7 +101,7 @@ describe('UserImpl', () => {
         expect(user.hasAbility(UserAbility.Debug)).toBeFalsy();
 
         const result = await user.login(kLoginRequest);
-        expect(result).toBeTruthy();
+        expect(result).toEqual(LoginResult.Success);
 
         expect(user.hasAbility(UserAbility.Debug)).toBeTruthy();
 
@@ -127,7 +128,7 @@ describe('UserImpl', () => {
         expect(user.hasAbility(UserAbility.Debug)).toBeFalsy();
 
         const result = await user.login(kLoginRequest);
-        expect(result).toBeTruthy();
+        expect(result).toEqual(LoginResult.Success);
 
         expect(user.hasAbility(UserAbility.Debug)).toBeTruthy();
     });
@@ -145,7 +146,7 @@ describe('UserImpl', () => {
         expect(user.hasAbility(UserAbility.Debug)).toBeFalsy();
 
         const result = await user.login(kLoginRequest);
-        expect(result).toBeTruthy();
+        expect(result).toEqual(LoginResult.Success);
 
         expect(user.hasAbility(UserAbility.Debug)).toBeTruthy();
     });
@@ -157,7 +158,7 @@ describe('UserImpl', () => {
         });
 
         const result = await user.login(kLoginRequest);
-        expect(result).toBeFalsy();
+        expect(result).toEqual(LoginResult.ErrorUserIssue);
 
         restoreConsole();
     });
@@ -167,7 +168,7 @@ describe('UserImpl', () => {
         const user = createInstanceForLoginRequest(404, {});
 
         const result = await user.login(kLoginRequest);
-        expect(result).toBeFalsy();
+        expect(result).toEqual(LoginResult.ErrorServerIssue);
 
         restoreConsole();
     });
@@ -180,7 +181,7 @@ describe('UserImpl', () => {
         });
 
         const result = await user.login(kLoginRequest);
-        expect(result).toBeFalsy();
+        expect(result).toEqual(LoginResult.ErrorServerIssue);
 
         restoreConsole();
     });
