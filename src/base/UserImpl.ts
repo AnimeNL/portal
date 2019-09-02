@@ -9,6 +9,7 @@ import { ILoginRequest, ILoginResponse } from '../api/ILogin';
 import { Configuration } from './Configuration';
 import { LoginResult, User } from './User';
 import { UserAbility } from './UserAbility';
+import { UserObserver } from './UserObserver';
 import { validateArray, validateBoolean, validateNumber, validateString } from './TypeValidators';
 
 /**
@@ -42,6 +43,7 @@ const kExceptionMessage = 'The User object has not been successfully initialized
  */
 export class UserImpl implements User {
     private configuration: Configuration;
+    private observers: Set<UserObserver>;
 
     private userName?: string;
     private userToken?: string;
@@ -56,6 +58,7 @@ export class UserImpl implements User {
 
     constructor(configuration: Configuration) {
         this.configuration = configuration;
+        this.observers = new Set();
 
         // Initialize the |abilities| for the current user with the default ones.
         this.abilities = new Set(kDefaultAbilities);
@@ -160,6 +163,9 @@ export class UserImpl implements User {
             // in across same-site navigations. The expiration time will continue to take effect.
             localStorage.setItem(UserImpl.kCacheName, resultText);
 
+            // Let all observers know of a successful account state change.
+            this.notifyAccountStateChange();
+
             return LoginResult.Success;
 
         } catch (exception) {
@@ -235,5 +241,29 @@ export class UserImpl implements User {
 
         if (navigator.cookieEnabled)
             localStorage.removeItem(UserImpl.kCacheName);
+
+        this.notifyAccountStateChange();
+    }
+
+    /**
+     * Enables the |observer| from being able to track user account state changes.
+     */
+    addObserver(observer: UserObserver): void {
+        this.observers.add(observer);
+    }
+
+    /**
+     * Notify observers of an account state change.
+     */
+    private notifyAccountStateChange(): void {
+        for (const observer of this.observers)
+            observer.onUserAccountStateChange();
+    }
+
+    /**
+     * Removes the |observer| from being able to track user account state changes.
+     */
+    removeObserver(observer: UserObserver): void {
+        this.observers.delete(observer);
     }
 }

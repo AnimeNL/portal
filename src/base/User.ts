@@ -5,6 +5,7 @@
 import { ILoginRequest } from '../api/ILogin';
 
 import { UserAbility } from './UserAbility';
+import { UserObserver } from './UserObserver';
 
 /**
  * Detailed result statuses for the `login()` function. Should be used when the result has to be
@@ -60,4 +61,14 @@ export interface User {
      * Logs the user out of their account. Both internal and cached state will be cleared.
      */
     logout(): void;
+
+    /**
+     * Enables the |observer| from being able to track user account state changes.
+     */
+    addObserver(observer: UserObserver): void;
+
+    /**
+     * Removes the |observer| from being able to track user account state changes.
+     */
+    removeObserver(observer: UserObserver): void;
 }

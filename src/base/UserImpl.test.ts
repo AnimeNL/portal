@@ -186,6 +186,31 @@ describe('UserImpl', () => {
         restoreConsole();
     });
 
+    it('should offer the ability to observe account state changes', async () => {
+        const user = createInstanceForLoginRequest(200, {
+            success: true,
+            userName: 'Jane Doe',
+            userToken: 'abc',
+            authToken: 'def',
+            expirationTime: Number.MAX_SAFE_INTEGER,
+            abilities: ['debug'],
+        });
+
+        let stateChangedCounter = 0;
+
+        // Add an observer that simply counts the number of state changes.
+        user.addObserver({ onUserAccountStateChange: () => ++stateChangedCounter });
+
+        const result = await user.login(kLoginRequest);
+        expect(result).toEqual(LoginResult.Success);
+
+        expect(stateChangedCounter).toEqual(1);
+
+        user.logout();
+
+        expect(stateChangedCounter).toEqual(2);
+    });
+
     it('should throw when accessing properties prematurely', () => {
         const configuration = new ConfigurationImpl();
         const user = new UserImpl(configuration);
