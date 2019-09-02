@@ -41,6 +41,7 @@ const kExceptionMessage = 'The User object has not been successfully initialized
 export class UserImpl implements User {
     private configuration: Configuration;
 
+    private userName?: string;
     private userToken?: string;
     private authToken?: string;
     private expirationTime?: number;
@@ -92,6 +93,13 @@ export class UserImpl implements User {
         return this.authToken;
     }
     
+    getUserName(): string {
+        if (!this.userName)
+            throw new Error(kExceptionMessage);
+
+        return this.userName;
+    }
+
     getUserToken(): string {
         if (!this.userToken)
             throw new Error(kExceptionMessage);
@@ -162,6 +170,7 @@ export class UserImpl implements User {
             if (!this.validateLoginResponse(unverifiedResponse))
                 return false;
 
+            this.userName = unverifiedResponse.userName;
             this.userToken = unverifiedResponse.userToken;
             this.authToken = unverifiedResponse.authToken;
             this.expirationTime = unverifiedResponse.expirationTime;
@@ -193,7 +202,8 @@ export class UserImpl implements User {
             return false;
         }
 
-        return validateString(unverifiedResponse, kInterfaceName, 'userToken') &&
+        return validateString(unverifiedResponse, kInterfaceName, 'userName') &&
+               validateString(unverifiedResponse, kInterfaceName, 'userToken') &&
                validateString(unverifiedResponse, kInterfaceName, 'authToken') &&
                validateNumber(unverifiedResponse, kInterfaceName, 'expirationTime') &&
                validateArray(unverifiedResponse, kInterfaceName, 'abilities');

@@ -68,6 +68,7 @@ describe('UserImpl', () => {
 
         localStorage.setItem(UserImpl.kCacheName, JSON.stringify({
             success: true,
+            userName: 'John Doe',
             userToken: 'abc',
             authToken: 'def',
             expirationTime: 9001,
@@ -78,6 +79,7 @@ describe('UserImpl', () => {
 
         expect(user.hasAccount()).toBeTruthy();
 
+        expect(user.getUserName()).toEqual('John Doe');
         expect(user.getAuthToken()).toEqual('def');
         expect(user.getUserToken()).toEqual('abc');
         expect(user.hasAbility(UserAbility.Debug)).toBeTruthy();
@@ -86,6 +88,7 @@ describe('UserImpl', () => {
     it('should be able to process successful login requests', async () => {
         const response = {
             success: true,
+            userName: 'Jane Doe',
             userToken: 'abc',
             authToken: 'def',
             expirationTime: 9001,
@@ -101,6 +104,7 @@ describe('UserImpl', () => {
 
         expect(user.hasAbility(UserAbility.Debug)).toBeTruthy();
 
+        expect(user.getUserName()).toEqual('Jane Doe');
         expect(user.getAuthToken()).toEqual('def');
         expect(user.getUserToken()).toEqual('abc');
 
@@ -113,6 +117,7 @@ describe('UserImpl', () => {
     it('should ignore unknown abilities for forward compability', async () => {
         const user = createInstanceForLoginRequest(200, {
             success: true,
+            userName: 'John Doe',
             userToken: 'abc',
             authToken: 'def',
             expirationTime: 9001,
@@ -130,6 +135,7 @@ describe('UserImpl', () => {
     it('should grant all abilities when Root has been granted to the user', async () => {
         const user = createInstanceForLoginRequest(200, {
             success: true,
+            userName: 'John Doe',
             userToken: 'abc',
             authToken: 'def',
             expirationTime: 9001,
@@ -185,6 +191,7 @@ describe('UserImpl', () => {
 
         expect(user.hasAccount()).toBeFalsy();
 
+        expect(() => user.getUserName()).toThrowError();
         expect(() => user.getAuthToken()).toThrowError();
         expect(() => user.getUserToken()).toThrowError();
     });

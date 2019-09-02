@@ -29,6 +29,11 @@ export interface User {
     getAuthToken(): string;
 
     /**
+     * Returns the full name of the authenticated user. Must only be used if |hasAccount| is true.
+     */
+    getUserName(): string;
+
+    /**
      * Returns the user token of the authenticated user. Must only be used if |hasAccount| is true.
      */
     getUserToken(): string;

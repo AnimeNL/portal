@@ -15,6 +15,7 @@ export interface ILoginRequest {
  */
 export interface ILoginResponse {
     success: boolean;
+    userName: string;
     userToken: string;
     authToken: string;
     expirationTime: number;
