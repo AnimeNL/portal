@@ -51,7 +51,8 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
     state: InternalState = {
         contentAvailable: false,
         contentProvider: new ContentProvider(),
-        userController: new UserController(ApplicationState.getUser()),
+        userController: new UserController(ApplicationState.getConfiguration(),
+                                           ApplicationState.getUser()),
     };
 
     /**

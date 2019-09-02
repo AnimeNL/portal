@@ -4,27 +4,14 @@
 
 import React from 'react';
 
+import { IRegistrationRequest } from '../../api/IRegistration';
+
 /**
  * Possible outcomes of a login request. Contains the result as a boolean, and a message that can
  * be displayed to the user in case of a failure.
  */
 export type LoginDetails = { result: boolean, message?: string };
 export type RegistrationResult = { result: boolean, accessCode?: number; message?: string };
-
-/**
- * Information made available for a registration request. All fields are mandatory.
- */
-export interface RegistrationInfo {
-    firstName: string;
-    lastName: string;
-    emailAddress: string;
-    telephoneNumber: string;
-    dateOfBirth: string;  // YYYY-MM-DD
-    fullAvailability: boolean;
-    nightShifts: boolean;
-    socialMedia: boolean;
-    dataProcessing: boolean;
-}
 
 /**
  * Interface that a UserControllerContext has to support.
@@ -37,10 +24,10 @@ export interface IUserController {
     requestLogin(accessCode: string, emailAddress: string): Promise<LoginDetails>;
 
     /**
-     * Requests an account to be created for the given |info|. All fields are expected to have been
-     * validated already. Asynchronously returns a RegistrationResult.
+     * Requests an account to be created for the given |request|. All fields are expected to have
+     * been validated already. Asynchronously returns a RegistrationResult.
      */
-    requestRegistration(info: RegistrationInfo): Promise<RegistrationResult>;
+    requestRegistration(request: IRegistrationRequest): Promise<RegistrationResult>;
 
     /**
      * Whether the given |value| is a valid access code for the portal. 
@@ -59,7 +46,7 @@ export interface IUserController {
  */
 export const UserControllerContext = React.createContext<IUserController>({
     requestLogin: async (accessCode: string, emailAddress: string) => ({ result: false }),
-    requestRegistration: async (info: RegistrationInfo) => ({ result: false }),
+    requestRegistration: async (request: IRegistrationRequest) => ({ result: false }),
     validateAccessCode: (value: string) => false,
     validateEmailAddress: (value: string) => false,
 });

@@ -206,7 +206,7 @@ Handles volunteer registration from the Registration application. Must accept `P
 | Property         | Type       | Description |
 | :---             | :---       | :--- |
 | `success`        | `boolean`  | Always set to `true` to indicate registration succeeded. |
-| `accessCode`     | `number`   | The access code with which they can identify themselves. |
+| `accessCode`     | `string`   | The access code with which they can identify themselves. |
 
 #### 🡄 Failure response
 

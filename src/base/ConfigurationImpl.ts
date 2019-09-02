@@ -10,6 +10,7 @@ import { Configuration } from './Configuration';
 const kContentEndpoint = '/api/content';
 const kEnvironmentEndpoint = '/api/environment';
 const kLoginEndpoint = '/api/login';
+const kRegistrationEndpoint = '/api/registration';
 
 /**
  * Implementation of the Configuration interface. Comes with a number of setters usable by the
@@ -28,6 +29,7 @@ export class ConfigurationImpl implements Configuration {
     contentOverride?: string;
     environmentOverride?: string;
     loginOverride?: string;
+    registrationOverride?: string;
 
     constructor() {
         this.hostname = process.env.REACT_APP_API_HOST || '';
@@ -55,5 +57,13 @@ export class ConfigurationImpl implements Configuration {
 
     setLoginEndpoint(endpoint: string): void {
         this.loginOverride = endpoint;
+    }
+
+    getRegistrationEndpoint(): string {
+        return this.registrationOverride || (this.hostname + kRegistrationEndpoint);
+    }
+
+    setRegistrationEndpoint(endpoint: string): void {
+        this.registrationOverride = endpoint;
     }
 }

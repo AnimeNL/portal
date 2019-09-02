@@ -4,16 +4,22 @@
 
 import EmailValidator from 'email-validator';
 
-import { IUserController, LoginDetails, RegistrationInfo, RegistrationResult } from './UserControllerContext';
+import { IRegistrationRequest, IRegistrationResponse } from '../../api/IRegistration';
+
+import { Configuration } from '../../base/Configuration';
+import { IUserController, LoginDetails, RegistrationResult } from './UserControllerContext';
 import { LoginResult, User } from '../../base/User';
+import { validateBoolean, validateString } from '../../base/TypeValidators';
 
 /**
  * Implementation of the user controller. Made available to 
  */
 export class UserController implements IUserController {
+    private configuration: Configuration;
     private user: User;
 
-    constructor(user: User) {
+    constructor(configuration: Configuration, user: User) {
+        this.configuration = configuration;
         this.user = user;
     }
 
@@ -39,13 +45,67 @@ export class UserController implements IUserController {
     }
 
     /**
-     * Requests an account to be created for the given |info|. All fields are expected to have been
-     * validated already. Asynchronously returns a RegistrationResult.
+     * Requests an account to be created for the given |request|. All fields are expected to have
+     * been validated already. Asynchronously returns a RegistrationResult.
      */
-    async requestRegistration(info: RegistrationInfo): Promise<RegistrationResult> {
-        await new Promise(resolve => setTimeout(resolve, 3000));
+    async requestRegistration(request: IRegistrationRequest): Promise<RegistrationResult> {
+        const kErrorPrefix = 'Unable to fetch the registration response: ';
 
-        return { result: false, message: 'NOT IMPLEMENTED' };
+        try {
+            const requestBody = new FormData();
+
+            // Move the full |request| over to the |requestBody| object.
+            Object.entries(request).forEach(([key, value]) => requestBody.set(key, value));
+
+            const result = await fetch(this.configuration.getRegistrationEndpoint(), {
+                method: 'POST',
+                body: requestBody,
+            });
+
+            if (!result.ok) {
+                console.error(kErrorPrefix + ` status ${result.status}`);
+                return { result: false, message: 'Er is een probleem met de server.' };
+            }
+            
+            let unverifiedResponse: object | null = null;
+
+            try {
+                unverifiedResponse = JSON.parse(await result.text());
+            } catch (exception) {
+                console.error(kErrorPrefix, exception);
+            }
+
+            if (!unverifiedResponse || !this.validateRegistrationResponse(unverifiedResponse))
+                return { result: false, message: 'Er is een probleem met de server.' };
+
+            if (!unverifiedResponse.success)
+                return { result: false, message: unverifiedResponse.message! };
+
+            return this.requestLogin(unverifiedResponse.accessCode!, request.emailAddress);
+
+        } catch (exception) {
+            console.error(kErrorPrefix, exception);
+        }
+
+        return { result: false, message: 'De server is onbereikbaar.' };
+    }
+
+    /**
+     * Validates that the |unverifiedResponse| is a valid IRegistrationResponse answer from the
+     * server, in accordance with the API definition.
+     * 
+     * @see https://github.com/AnimeNL/portal/blob/master/API.md#apiregistration
+     */
+    validateRegistrationResponse(unverifiedResponse: any): unverifiedResponse is IRegistrationResponse {
+        const kInterfaceName = 'IRegistrationResponse';
+
+        if (!validateBoolean(unverifiedResponse, kInterfaceName, 'success'))
+            return false;
+        
+        if (!unverifiedResponse.success)
+            return validateString(unverifiedResponse, kInterfaceName, 'message');
+        
+        return validateString(unverifiedResponse, kInterfaceName, 'accessCode');
     }
 
     /**

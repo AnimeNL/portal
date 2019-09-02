@@ -136,8 +136,9 @@ export class UserImpl implements User {
 
         try {
             const requestBody = new FormData();
-            requestBody.append('email', request.email);
-            requestBody.append('accessCode', request.accessCode);
+
+            // Move the full |request| over to the |requestBody| object.
+            Object.entries(request).forEach(([key, value]) => requestBody.set(key, value));
 
             const result = await fetch(this.configuration.getLoginEndpoint(), {
                 method: 'POST',
