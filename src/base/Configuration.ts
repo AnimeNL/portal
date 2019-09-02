@@ -18,4 +18,10 @@ export interface Configuration {
      * @see https://github.com/AnimeNL/portal/blob/master/API.md#apienvironment
      */
     getEnvironmentEndpoint(): string;
+
+    /**
+     * Returns a URL to the endpoint where the Login API can be used.
+     * @see https://github.com/AnimeNL/portal/blob/master/API.md#apilogin
+     */
+    getLoginEndpoint(): string;
 }

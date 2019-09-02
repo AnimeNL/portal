@@ -40,6 +40,10 @@ function validate<T>(input: any, inputName: string, property: string, validateFn
     return true
 }
 
+function isBoolean(input: any): boolean {
+    return typeof input === 'boolean';
+}
+
 function isArray(input: any): boolean {
     return typeof input === 'object' && Array.isArray(input);
 }
@@ -53,10 +57,17 @@ function isString(input: any): boolean {
 }
 
 /**
- * 
+ * Validates that the |property| on the |input| object of type |inputName| is an array.
  */
 export function validateArray(input: any, inputName: string, property: string): boolean {
     return validate(input, inputName, property, isArray);
+}
+
+/**
+ * Validates that the |property| on the |input| object of type |inputName| is a boolean. 
+ */
+export function validateBoolean(input: any, inputName: string, property: string): boolean {
+    return validate(input, inputName, property, isBoolean);
 }
 
 /**

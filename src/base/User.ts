@@ -2,6 +2,8 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import { ILoginRequest } from '../api/ILogin';
+
 import { UserAbility } from './UserAbility';
 
 /**
@@ -20,4 +22,20 @@ export interface User {
      * being known to the system.
      */
     hasAccount(): boolean;
+
+    /**
+     * Returns the auth token of the authenticated user. Must only be used if |hasAccount| is true.
+     */
+    getAuthToken(): string;
+
+    /**
+     * Returns the user token of the authenticated user. Must only be used if |hasAccount| is true.
+     */
+    getUserToken(): string;
+
+    /**
+     * Attempts to process the login |request|. A promise will be returned that indicates whether
+     * the user successfully logged in to an account. If so, the User interface will self-update.
+     */
+    login(request: ILoginRequest): Promise<boolean>;
 }
