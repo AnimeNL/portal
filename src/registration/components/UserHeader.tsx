@@ -113,10 +113,12 @@ class UserHeaderBase extends React.Component<Properties, InternalState> {
             return;
         
         const actionAvailable = this.shouldActionBeAvailable();
-        if (state.actionAvailable === actionAvailable)
+        const statusDisplayed = false;
+
+        if (state.actionAvailable === actionAvailable && state.statusDisplayed === statusDisplayed)
             return;
         
-        this.setState({ actionAvailable });
+        this.setState({ actionAvailable, statusDisplayed });
     }
 
     /**
@@ -136,7 +138,13 @@ class UserHeaderBase extends React.Component<Properties, InternalState> {
         if (identified !== this.state.identified)
             this.componentDidMount();
 
-        this.setState({ loginDialogDisplayed: false });
+        this.setState({
+            loginDialogDisplayed: false,
+
+            // Automatically open the Status display after logging in to provide the user with some
+            // feedback, otherwise it looks like the dialog just silently disappeared.
+            statusDisplayed: !!identified
+         });
     }
 
     /**
@@ -165,7 +173,7 @@ class UserHeaderBase extends React.Component<Properties, InternalState> {
                             </Button> }
                     </div>
 
-                    <ExpansionPanel expanded={statusDisplayed} className={classes.noMargin}>
+                    <ExpansionPanel expanded={!!statusDisplayed} className={classes.noMargin}>
                         <ExpansionPanelSummary className={classes.hide} />
                         <ExpansionPanelDetails className={classes.status}>
                             Hello, world!
