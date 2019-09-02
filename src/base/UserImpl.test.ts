@@ -24,7 +24,7 @@ const kLoginRequest: ILoginRequest = {
 
 describe('UserImpl', () => {
     beforeEach(() => mockServer.start());
-    afterEach(() => mockServer.stop() && sessionStorage.clear());
+    afterEach(() => mockServer.stop() && localStorage.clear());
 
     /**
      * Creates an instance of the UserImpl object specifically to handle a login request. The
@@ -58,14 +58,41 @@ describe('UserImpl', () => {
             expect(user.hasAbility(ability)).toBeTruthy());
     });
 
-    it('should be able to process successful login requests', async () => {
-        const user = createInstanceForLoginRequest(200, {
+    it('can log in users based on the data cached in localStorage', async () => {
+        const configuration = new ConfigurationImpl();
+        const user = new UserImpl(configuration);
+
+        expect(localStorage.getItem).toHaveBeenCalledTimes(0);
+        expect(user.hasAbility(UserAbility.Debug)).toBeFalsy();
+        expect(user.hasAccount()).toBeFalsy();
+
+        localStorage.setItem(UserImpl.kCacheName, JSON.stringify({
             success: true,
             userToken: 'abc',
             authToken: 'def',
             expirationTime: 9001,
             abilities: ['debug'],
-        });
+        }));
+
+        expect(await user.initialize()).toBeTruthy();
+
+        expect(user.hasAccount()).toBeTruthy();
+
+        expect(user.getAuthToken()).toEqual('def');
+        expect(user.getUserToken()).toEqual('abc');
+        expect(user.hasAbility(UserAbility.Debug)).toBeTruthy();
+    });
+
+    it('should be able to process successful login requests', async () => {
+        const response = {
+            success: true,
+            userToken: 'abc',
+            authToken: 'def',
+            expirationTime: 9001,
+            abilities: ['debug'],
+        };
+
+        const user = createInstanceForLoginRequest(200, response);
 
         expect(user.hasAbility(UserAbility.Debug)).toBeFalsy();
 
@@ -76,6 +103,11 @@ describe('UserImpl', () => {
 
         expect(user.getAuthToken()).toEqual('def');
         expect(user.getUserToken()).toEqual('abc');
+
+        expect(localStorage.getItem).toHaveBeenCalledTimes(1);
+        expect(localStorage.setItem).toHaveBeenCalledTimes(2);
+
+        expect(localStorage.getItem(UserImpl.kCacheName)).toEqual(JSON.stringify(response));
     });
 
     it('should ignore unknown abilities for forward compability', async () => {

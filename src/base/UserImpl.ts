@@ -46,6 +46,11 @@ export class UserImpl implements User {
     private expirationTime?: number;
     private abilities: Set<UserAbility>;
 
+    /**
+     * Name of the session storage cache in which the login data will be recorded.
+     */
+    public static kCacheName: string = 'portal-login';
+
     constructor(configuration: Configuration) {
         this.configuration = configuration;
 
@@ -54,10 +59,29 @@ export class UserImpl implements User {
     }
 
     /**
-     * Initializes the User class with all associated state.
+     * Initializes the User class with all associated state. The login state will be read from
+     * local storage if cookies are available (and data exists).
      */
     async initialize(): Promise<boolean> {
-        // TODO: Handle initialization.
+        if (navigator.cookieEnabled) {
+            const kErrorPrefix = 'Unable to restore login state: ';
+            const loginData = localStorage.getItem(UserImpl.kCacheName);
+
+            // The user hasn't logged in at all if the cache does not exist.
+            if (!loginData)
+                return true;
+
+            if (!this.initializeFromUnverifiedSource(kErrorPrefix, loginData)) {
+                console.error('Removing login data from cache due to corruption.');
+
+                localStorage.removeItem(UserImpl.kCacheName);
+                return true;
+            }
+
+            // TODO: Handle session expiration.
+        }
+
+        
         return true;
     }
 
@@ -88,6 +112,11 @@ export class UserImpl implements User {
      * the user successfully logged in to an account. If so, the User interface will self-update.
      */
     async login(request: ILoginRequest): Promise<boolean> {
+        if (!navigator.cookieEnabled) {
+            console.error('Unable to process the login request: cookies are disabled.');
+            return false;
+        }
+
         const kErrorPrefix = 'Unable to fetch the login response: ';
 
         try {
@@ -105,10 +134,14 @@ export class UserImpl implements User {
                 return false;
             }
             
-            if (!this.initializeFromUnverifiedSource(kErrorPrefix, await result.text()))
+            const resultText = await result.text();
+
+            if (!this.initializeFromUnverifiedSource(kErrorPrefix, resultText))
                 return false;
             
-            // TODO: Cache in local storage.
+            // Store the |resultText| in local storage, so that the user can continue to be logged
+            // in across same-site navigations. The expiration time will continue to take effect.
+            localStorage.setItem(UserImpl.kCacheName, resultText);
 
             return true;
 
