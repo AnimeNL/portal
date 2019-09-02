@@ -2,6 +2,8 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
+import moment from 'moment';
+
 import { ILoginRequest, ILoginResponse } from '../api/ILogin';
 
 import { Configuration } from './Configuration';
@@ -74,15 +76,20 @@ export class UserImpl implements User {
 
             if (!this.initializeFromUnverifiedSource(kErrorPrefix, loginData)) {
                 console.error('Removing login data from cache due to corruption.');
+                this.logout();
 
-                localStorage.removeItem(UserImpl.kCacheName);
                 return true;
             }
 
-            // TODO: Handle session expiration.
+            // TODO: This should be using an application-wide Clock implementation.
+            if (this.expirationTime! < moment().unix()) {
+                console.error('Removing login data from cache due to expiration.');
+                this.logout();
+
+                return true;
+            }
         }
 
-        
         return true;
     }
 
@@ -207,5 +214,20 @@ export class UserImpl implements User {
                validateString(unverifiedResponse, kInterfaceName, 'authToken') &&
                validateNumber(unverifiedResponse, kInterfaceName, 'expirationTime') &&
                validateArray(unverifiedResponse, kInterfaceName, 'abilities');
+    }
+
+    /**
+     * Signs the user out of the account they're identified to, if any. This resets all internal
+     * state, including cached values, back to their default value.
+     */
+    logout(): void {
+        this.userName = undefined;
+        this.userToken = undefined;
+        this.authToken = undefined;
+        this.expirationTime = undefined;
+        this.abilities = new Set(kDefaultAbilities);
+
+        if (navigator.cookieEnabled)
+            localStorage.removeItem(UserImpl.kCacheName);
     }
 }

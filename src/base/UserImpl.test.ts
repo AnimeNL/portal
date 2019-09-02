@@ -71,7 +71,7 @@ describe('UserImpl', () => {
             userName: 'John Doe',
             userToken: 'abc',
             authToken: 'def',
-            expirationTime: 9001,
+            expirationTime: Number.MAX_SAFE_INTEGER,
             abilities: ['debug'],
         }));
 
@@ -91,7 +91,7 @@ describe('UserImpl', () => {
             userName: 'Jane Doe',
             userToken: 'abc',
             authToken: 'def',
-            expirationTime: 9001,
+            expirationTime: Number.MAX_SAFE_INTEGER,
             abilities: ['debug'],
         };
 
@@ -120,7 +120,7 @@ describe('UserImpl', () => {
             userName: 'John Doe',
             userToken: 'abc',
             authToken: 'def',
-            expirationTime: 9001,
+            expirationTime: Number.MAX_SAFE_INTEGER,
             abilities: ['ignored1', 'debug', 'ignored2'],
         });
 
@@ -138,7 +138,7 @@ describe('UserImpl', () => {
             userName: 'John Doe',
             userToken: 'abc',
             authToken: 'def',
-            expirationTime: 9001,
+            expirationTime: Number.MAX_SAFE_INTEGER,
             abilities: ['root'],
         });
 
