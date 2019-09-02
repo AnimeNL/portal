@@ -119,7 +119,7 @@ interface InternalState {
     /**
      * The access code in case their registration has succeeded.
      */
-    confirmationAccessCode?: number;
+    confirmationAccessCode?: string;
 }
 
 /**
@@ -280,7 +280,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
             let content = contentProvider.getPageContent(kRegistrationConfirm);
 
             content = content.replace('{emailAddress}', this.state.emailAddress!);
-            content = content.replace('{accessCode}', confirmationAccessCode.toString());
+            content = content.replace('{accessCode}', confirmationAccessCode);
 
             return <MarkdownView content={content} />
         }

@@ -11,7 +11,7 @@ import { IRegistrationRequest } from '../../api/IRegistration';
  * be displayed to the user in case of a failure.
  */
 export type LoginDetails = { result: boolean, message?: string };
-export type RegistrationResult = { result: boolean, accessCode?: number; message?: string };
+export type RegistrationResult = { result: boolean, accessCode?: string; message?: string };
 
 /**
  * Interface that a UserControllerContext has to support.

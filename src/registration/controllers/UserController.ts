@@ -81,7 +81,16 @@ export class UserController implements IUserController {
             if (!unverifiedResponse.success)
                 return { result: false, message: unverifiedResponse.message! };
 
-            return this.requestLogin(unverifiedResponse.accessCode!, request.emailAddress);
+            // Attempt to automatically log the user in to their account. This will open the fancy
+            // registration state bar at the top of the application as an additional feedback. We
+            // don't actually care about the result of the login.
+            await this.user.login({ accessCode: unverifiedResponse.accessCode!,
+                                    email: request.emailAddress });
+            
+            return {
+                result: true,
+                accessCode: unverifiedResponse.accessCode!
+            };
 
         } catch (exception) {
             console.error(kErrorPrefix, exception);
