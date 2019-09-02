@@ -17,6 +17,19 @@ export const kDefaultAbilities: UserAbility[] = [
 ];
 
 /**
+ * Map from the string representation to a UserAbility constant.
+ */
+const kAbilitiesMap = new Map<string, UserAbility>([
+    ['debug',                       UserAbility.Debug],
+    ['manage-event-info',           UserAbility.ManageEventInfo],
+    ['registration-application',    UserAbility.RegistrationApplication],
+    ['root',                        UserAbility.Root],
+    ['schedule-application',        UserAbility.ScheduleApplication],
+    ['update-avatar-all',           UserAbility.UpdateAvatarAll],
+    ['update-avatar-self',          UserAbility.UpdateAvatarSelf],
+]);
+
+/**
  * Message to include with the exception thrown when data is being accessed before the UserImpl
  * has been initialized properly.
  */
@@ -63,13 +76,17 @@ export class UserImpl implements User {
     }
 
     hasAbility(ability: UserAbility): boolean {
-        return this.abilities.has(ability);
+        return this.abilities.has(ability) || this.abilities.has(UserAbility.Root);
     }
 
     hasAccount(): boolean {
         return this.userToken !== undefined;
     }
 
+    /**
+     * Attempts to process the login |request|. A promise will be returned that indicates whether
+     * the user successfully logged in to an account. If so, the User interface will self-update.
+     */
     async login(request: ILoginRequest): Promise<boolean> {
         const kErrorPrefix = 'Unable to fetch the login response: ';
 
@@ -116,7 +133,12 @@ export class UserImpl implements User {
             this.authToken = unverifiedResponse.authToken;
             this.expirationTime = unverifiedResponse.expirationTime;
 
-            // TODO: Abilities.
+            // Load all the abilities. Unknown abilities will be silently ignored.
+            unverifiedResponse.abilities.forEach(ability => {
+                const userAbility = kAbilitiesMap.get(ability);
+                if (userAbility !== undefined)
+                    this.abilities.add(userAbility);
+            });
 
             return true;
 

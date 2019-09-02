@@ -9,6 +9,7 @@ import mockConsole from 'jest-mock-console';
 import { ILoginRequest } from '../api/ILogin';
 
 import { ConfigurationImpl } from './ConfigurationImpl';
+import { UserAbility } from './UserAbility';
 import { UserImpl, kDefaultAbilities } from './UserImpl';
 
 const mockServer = require('mockttp').getLocal({ cors: true });
@@ -63,14 +64,52 @@ describe('UserImpl', () => {
             userToken: 'abc',
             authToken: 'def',
             expirationTime: 9001,
-            abilities: [],
+            abilities: ['debug'],
         });
+
+        expect(user.hasAbility(UserAbility.Debug)).toBeFalsy();
 
         const result = await user.login(kLoginRequest);
         expect(result).toBeTruthy();
 
+        expect(user.hasAbility(UserAbility.Debug)).toBeTruthy();
+
         expect(user.getAuthToken()).toEqual('def');
         expect(user.getUserToken()).toEqual('abc');
+    });
+
+    it('should ignore unknown abilities for forward compability', async () => {
+        const user = createInstanceForLoginRequest(200, {
+            success: true,
+            userToken: 'abc',
+            authToken: 'def',
+            expirationTime: 9001,
+            abilities: ['ignored1', 'debug', 'ignored2'],
+        });
+
+        expect(user.hasAbility(UserAbility.Debug)).toBeFalsy();
+
+        const result = await user.login(kLoginRequest);
+        expect(result).toBeTruthy();
+
+        expect(user.hasAbility(UserAbility.Debug)).toBeTruthy();
+    });
+
+    it('should grant all abilities when Root has been granted to the user', async () => {
+        const user = createInstanceForLoginRequest(200, {
+            success: true,
+            userToken: 'abc',
+            authToken: 'def',
+            expirationTime: 9001,
+            abilities: ['root'],
+        });
+
+        expect(user.hasAbility(UserAbility.Debug)).toBeFalsy();
+
+        const result = await user.login(kLoginRequest);
+        expect(result).toBeTruthy();
+
+        expect(user.hasAbility(UserAbility.Debug)).toBeTruthy();
     });
 
     it('should fail when processing an invalid login request', async () => {
