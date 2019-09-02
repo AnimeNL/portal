@@ -4,20 +4,38 @@
 
 import EmailValidator from 'email-validator';
 
-import { IUserController, LoginResult, RegistrationInfo, RegistrationResult } from './UserControllerContext';
+import { IUserController, LoginDetails, RegistrationInfo, RegistrationResult } from './UserControllerContext';
+import { LoginResult, User } from '../../base/User';
 
 /**
  * Implementation of the user controller. Made available to 
  */
 export class UserController implements IUserController {
+    private user: User;
+
+    constructor(user: User) {
+        this.user = user;
+    }
+
     /**
      * Requests a login for the given |accessCode| and |emailAddress|. Both are expected to validate
      * per the portal's requirements. Asynchronously returns a LoginResult.
      */
-    async requestLogin(accessCode: string, emailAddress: string): Promise<LoginResult> {
-        await new Promise(resolve => setTimeout(resolve, 3000));
+    async requestLogin(accessCode: string, emailAddress: string): Promise<LoginDetails> {
+        const result = await this.user.login({ email: emailAddress, accessCode });
 
-        return { result: false, message: 'NOT IMPLEMENTED' };
+        switch (result) {
+            case LoginResult.ErrorConnectionIssue:
+                return { result: false, message: 'De server is onbereikbaar.' };
+            case LoginResult.ErrorCookiesDisabled:
+                return { result: false, message: 'Cookies zijn niet beschikbaar in je browser.' };
+            case LoginResult.ErrorServerIssue:
+                return { result: false, message: 'Er is een probleem met de server.' };
+            case LoginResult.ErrorUserIssue:
+                return { result: false, message: 'Je inloggegevens zijn niet bekend.' };
+            case LoginResult.Success:
+                return { result: true };
+        }
     }
 
     /**

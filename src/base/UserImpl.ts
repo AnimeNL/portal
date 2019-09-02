@@ -152,7 +152,7 @@ export class UserImpl implements User {
             const resultText = await result.text();
             const resultCode = this.initializeFromUnverifiedSource(kErrorPrefix, resultText);
 
-            if (resultCode != LoginResult.Success)
+            if (resultCode !== LoginResult.Success)
                 return resultCode;
             
             // Store the |resultText| in local storage, so that the user can continue to be logged

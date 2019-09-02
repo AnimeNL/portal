@@ -5,6 +5,7 @@
 import React from 'react';
 import { Route, RouteComponentProps, Switch } from 'react-router-dom'
 
+import { ApplicationState } from '../base/ApplicationState';
 import { ContentProvider } from './ContentProvider';
 import { UserController } from './controllers/UserController';
 import { UserControllerContext } from './controllers/UserControllerContext';
@@ -50,7 +51,7 @@ export default class RegistrationApplication extends React.PureComponent<{}, Int
     state: InternalState = {
         contentAvailable: false,
         contentProvider: new ContentProvider(),
-        userController: new UserController(),
+        userController: new UserController(ApplicationState.getUser()),
     };
 
     /**

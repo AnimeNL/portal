@@ -8,7 +8,7 @@ import React from 'react';
  * Possible outcomes of a login request. Contains the result as a boolean, and a message that can
  * be displayed to the user in case of a failure.
  */
-export type LoginResult = { result: boolean, message?: string };
+export type LoginDetails = { result: boolean, message?: string };
 export type RegistrationResult = { result: boolean, accessCode?: number; message?: string };
 
 /**
@@ -32,9 +32,9 @@ export interface RegistrationInfo {
 export interface IUserController {
     /**
      * Requests a login for the given |accessCode| and |emailAddress|. Both are expected to validate
-     * per the portal's requirements. Asynchronously returns a LoginResult.
+     * per the portal's requirements. Asynchronously returns a LoginDetails.
      */
-    requestLogin(accessCode: string, emailAddress: string): Promise<LoginResult>;
+    requestLogin(accessCode: string, emailAddress: string): Promise<LoginDetails>;
 
     /**
      * Requests an account to be created for the given |info|. All fields are expected to have been

@@ -100,7 +100,7 @@ class UserHeaderBase extends React.Component<Properties, InternalState> {
         const actionAvailable = this.shouldActionBeAvailable();
 
         const identified = user.hasAccount();
-        const title = identified ? personaliseTitle('Peter Beverloo')
+        const title = identified ? personaliseTitle(user.getUserName())
                                  : environment.getPortalTitle();
 
         this.setState({ actionAvailable, identified, title });
