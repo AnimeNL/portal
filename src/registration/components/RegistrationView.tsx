@@ -286,7 +286,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
         }
 
         return (
-            <MuiPickersUtilsProvider utils={MomentUtils}>
+            <>
                 {introText}
 
                 <Divider />
@@ -297,6 +297,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
                     </Typography>
                 </Collapse>
 
+                <MuiPickersUtilsProvider utils={MomentUtils}>
                 <form onSubmit={this.handleSubmit}>
                     <div className={classes.root}>
                         <Grid container spacing={2}>
@@ -445,6 +446,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
                         </Grid>
                     </div>
                 </form>
+                </MuiPickersUtilsProvider>
 
                 <Divider />
 
@@ -457,7 +459,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
                     onze <Link to="dataverwerking.html">dataverwerking</Link>.
                 </Typography>
 
-            </MuiPickersUtilsProvider>
+            </>
         );
     }
 }
