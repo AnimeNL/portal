@@ -160,8 +160,14 @@ class UserLoginDialogBase extends React.Component<Properties, InternalState> {
         errorMessage = response.message;
         validating = false;
 
-        if (response.result)
+        // Don't call setState() if the login was successful, as the form will have been removed.
+        if (response.result) {
+            this.state.errorMessage = errorMessage;
+            this.state.validating = validating;
+
             this.props.onFinished(/* identified= */ true);
+            return;
+        }
 
         this.setState({ errorMessage, validating });
     }

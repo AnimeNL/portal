@@ -9,6 +9,7 @@ import bind from 'bind-decorator';
 import { ApplicationState } from '../../base/ApplicationState';
 import { Colors } from '../Colors';
 import { UserLoginDialog } from './UserLoginDialog';
+import { UserObserver } from '../../base/UserObserver';
 import { kRegistrationApplicationBasename } from '../../base/ApplicationBasename';
 
 import Button from '@material-ui/core/Button';
@@ -51,6 +52,11 @@ const styles = (theme: Theme) =>
 const personaliseTitle = (fullName: string) => 'Welkom ' + fullName.replace(/\s.*/, '') + '!';
 
 /**
+ * Utility function to quickly get access to the User object.
+ */
+const getUser = () => ApplicationState.getUser();
+
+/**
  * State internal to the <UserHeader> component.
  */
 interface InternalState {
@@ -87,23 +93,18 @@ type Properties = RouteComponentProps & WithStyles<typeof styles>;
  * The <UserHeader> component is displayed on top of every page on the registration portal. Users
  * have the ability to identify themselves to see the progress of their application.
  */
-class UserHeaderBase extends React.Component<Properties, InternalState> {
+class UserHeaderBase extends React.Component<Properties, InternalState> implements UserObserver {
     state: InternalState = {
         actionAvailable: false,
         title: 'Volunteer Portal',
     };
 
     componentDidMount() {
-        const environment = ApplicationState.getEnvironment();
-        const user = ApplicationState.getUser();
+        getUser().addObserver(this);
 
-        const actionAvailable = this.shouldActionBeAvailable();
-
-        const identified = user.hasAccount();
-        const title = identified ? personaliseTitle(user.getUserName())
-                                 : environment.getPortalTitle();
-
-        this.setState({ actionAvailable, identified, title });
+        // Manually trigger an `onUserAccountStateChange` notification to set the initial state for
+        // this component. Future changes will automatically propagate.
+        this.onUserAccountStateChange(/* isInitialState= */ true);
     }
 
     componentDidUpdate(prevProps: Properties): void {
@@ -121,6 +122,31 @@ class UserHeaderBase extends React.Component<Properties, InternalState> {
         this.setState({ actionAvailable, statusDisplayed });
     }
 
+    componentWillUnmount() {
+        getUser().removeObserver(this);
+    }
+
+    /**
+     * Called by the User interface whenever the user's login state changes.
+     */
+    onUserAccountStateChange(isInitialState?: boolean): void {
+        const environment = ApplicationState.getEnvironment();
+        const user = getUser();
+
+        const actionAvailable = this.shouldActionBeAvailable();
+
+        const identified = user.hasAccount();
+        const title = identified ? personaliseTitle(user.getUserName())
+                                 : environment.getPortalTitle();
+
+        this.setState({ actionAvailable, identified, title });
+
+        // Automatically open the Status display after logging in to provide the user with some
+        // feedback, otherwise it looks like the dialog just silently disappeared.
+        if (!isInitialState && !!identified)
+            requestAnimationFrame(() => this.setState({ statusDisplayed: true }));
+    }
+
     /**
      * Returns whether the action should be available on the current page.
      */
@@ -135,16 +161,7 @@ class UserHeaderBase extends React.Component<Properties, InternalState> {
 
     @bind
     onLoginFinished(identified: boolean): void {
-        if (identified !== this.state.identified)
-            this.componentDidMount();
-
-        this.setState({
-            loginDialogDisplayed: false,
-
-            // Automatically open the Status display after logging in to provide the user with some
-            // feedback, otherwise it looks like the dialog just silently disappeared.
-            statusDisplayed: !!identified
-         });
+        this.setState({ loginDialogDisplayed: false });
     }
 
     /**
