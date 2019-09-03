@@ -8,6 +8,7 @@ import bind from 'bind-decorator';
 
 import { ApplicationState } from '../../base/ApplicationState';
 import { Colors } from '../Colors';
+import { UserApplicationProgress } from './UserApplicationProgress';
 import { UserLoginDialog } from './UserLoginDialog';
 import { UserObserver } from '../../base/UserObserver';
 import { kRegistrationApplicationBasename } from '../../base/ApplicationBasename';
@@ -42,6 +43,7 @@ const styles = (theme: Theme) =>
             lineHeight: '38px',
         },
         status: {
+            padding: theme.spacing(2),
             backgroundColor: amber[50],
         },
     });
@@ -193,7 +195,7 @@ class UserHeaderBase extends React.Component<Properties, InternalState> implemen
                     <ExpansionPanel expanded={!!statusDisplayed} className={classes.noMargin}>
                         <ExpansionPanelSummary className={classes.hide} />
                         <ExpansionPanelDetails className={classes.status}>
-                            Hello, world!
+                            <UserApplicationProgress state="received" />
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
                 </>
