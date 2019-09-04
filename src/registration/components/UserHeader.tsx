@@ -221,4 +221,4 @@ class UserHeaderBase extends React.Component<Properties, InternalState> implemen
     }
 }
 
-export const UserHeader = withRouter(withStyles(styles)(UserHeaderBase));
+export const UserHeader = withStyles(styles)(withRouter(UserHeaderBase));

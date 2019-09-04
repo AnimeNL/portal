@@ -96,5 +96,5 @@ class LocationCard extends React.Component<Properties> {
     }
 }
 
-const StyledLocationCard = withRouter(withStyles(styles)(LocationCard));
+const StyledLocationCard = withStyles(styles)(withRouter(LocationCard));
 export { StyledLocationCard as LocationCard };

@@ -443,4 +443,4 @@ class OverviewPage extends React.Component<Properties, State> {
     }
 }
 
-export default withRouter(withStyles(styles)(OverviewPage));
+export default withStyles(styles)(withRouter(OverviewPage));
