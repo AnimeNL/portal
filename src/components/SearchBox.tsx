@@ -160,7 +160,7 @@ class SearchBox extends React.Component<Properties & WithStyles<typeof styles>, 
      * from the `onChange` event on the input field.
      */
     @bind
-    onFocus(event: React.FocusEvent<HTMLDivElement>): void {
+    onFocus(event: React.FocusEvent<HTMLInputElement>): void {
         this.setState({
             anchor: event.currentTarget,
         });

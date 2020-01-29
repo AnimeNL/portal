@@ -30,7 +30,9 @@ const styles = (theme: Theme) =>
                 paddingTop: (theme.mixins.toolbar.minHeight as number) + theme.spacing(1)
             },
         },
-        toolbar: theme.mixins.toolbar,
+        toolbar: {
+            ...theme.mixins.toolbar
+        },
     });
 
 /**

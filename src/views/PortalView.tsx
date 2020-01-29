@@ -35,7 +35,9 @@ const styles = (theme: Theme) =>
         content: {
             flexGrow: 1,
         },
-        toolbar: theme.mixins.toolbar,
+        toolbar: {
+            ...theme.mixins.toolbar,
+        },
     });
 
 /**
