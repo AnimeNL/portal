@@ -103,8 +103,10 @@ const RegistrationButton = (): JSX.Element => {
  * Utility component that enables React routing for links internal to the application.
  */
 const RouterLink = (props: HTMLAnchorElement) => {
-    return !props.href.startsWith('http') ? <Link to={props.href}>{props.children}</Link>
-                                          : <a href={props.href}>{props.children}</a>;
+    if (props.href.startsWith('http') || props.href.startsWith('mailto'))
+        return <a href={props.href}>{props.children}</a>;
+    
+    return <Link to={props.href}>{props.children}</Link>;
 };
 
 /**
