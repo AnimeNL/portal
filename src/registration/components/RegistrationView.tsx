@@ -81,6 +81,9 @@ const styles = (theme: Theme) =>
         },
         buttonIcon: {
             marginRight: theme.spacing(1),
+        },
+        dividerSpacing: {
+            marginTop: theme.spacing(2),
         }
     });
 
@@ -289,7 +292,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
             <>
                 {introText}
 
-                <Divider />
+                <Divider className={classes.dividerSpacing} />
 
                 <Collapse in={!!errorMessage}>
                     <Typography variant="body1" className={classes.errorText}>
