@@ -382,7 +382,7 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
                             </Grid>
                             <Grid item xs={6} sm={3} className={classes.label}>
                                 <Typography variant="body1">
-                                    Kan je 's nachts meehelpen?
+                                    Kan je 's nachts meehelpen? <sup>*</sup>
                                 </Typography>
                             </Grid>
                             <Grid item xs={6} sm={9}>
@@ -451,8 +451,9 @@ class RegistrationViewBase extends React.Component<Properties, InternalState> {
                 <Divider />
 
                 <Typography variant="body1" className={classes.root}>
-                    <sup>(1)</sup> We verwachten dat je het volledige weekend aanwezig kan zijn.
-                    Neem contact met ons op indien dat niet het geval is.<br />
+                    <sup>(1)</sup> We verwachten dat je tussen 10 uur 's ochtends op vrijdag tot zes
+                    uur 's avonds op zondag aanwezig bent. Neem contact met ons op indien dat niet
+                    het geval is.<br />
                     <sup>(2)</sup> We hebben zowel een WhatsApp als een Facebook groep voor de
                     vrijwilligers. Deelname is optioneel, maar erg gezellig!<br />
                     <sup>(3)</sup> Zie de aparte pagina met meer informatie over
