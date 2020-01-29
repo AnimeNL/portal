@@ -1,5 +1,9 @@
+![Dependencies](https://david-dm.org/animenl/portal.svg) ![devDependencies](https://david-dm.org/animenl/portal/dev-status.svg)
+
 # Volunteer Portal
-This is the front-end code for a Volunteer Portal.
+This is the front-end code for the [AnimeCon](https://animecon.nl/) Volunteer Portal. It's written
+in TypeScript and depends on [React](https://reactjs.org/), [Material UI](https://material-ui.com/)
+and various other packages that can be found in [package.json](package.json).
 
 ## Installation
 Installing the volunteer portal for local development is straightforward, and does not require any
