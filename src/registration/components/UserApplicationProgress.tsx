@@ -20,6 +20,7 @@ const styles = (theme: Theme) =>
     createStyles({
         root: {
             background: 'none',
+            counterReset: 'registration-step-counter',
             width: '100%',
         }
     });
@@ -40,6 +41,12 @@ const useStyles = makeStyles(theme => ({
 
         backgroundColor: brown[200],
         color: theme.palette.getContrastText(Colors.kHyperlinkColor),
+
+        counterIncrement: 'registration-step-counter',
+
+        '&:before': {
+            content: 'counter(registration-step-counter)',
+        },
     },
     completed: {
         backgroundColor: brown[600],
@@ -60,9 +67,7 @@ const StepIcon = (props: StepIconProperties): JSX.Element => {
 
     return (
         <div className={clsx(classes.root, props.active && classes.active,
-                                           props.completed && classes.completed)}>
-            1
-        </div>
+                                           props.completed && classes.completed)}></div>
     );
 }
 
