@@ -51,7 +51,7 @@ const styles = (theme: Theme) =>
         errorText: {
             backgroundColor: deepOrange[100],
             borderRadius: theme.shape.borderRadius,
-            padding: theme.spacing(1),
+            padding: theme.spacing(1, 1, 1, 2),
             margin: theme.spacing(2, 2, 0, 2),
         },
         title: {
