@@ -40,7 +40,7 @@ const useStyles = makeStyles(theme => ({
         justifyContent: 'center',
         alignItems: 'center',
 
-        backgroundColor: brown[200],
+        backgroundColor: brown[100],
         color: theme.palette.getContrastText(Colors.kHyperlinkColor),
 
         counterIncrement: 'registration-step-counter',
