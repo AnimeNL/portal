@@ -102,9 +102,11 @@ class UserApplicationProgressBase extends React.Component<Properties> {
                                                        : 'Afgewezen 🙁';
                 step++;
 
+                // eslint-disable-next-line
             case 'Pending':
                 step++;
 
+                // eslint-disable-next-line
             case 'New':
                 break;
         }

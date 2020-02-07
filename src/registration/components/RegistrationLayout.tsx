@@ -76,7 +76,7 @@ class RegistrationLayoutBase extends React.PureComponent<WithStyles<typeof style
                 <div className={classes.background}></div>
                 <div className={classes.container}>
                     <Link to="/registration/">
-                        <img src="https://stewards.team/static/images/logo-portal.png" alt="J-POP Logo" />
+                        <img src="/static/images/logo-portal.png" alt="J-POP Logo" />
                     </Link>
                     <Paper className={classes.content}>
                         {children}
