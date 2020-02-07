@@ -13,11 +13,17 @@ export interface ILoginRequest {
 /**
  * @see https://github.com/AnimeNL/portal/blob/master/API.md#apilogin
  */
+type ILoginStatus = "New" | "Pending" | "Accepted" | "Rejected";
+
+/**
+ * @see https://github.com/AnimeNL/portal/blob/master/API.md#apilogin
+ */
 export interface ILoginResponse {
     success: boolean;
     userName: string;
     userToken: string;
     authToken: string;
+    status: ILoginStatus;
     expirationTime: number;
     abilities: string[];
 }

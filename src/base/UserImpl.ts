@@ -4,7 +4,7 @@
 
 import moment from 'moment';
 
-import { ILoginRequest, ILoginResponse } from '../api/ILogin';
+import { ILoginRequest, ILoginResponse, ILoginStatus } from '../api/ILogin';
 
 import { Configuration } from './Configuration';
 import { LoginResult, User } from './User';
@@ -48,6 +48,7 @@ export class UserImpl implements User {
     private userName?: string;
     private userToken?: string;
     private authToken?: string;
+    private status?: ILoginStatus;
     private expirationTime?: number;
     private abilities: Set<UserAbility>;
 
@@ -115,6 +116,13 @@ export class UserImpl implements User {
             throw new Error(kExceptionMessage);
 
         return this.userToken;
+    }
+
+    getStatus(): ILoginStatus {
+        if (!this.status)
+            throw new Error(kExceptionMessage);
+
+        return this.status;
     }
 
     hasAbility(ability: UserAbility): boolean {
@@ -191,6 +199,7 @@ export class UserImpl implements User {
             this.userName = unverifiedResponse.userName;
             this.userToken = unverifiedResponse.userToken;
             this.authToken = unverifiedResponse.authToken;
+            this.status = unverifiedResponse.status;
             this.expirationTime = unverifiedResponse.expirationTime;
 
             // Load all the abilities. Unknown abilities will be silently ignored.
@@ -224,6 +233,7 @@ export class UserImpl implements User {
         return validateString(unverifiedResponse, kInterfaceName, 'userName') &&
                validateString(unverifiedResponse, kInterfaceName, 'userToken') &&
                validateString(unverifiedResponse, kInterfaceName, 'authToken') &&
+               validateString(unverifiedResponse, kInterfaceName, 'status') &&
                validateNumber(unverifiedResponse, kInterfaceName, 'expirationTime') &&
                validateArray(unverifiedResponse, kInterfaceName, 'abilities');
     }
@@ -236,6 +246,7 @@ export class UserImpl implements User {
         this.userName = undefined;
         this.userToken = undefined;
         this.authToken = undefined;
+        this.status = undefined;
         this.expirationTime = undefined;
         this.abilities = new Set(kDefaultAbilities);
 

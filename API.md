@@ -63,6 +63,7 @@ the input data and return user status when successful. Must accept `POST` reques
 | `userName`       | `string`   | The full name that's associated with this user. |
 | `userToken`      | `string`   | The token that identifies this user. Should be pseudo-anonymous. |
 | `authToken`      | `string`   | The token that authenticates this user. Should be pseudo-anonymous. |
+| `status`         | `string`   | Registration status. One of: { New, Pending, Accepted, Rejected }. |
 | `expirationTime` | `number`   | Time, in milliseconds since the UNIX epoch, at which the session expires. |
 | `abilities`      | `string[]` | Abilities that are available for this user. |
 
