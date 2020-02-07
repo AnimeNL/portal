@@ -6,6 +6,7 @@ import React from 'react';
 import clsx from 'clsx';
 
 import { Colors } from '../Colors';
+import { ILoginStatus } from '../../api/ILogin';
 
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
@@ -46,6 +47,7 @@ const useStyles = makeStyles(theme => ({
 
         '&:before': {
             content: 'counter(registration-step-counter)',
+            padding: '1px 0 0 0',
         },
     },
     completed: {
@@ -78,7 +80,7 @@ interface UserApplicationProgressProperties {
     /**
      * State of the current user's application as a volunteer for the conference.
      */
-    state: 'received';
+    status: ILoginStatus;
 }
 
 type Properties = UserApplicationProgressProperties & WithStyles<typeof styles>;
@@ -88,18 +90,35 @@ type Properties = UserApplicationProgressProperties & WithStyles<typeof styles>;
  */
 class UserApplicationProgressBase extends React.Component<Properties> {
     render(): JSX.Element {
-        const { classes } = this.props;
+        const { classes, status } = this.props;
+
+        let step = 0;
+        let completedLabel = '…';
+
+        switch (status) {
+            case 'Accepted':
+            case 'Rejected':
+                completedLabel = status === 'Accepted' ? 'Aangenomen 🙂'
+                                                       : 'Afgewezen 🙁';
+                step++;
+
+            case 'Pending':
+                step++;
+
+            case 'New':
+                break;
+        }
 
         return (
-            <Stepper className={classes.root} alternativeLabel>
+            <Stepper className={classes.root} activeStep={step} alternativeLabel>
                 <Step key={0}>
                     <StepLabel StepIconComponent={StepIcon}>Aanmelding ontvangen</StepLabel>
                 </Step>
                 <Step key={1}>
-                    <StepLabel StepIconComponent={StepIcon}>Aanmelding bevestigd</StepLabel>
+                    <StepLabel StepIconComponent={StepIcon}>In overweging…</StepLabel>
                 </Step>
                 <Step key={2}>
-                    <StepLabel StepIconComponent={StepIcon}>Aanmelding compleet</StepLabel>
+                    <StepLabel StepIconComponent={StepIcon}>{completedLabel}</StepLabel>
                 </Step>
             </Stepper>
         );

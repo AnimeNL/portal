@@ -8,6 +8,7 @@ import bind from 'bind-decorator';
 
 import { ApplicationState } from '../../base/ApplicationState';
 import { Colors } from '../Colors';
+import { ILoginStatus } from '../../api/ILogin';
 import { UserApplicationProgress } from './UserApplicationProgress';
 import { UserLoginDialog } from './UserLoginDialog';
 import { UserObserver } from '../../base/UserObserver';
@@ -68,14 +69,14 @@ interface InternalState {
     actionAvailable: boolean;
 
     /**
-     * Whether the user has identified to an account. This reflects the available options.
-     */
-    identified?: boolean;
-
-    /**
      * Whether the login dialog should be displayed to the user.
      */
     loginDialogDisplayed?: boolean;
+
+    /**
+     * Status of the user in the sign-up process, if any.
+     */
+    status?: ILoginStatus;
 
     /**
      * Whether the status of the signed in user's application should be displayed.
@@ -138,10 +139,12 @@ class UserHeaderBase extends React.Component<Properties, InternalState> implemen
         const actionAvailable = this.shouldActionBeAvailable();
 
         const identified = user.hasAccount();
+
+        const status = identified ? user.getStatus() : undefined;
         const title = identified ? personaliseTitle(user.getUserName())
                                  : environment.getPortalTitle();
 
-        this.setState({ actionAvailable, identified, title });
+        this.setState({ actionAvailable, status, title });
 
         // Automatically open the Status display after logging in to provide the user with some
         // feedback, otherwise it looks like the dialog just silently disappeared.
@@ -177,9 +180,9 @@ class UserHeaderBase extends React.Component<Properties, InternalState> implemen
 
     render(): JSX.Element {
         const { classes } = this.props;
-        const { actionAvailable, identified, loginDialogDisplayed, statusDisplayed, title } = this.state;
+        const { actionAvailable, loginDialogDisplayed, status, statusDisplayed, title } = this.state;
 
-        if (identified) {
+        if (status) {
             return (
                 <>
                     <div className={classes.root}>
@@ -195,7 +198,7 @@ class UserHeaderBase extends React.Component<Properties, InternalState> implemen
                     <ExpansionPanel expanded={!!statusDisplayed} className={classes.noMargin}>
                         <ExpansionPanelSummary className={classes.hide} />
                         <ExpansionPanelDetails className={classes.status}>
-                            <UserApplicationProgress state="received" />
+                            <UserApplicationProgress status={status} />
                         </ExpansionPanelDetails>
                     </ExpansionPanel>
                 </>

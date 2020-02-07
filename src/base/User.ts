@@ -2,7 +2,7 @@
 // Use of this source code is governed by the MIT license, a copy of which can
 // be found in the LICENSE file.
 
-import { ILoginRequest } from '../api/ILogin';
+import { ILoginRequest, ILoginStatus } from '../api/ILogin';
 
 import { UserAbility } from './UserAbility';
 import { UserObserver } from './UserObserver';
@@ -50,6 +50,12 @@ export interface User {
      * Returns the user token of the authenticated user. Must only be used if |hasAccount| is true.
      */
     getUserToken(): string;
+
+    /**
+     * Returns the status of the user in the volunteer registration process. Must only be used if
+     * |hasAccount| is true.
+     */
+    getStatus(): ILoginStatus;
 
     /**
      * Attempts to process the login |request|. A promise will be returned that indicates whether

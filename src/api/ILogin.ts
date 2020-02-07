@@ -13,7 +13,7 @@ export interface ILoginRequest {
 /**
  * @see https://github.com/AnimeNL/portal/blob/master/API.md#apilogin
  */
-type ILoginStatus = "New" | "Pending" | "Accepted" | "Rejected";
+export type ILoginStatus = "New" | "Pending" | "Accepted" | "Rejected";
 
 /**
  * @see https://github.com/AnimeNL/portal/blob/master/API.md#apilogin
