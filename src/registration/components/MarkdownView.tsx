@@ -13,6 +13,7 @@ import HowToRegIcon from '@material-ui/icons/HowToReg';
 import { Theme } from '@material-ui/core/styles/createMuiTheme';
 import { WithStyles, default as withStyles } from '@material-ui/core/styles/withStyles';
 import { darken } from '@material-ui/core/styles/colorManipulator';
+import brown from '@material-ui/core/colors/brown';
 import createStyles from '@material-ui/core/styles/createStyles';
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import lightGreen from '@material-ui/core/colors/lightGreen';
@@ -45,6 +46,16 @@ const styles = (theme: Theme) =>
 
             '& h3 + p': { marginTop: 0 },
             '& h3': { marginBottom: 0 },
+
+            '& table': {
+                borderCollapse: 'collapse',
+                borderSpacing: 0,
+            },
+            '& td, th': {
+                border: '1px solid ' + brown[100],
+                padding: theme.spacing(.5, 1),
+            },
+            '& thead': { textAlign: 'left' },
         }
     });
 
